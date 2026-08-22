@@ -9,6 +9,8 @@ from pathlib import Path
 from . import __version__
 from .db import all_endpoints, all_units, connect, get_unit, replace_file
 from .indexer import index_python_file, iter_python_files
+from .packet import build_packet
+from .search import search_units
 
 
 def root_from(value: str | None) -> Path:
@@ -77,6 +79,35 @@ def _load(root: Path):
     return conn, all_units(conn), all_endpoints(conn)
 
 
+def _search(args: argparse.Namespace):
+    root = root_from(args.root)
+    _, units, endpoints = _load(root)
+    results = search_units(units, args.query, args.limit, args.input, args.returns)
+    return endpoints, results
+
+
+def cmd_search(args: argparse.Namespace) -> int:
+    _, results = _search(args)
+    if args.json:
+        print(json.dumps([result.to_dict() for result in results], indent=2))
+        return 0
+    for result in results:
+        unit = result.unit
+        signature = f" | {unit.signature}" if unit.signature else ""
+        print(
+            f"{result.score:5.1f}  {unit.unit_id}  [{unit.body_hash}]\n"
+            f"       {unit.purpose}{signature}"
+        )
+    return 0
+
+
+def cmd_packet(args: argparse.Namespace) -> int:
+    endpoints, results = _search(args)
+    packet = build_packet(args.query, results, endpoints, args.input, args.returns)
+    print(json.dumps(packet, indent=2))
+    return 0
+
+
 def cmd_read(args: argparse.Namespace) -> int:
     root = root_from(args.root)
     conn, _, _ = _load(root)
@@ -119,7 +150,7 @@ def cmd_map(args: argparse.Namespace) -> int:
     for unit in units:
         if unit.path != current_path:
             current_path = unit.path
-            output.extend([f"## `{current_path}`", ""]
+            output.extend([f"## `{current_path}`", ""])
         output.append(f"### `{unit.unit_id}`")
         summary = f"`{unit.kind}` · lines {unit.start_line}-{unit.end_line} · `{unit.body_hash}`"
         if unit.git_file_commit:
@@ -158,6 +189,21 @@ def build_parser() -> argparse.ArgumentParser:
     update.add_argument("--if-exists", action="store_true", help="do nothing until an index exists")
     update.add_argument("--quiet", action="store_true")
     update.set_defaults(func=cmd_update)
+
+    def add_search_args(command: argparse.ArgumentParser) -> None:
+        command.add_argument("query")
+        command.add_argument("--limit", type=int, default=8)
+        command.add_argument("--input", action="append", default=[], help="expected input type; repeatable")
+        command.add_argument("--returns", default="", help="expected return type")
+
+    search = sub.add_parser("search", help="rank existing code units for an intent")
+    add_search_args(search)
+    search.add_argument("--json", action="store_true")
+    search.set_defaults(func=cmd_search)
+
+    packet = sub.add_parser("packet", help="emit a compact reuse-review packet")
+    add_search_args(packet)
+    packet.set_defaults(func=cmd_packet)
 
     read = sub.add_parser("read", help="extract exactly one indexed code unit")
     read.add_argument("unit")
