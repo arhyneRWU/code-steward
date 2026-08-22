@@ -1,0 +1,128 @@
+[
+  {
+    "id": "exact-taxonomy-intent",
+    "category": "direct lexical intent",
+    "query": "normalize taxon name and resolve aliases",
+    "relevant": ["taxonomy.normalize"],
+    "traps": ["billing.normalize-price"],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 5
+  },
+  {
+    "id": "similar-name-different-behavior",
+    "category": "false lexical similarity",
+    "query": "normalize species name",
+    "relevant": ["taxonomy.normalize"],
+    "traps": ["billing.normalize-price"],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 5
+  },
+  {
+    "id": "missing-docstring",
+    "category": "missing documentation",
+    "query": "lookup taxon from supplier label",
+    "relevant": ["taxonomy.lookup-label"],
+    "traps": [],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 5
+  },
+  {
+    "id": "wrapper-shared-implementation",
+    "category": "wrapper and shared implementation",
+    "query": "resolve supplier species label",
+    "relevant": ["imports.resolve-species", "taxonomy.normalize"],
+    "traps": [],
+    "redundancy_groups": [
+      ["imports.resolve-species", "api.resolve-species", "cli.resolve-species"]
+    ],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 6
+  },
+  {
+    "id": "independent-overlapping-implementations",
+    "category": "multiple implementations",
+    "query": "canonicalize species record",
+    "relevant": ["legacy.canonicalize-species", "taxonomy.normalize"],
+    "traps": ["billing.normalize-price"],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 6
+  },
+  {
+    "id": "conceptual-region",
+    "category": "conceptual region",
+    "query": "validate order customer inventory and shipping",
+    "relevant": ["orders.validation"],
+    "traps": [],
+    "input_types": [],
+    "return_type": "",
+    "limit": 6
+  },
+  {
+    "id": "vocabulary-mismatch",
+    "category": "query expansion candidate",
+    "query": "read app settings",
+    "relevant": ["config.load"],
+    "traps": ["records.fetch"],
+    "input_types": ["str"],
+    "return_type": "dict[str, str]",
+    "limit": 5
+  },
+  {
+    "id": "synonym-save-settings",
+    "category": "query expansion candidate",
+    "query": "save settings",
+    "relevant": ["preferences.persist"],
+    "traps": ["config.load"],
+    "input_types": [],
+    "return_type": "",
+    "limit": 5
+  },
+  {
+    "id": "semantic-logout",
+    "category": "query expansion candidate",
+    "query": "log user out",
+    "relevant": ["session.revoke"],
+    "traps": ["auth.verify"],
+    "input_types": [],
+    "return_type": "",
+    "limit": 5
+  },
+  {
+    "id": "related-not-equivalent-cache",
+    "category": "related but not equivalent concepts",
+    "query": "remove cached item",
+    "relevant": ["cache.evict"],
+    "traps": ["records.remove"],
+    "input_types": ["str"],
+    "return_type": "bool",
+    "limit": 5
+  },
+  {
+    "id": "repository-abbreviation",
+    "category": "abbreviation and vocabulary mismatch",
+    "query": "inventory repo files",
+    "relevant": ["repository.inventory"],
+    "traps": ["orders::validate_inventory"],
+    "input_types": ["str"],
+    "return_type": "list[str]",
+    "limit": 5
+  },
+  {
+    "id": "wrapper-redundancy",
+    "category": "candidate redundancy",
+    "query": "resolve species label",
+    "relevant": ["taxonomy.normalize"],
+    "traps": [],
+    "redundancy_groups": [
+      ["imports.resolve-species", "api.resolve-species", "cli.resolve-species"]
+    ],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 6
+  }
+]
