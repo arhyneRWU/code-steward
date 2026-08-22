@@ -10,7 +10,7 @@ from . import __version__
 from .db import all_endpoints, all_units, connect, get_unit, replace_file
 from .indexer import index_python_file, iter_python_files
 from .packet import build_packet
-from .search import search_units
+from .retrieval import rank_units, retrieve_units
 
 
 def root_from(value: str | None) -> Path:
@@ -79,10 +79,11 @@ def _load(root: Path):
     return conn, all_units(conn), all_endpoints(conn)
 
 
-def _search(args: argparse.Namespace):
+def _search(args: argparse.Namespace, *, compact: bool = False):
     root = root_from(args.root)
     _, units, endpoints = _load(root)
-    results = search_units(units, args.query, args.limit, args.input, args.returns)
+    retriever = retrieve_units if compact else rank_units
+    results = retriever(units, args.query, args.limit, args.input, args.returns)
     return endpoints, results
 
 
@@ -102,7 +103,7 @@ def cmd_search(args: argparse.Namespace) -> int:
 
 
 def cmd_packet(args: argparse.Namespace) -> int:
-    endpoints, results = _search(args)
+    endpoints, results = _search(args, compact=True)
     packet = build_packet(args.query, results, endpoints, args.input, args.returns)
     print(json.dumps(packet, indent=2))
     return 0
