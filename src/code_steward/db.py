@@ -53,52 +53,72 @@ def connect(db_path: Path) -> sqlite3.Connection:
     return conn
 
 
+def _validate_unit_ids(conn: sqlite3.Connection, path: str, units: list[CodeUnit]) -> None:
+    seen: set[str] = set()
+    for unit in units:
+        if unit.unit_id in seen:
+            raise ValueError(f"Duplicate Code Steward unit ID in {path!r}: {unit.unit_id!r}")
+        seen.add(unit.unit_id)
+
+        existing = conn.execute(
+            "SELECT path FROM units WHERE unit_id = ? AND path <> ?",
+            (unit.unit_id, path),
+        ).fetchone()
+        if existing is not None:
+            raise ValueError(
+                f"Code Steward unit ID {unit.unit_id!r} in {path!r} conflicts "
+                f"with existing unit in {existing['path']!r}"
+            )
+
+
 def replace_file(
     conn: sqlite3.Connection,
     path: str,
     units: list[CodeUnit],
     endpoints: list[Endpoint],
 ) -> None:
-    conn.execute("DELETE FROM endpoints WHERE path = ?", (path,))
-    conn.execute("DELETE FROM units WHERE path = ?", (path,))
-    for unit in units:
-        conn.execute(
-            """INSERT OR REPLACE INTO units VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                unit.unit_id,
-                unit.path,
-                unit.kind,
-                unit.name,
-                unit.qualname,
-                unit.start_line,
-                unit.end_line,
-                unit.signature,
-                json.dumps(unit.parameters, separators=(",", ":")),
-                unit.returns,
-                unit.purpose,
-                json.dumps(unit.concepts, separators=(",", ":")),
-                json.dumps(unit.decorators, separators=(",", ":")),
-                json.dumps(unit.dependencies, separators=(",", ":")),
-                json.dumps(unit.owns, separators=(",", ":")),
-                json.dumps(unit.not_owns, separators=(",", ":")),
-                unit.body_hash,
-                unit.git_file_commit,
-                int(unit.explicit_region),
-            ),
-        )
-    for endpoint in endpoints:
-        conn.execute(
-            "INSERT OR REPLACE INTO endpoints VALUES (?,?,?,?,?,?)",
-            (
-                endpoint.unit_id,
-                endpoint.path,
-                endpoint.method,
-                endpoint.route,
-                endpoint.response_model,
-                json.dumps(endpoint.dependencies, separators=(",", ":")),
-            ),
-        )
-    conn.commit()
+    _validate_unit_ids(conn, path, units)
+
+    with conn:
+        conn.execute("DELETE FROM endpoints WHERE path = ?", (path,))
+        conn.execute("DELETE FROM units WHERE path = ?", (path,))
+        for unit in units:
+            conn.execute(
+                """INSERT INTO units VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                (
+                    unit.unit_id,
+                    unit.path,
+                    unit.kind,
+                    unit.name,
+                    unit.qualname,
+                    unit.start_line,
+                    unit.end_line,
+                    unit.signature,
+                    json.dumps(unit.parameters, separators=(",", ":")),
+                    unit.returns,
+                    unit.purpose,
+                    json.dumps(unit.concepts, separators=(",", ":")),
+                    json.dumps(unit.decorators, separators=(",", ":")),
+                    json.dumps(unit.dependencies, separators=(",", ":")),
+                    json.dumps(unit.owns, separators=(",", ":")),
+                    json.dumps(unit.not_owns, separators=(",", ":")),
+                    unit.body_hash,
+                    unit.git_file_commit,
+                    int(unit.explicit_region),
+                ),
+            )
+        for endpoint in endpoints:
+            conn.execute(
+                "INSERT INTO endpoints VALUES (?,?,?,?,?,?)",
+                (
+                    endpoint.unit_id,
+                    endpoint.path,
+                    endpoint.method,
+                    endpoint.route,
+                    endpoint.response_model,
+                    json.dumps(endpoint.dependencies, separators=(",", ":")),
+                ),
+            )
 
 
 def _row_to_unit(row: sqlite3.Row) -> CodeUnit:
