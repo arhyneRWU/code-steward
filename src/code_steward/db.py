@@ -126,7 +126,9 @@ def _row_to_unit(row: sqlite3.Row) -> CodeUnit:
 
 
 def all_units(conn: sqlite3.Connection) -> list[CodeUnit]:
-    return [_row_to_unit(row) for row in conn.execute("SELECT * FROM units ORDER BY path,start_line")]
+    return [
+        _row_to_unit(row) for row in conn.execute("SELECT * FROM units ORDER BY path,start_line")
+    ]
 
 
 def get_unit(conn: sqlite3.Connection, unit_id: str) -> CodeUnit | None:
