@@ -161,7 +161,9 @@ def cmd_map(args: argparse.Namespace) -> int:
         output.append("")
         output.append(unit.purpose or "No purpose summary.")
         if endpoint_map.get(unit.unit_id):
-            output.append("API: " + ", ".join(f"`{value}`" for value in endpoint_map[unit.unit_id]))
+            output.append(
+                "API: " + ", ".join(f"`{value}`" for value in endpoint_map[unit.unit_id])
+            )
         output.append("")
     destination = Path(args.output) if args.output else root / ".code-steward" / "CODEMAP.md"
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -186,14 +188,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     update = sub.add_parser("update", help="incrementally re-index one Python file")
     update.add_argument("path")
-    update.add_argument("--if-exists", action="store_true", help="do nothing until an index exists")
+    update.add_argument(
+        "--if-exists", action="store_true", help="do nothing until an index exists"
+    )
     update.add_argument("--quiet", action="store_true")
     update.set_defaults(func=cmd_update)
 
     def add_search_args(command: argparse.ArgumentParser) -> None:
         command.add_argument("query")
         command.add_argument("--limit", type=int, default=8)
-        command.add_argument("--input", action="append", default=[], help="expected input type; repeatable")
+        command.add_argument(
+            "--input", action="append", default=[], help="expected input type; repeatable"
+        )
         command.add_argument("--returns", default="", help="expected return type")
 
     search = sub.add_parser("search", help="rank existing code units for an intent")
