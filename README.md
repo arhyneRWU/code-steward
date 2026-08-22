@@ -58,7 +58,7 @@ The first implementation targets Python and FastAPI and will extract information
 - docstrings and compact purpose summaries
 - FastAPI routes, response models, and dependencies
 - source hashes and Git metadata
-- optional conceptual code-unit tags for regions that do not map cleanly to one AST symbol
+- optional stable aliases and conceptual code-unit regions
 
 ### Low-context retrieval
 
@@ -80,20 +80,36 @@ A reviewer should receive only the task and a small candidate packet. It can the
 
 ## Code-unit addressing
 
-Ordinary Python functions and classes can be addressed from AST boundaries without modifying source files. Code Steward will also support optional explicit tags for conceptual regions:
+Ordinary Python functions and classes are addressed from native AST boundaries and require no source modification. A one-line Code Steward tag can optionally give the next declaration a stable semantic ID:
 
 ```python
-# <code-unit:taxonomy.normalization>
-# @purpose Normalize incoming taxonomic names and resolve aliases.
-# @owns normalization, alias resolution
-# @not-own database persistence
-
-...
-
-# </code-unit:taxonomy.normalization>
+# code-steward: unit taxonomy.normalize
+@cached
+def normalize_taxon(name: str) -> Taxon:
+    """Resolve a supplied name to its accepted taxon."""
+    ...
 ```
 
-These tags are intended for useful conceptual boundaries, not for annotating every function. Most structural metadata should be generated automatically.
+The tag must immediately precede the declaration or its first decorator. It replaces the generated module/symbol ID for that unit rather than creating a second search candidate.
+
+Paired tags are reserved for conceptual regions that span multiple native declarations:
+
+```python
+# code-steward: begin taxonomy.validation
+
+
+def validate_name(name: str) -> None: ...
+
+
+def validate_rank(rank: str) -> None: ...
+
+
+# code-steward: end taxonomy.validation
+```
+
+Human documentation remains in normal language-native documentation such as Python docstrings. Hashes, Git metadata, callers, dependencies, and other generated facts stay in the index, never in source tags.
+
+For the full draft semantics being tested, see [`docs/tag-protocol.md`](docs/tag-protocol.md).
 
 ## Design principles
 
@@ -144,7 +160,7 @@ Code Steward is an experiment in moving that work into deterministic indexes and
 
 The project is in an early architecture phase. Contributions and design discussion are welcome, particularly around context-efficient retrieval, code-unit identity, Python/FastAPI static analysis, and measurable evaluation of agent context use.
 
-Contributor guidance will live in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contributor guidance lives in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## License
 
