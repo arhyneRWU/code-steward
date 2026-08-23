@@ -150,6 +150,42 @@ The first public milestones are expected to focus on:
 7. post-change DRY and blast-radius review
 8. benchmarks for context use, retrieval quality, and incorrect reuse decisions
 
+## Claude Code plugin surface
+
+Code Steward ships a small plugin surface so an agent can use the indexer without a human
+driving the CLI by hand.
+
+```text
+.claude-plugin/plugin.json
+skills/searching-before-implementing/SKILL.md   # the search-before-implement workflow
+skills/searching-before-implementing/references/retrieval-limits.md
+agents/reuse-reviewer.md                        # read-only reviewer subagent
+```
+
+- **`searching-before-implementing`** teaches the workflow: run `code-steward packet` before
+  broad exploration, treat candidates as evidence rather than answers, read the minimum number
+  of unit bodies, classify the change, and fall back to ordinary exploration when the packet is
+  insufficient. It states plainly when Code Steward should *not* be used.
+- **`reuse-reviewer`** is the "isolated review agent" box in the diagram above. It receives a
+  task, runs `packet` and `read` in its own context, and returns a compact structured decision
+  so candidate evaluation never lands in the main session.
+
+Both are deliberately conservative about the retriever's current quality. On `psf/requests` the
+production retriever measures **Hit@1 40%, Hit@K 73.33%, MRR 0.500** — the top candidate is
+wrong most of the time, and roughly one query in four returns a packet that does not contain
+the correct unit at all. The skill and the agent both require verification before any reuse
+decision, and neither is permitted to treat "not in the packet" as proof that code is absent.
+The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not find it"), not `CREATE`.
+
+Known gaps in this surface:
+
+- The plugin does not install the CLI. `code-steward` must already be on `PATH`
+  (`pip install -e .`) for the skill or the agent to do anything.
+- There are no commands and no hooks. Indexing is not automatic; the index goes stale until
+  `code-steward update <path>` or `code-steward build` is run.
+- The reviewer agent holds `Bash` because that is the only way to invoke the CLI. Its
+  read-only contract is enforced by instruction, not by the tool allowlist.
+
 ## Why this project exists
 
 Modern coding agents are capable of exploring large repositories, but exploration itself has a cost. Repeated searches, broad file reads, graph results, test discovery, and Git history can consume a substantial portion of a long-running context window. That material is often useful only long enough to make one decision.

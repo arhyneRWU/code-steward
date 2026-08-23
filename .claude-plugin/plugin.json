@@ -3,5 +3,6 @@
   "description": "Context-efficient code intelligence and stewardship for Claude Code.",
   "version": "0.1.0",
   "license": "MIT",
-  "keywords": ["python", "fastapi", "code-intelligence", "code-review", "reuse", "claude-code"]
+  "keywords": ["python", "fastapi", "code-intelligence", "code-review", "reuse", "claude-code"],
+  "agents": "./agents"
 }
