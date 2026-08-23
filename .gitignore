@@ -14,3 +14,9 @@ build/
 # machine-local plugin toggle are ignored.
 .claude/worktrees/
 .claude/settings.local.json
+
+# Coverage output, written by `coverage run`.
+.coverage
+.coverage.*
+htmlcov/
+coverage.json
