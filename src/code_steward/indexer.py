@@ -357,19 +357,35 @@ def index_python_file(project_root: Path, path: Path) -> tuple[list[CodeUnit], l
     return visitor.units, visitor.endpoints
 
 
-def iter_python_files(project_root: Path, excludes: Iterable[str] = ()) -> Iterable[Path]:
-    excluded = set(excludes)
-    for path in project_root.rglob("*.py"):
+SKIPPED_DIRECTORIES = frozenset(
+    {
+        ".git",
+        ".venv",
+        "venv",
+        "__pycache__",
+        ".code-steward",
+        ".code-review-graph",
+        # Agent tooling keeps git worktrees under .claude/worktrees,
+        # which are copies of this repo and would duplicate every ID.
+        ".claude",
+    }
+)
+
+
+def is_excluded(project_root: Path, path: Path, excludes: Iterable[str] = ()) -> bool:
+    """Report whether a path is outside the indexable source tree."""
+    try:
         rel_parts = set(path.relative_to(project_root).parts)
-        if rel_parts & {
-            ".git",
-            ".venv",
-            "venv",
-            "__pycache__",
-            ".code-steward",
-            ".code-review-graph",
-        }:
-            continue
-        if any(value in path.as_posix() for value in excluded):
+    except ValueError:
+        return True
+    if rel_parts & SKIPPED_DIRECTORIES:
+        return True
+    return any(value in path.as_posix() for value in excludes)
+
+
+def iter_python_files(project_root: Path, excludes: Iterable[str] = ()) -> Iterable[Path]:
+    excluded = tuple(excludes)
+    for path in project_root.rglob("*.py"):
+        if is_excluded(project_root, path, excluded):
             continue
         yield path

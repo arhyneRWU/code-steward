@@ -8,7 +8,9 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .config import resolve_excludes
 from .db import all_endpoints, all_units, connect, get_unit
+from .indexer import is_excluded
 from .maintenance import rebuild_index, update_index_file
 from .packet import build_packet
 from .retrieval import rank_units, retrieve_units
@@ -26,7 +28,7 @@ def cmd_build(args: argparse.Namespace) -> int:
     root = root_from(args.root)
     destination = db_path(root)
     try:
-        stats = rebuild_index(root, destination, args.exclude)
+        stats = rebuild_index(root, destination, resolve_excludes(root, args.exclude))
     except (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError) as exc:
         if not args.quiet:
             print(f"build failed: {exc}", file=sys.stderr)
@@ -53,6 +55,9 @@ def cmd_update(args: argparse.Namespace) -> int:
     try:
         rel = path.relative_to(root).as_posix()
     except ValueError:
+        return 0
+
+    if is_excluded(root, path, resolve_excludes(root, args.exclude)):
         return 0
 
     if not path.exists() and not db.exists():
@@ -187,13 +192,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="project root; defaults to CLAUDE_PROJECT_DIR or cwd")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    exclude_help = (
+        "path fragment to skip; repeatable and added to "
+        "[tool.code-steward] exclude in pyproject.toml"
+    )
+
     build = sub.add_parser("build", help="build or rebuild the Python code-unit index")
-    build.add_argument("--exclude", action="append", default=[])
+    build.add_argument("--exclude", action="append", default=[], help=exclude_help)
     build.add_argument("--quiet", action="store_true")
     build.set_defaults(func=cmd_build)
 
     update = sub.add_parser("update", help="incrementally re-index one Python file")
     update.add_argument("path")
+    update.add_argument("--exclude", action="append", default=[], help=exclude_help)
     update.add_argument(
         "--if-exists", action="store_true", help="do nothing until an index exists"
     )
