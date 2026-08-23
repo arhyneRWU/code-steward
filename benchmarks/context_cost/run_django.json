@@ -1,0 +1,6610 @@
+{
+  "corpus": "django",
+  "eligible_units": 9610,
+  "match_rate": 0.3655,
+  "matched_units": 3512,
+  "schema_version": 1,
+  "targets": [
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1841,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4473,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5886,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3173,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.base::Model._check_m2m_through_same_relationship",
+      "their_target": "django/db/models/base.py::Model._check_m2m_through_same_relationship"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2237,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3826,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4704,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2181,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admindocs.utils::replace_unnamed_groups",
+      "their_target": "django/contrib/admindocs/utils.py::replace_unnamed_groups"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6366,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 9492,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 13636,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 4477,
+          "named": 8
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.3333,
+        "C_gcr_sufficient": 0.3333,
+        "D_hybrid": 0.3333
+      },
+      "target": "django.db.models.fields.related_descriptors::_filter_prefetch_queryset",
+      "their_target": "django/db/models/fields/related_descriptors.py::_filter_prefetch_queryset"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3485,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6098,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8016,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3428,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.base.schema::BaseDatabaseSchemaEditor._model_indexes_sql",
+      "their_target": "django/db/backends/base/schema.py::BaseDatabaseSchemaEditor._model_indexes_sql"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1669,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 7318,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8226,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2402,
+          "named": 6
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.sessions.backends.file::SessionStore._get_storage_path",
+      "their_target": "django/contrib/sessions/backends/file.py::SessionStore._get_storage_path"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 586,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 11264,
+          "named": 9
+        },
+        "C_gcr_sufficient": {
+          "bytes": 20367,
+          "named": 9
+        },
+        "D_hybrid": {
+          "bytes": 11189,
+          "named": 9
+        }
+      },
+      "key_size": 11,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.8182,
+        "D_hybrid": 0.8182
+      },
+      "target": "django.http.response::HttpResponseBase.has_header",
+      "their_target": "django/http/response.py::HttpResponseBase.has_header"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 686,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1340,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1340,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 686,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.backends.mysql.features::DatabaseFeatures.supports_default_in_lead_lag",
+      "their_target": "django/db/backends/mysql/features.py::DatabaseFeatures.supports_default_in_lead_lag"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2106,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 6436,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7513,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2018,
+          "named": 5
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.autoreload::WatchmanReloader.check_server_status",
+      "their_target": "django/utils/autoreload.py::WatchmanReloader.check_server_status"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1870,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 10457,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 13481,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 4910,
+          "named": 11
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.3333,
+        "C_gcr_sufficient": 0.6667,
+        "D_hybrid": 0.6667
+      },
+      "target": "django.contrib.staticfiles.storage::HashedFilesMixin._url",
+      "their_target": "django/contrib/staticfiles/storage.py::HashedFilesMixin._url"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 975,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2542,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3049,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 951,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.gdal.raster.source::GDALRaster.bands",
+      "their_target": "django/contrib/gis/gdal/raster/source.py::GDALRaster.bands"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4589,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 6241,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8198,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 3958,
+          "named": 7
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.template.defaulttags::ifchanged",
+      "their_target": "django/template/defaulttags.py::ifchanged"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 655,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1300,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1300,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 655,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.db.backends.utils::SpatialOperator.default_template",
+      "their_target": "django/contrib/gis/db/backends/utils.py::SpatialOperator.default_template"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3392,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 9448,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11896,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3886,
+          "named": 8
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.postgres.constraints::ExclusionConstraint._get_expressions",
+      "their_target": "django/contrib/postgres/constraints.py::ExclusionConstraint._get_expressions"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 960,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4524,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8265,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 4738,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.models.fields.__init__::Field._db_default_expression",
+      "their_target": "django/db/models/fields/__init__.py::Field._db_default_expression"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 696,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4928,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6163,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 2117,
+          "named": 3
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.safestring::SafeData.__html__",
+      "their_target": "django/utils/safestring.py::SafeData.__html__"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 913,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1212,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1212,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 915,
+          "named": 0
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.0,
+        "D_hybrid": 0.0
+      },
+      "target": "django.views.generic.dates::MonthMixin.get_month",
+      "their_target": "django/views/generic/dates.py::MonthMixin.get_month"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 937,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1240,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1240,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 937,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.dispatch.dispatcher::Signal._flag_dead_receivers",
+      "their_target": "django/dispatch/dispatcher.py::Signal._flag_dead_receivers"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4005,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 8762,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 17705,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 10421,
+          "named": 9
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.conf.__init__::LazySettings.configure",
+      "their_target": "django/conf/__init__.py::LazySettings.configure"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 717,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2644,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2644,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 717,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.geos.prototypes.io::WKBWriter._set_byteorder",
+      "their_target": "django/contrib/gis/geos/prototypes/io.py::WKBWriter._set_byteorder"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3155,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 7285,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8493,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 4041,
+          "named": 6
+        }
+      },
+      "key_size": 7,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.4286,
+        "D_hybrid": 0.4286
+      },
+      "target": "django.contrib.admin.sites::AdminSite.admin_view",
+      "their_target": "django/contrib/admin/sites.py::AdminSite.admin_view"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 724,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2472,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2472,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 724,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.views.decorators.csp::_make_csp_decorator.decorator._wrapped_sync_view",
+      "their_target": "django/views/decorators/csp.py::_wrapped_sync_view"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3307,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 2414,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4444,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3270,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.cache::_not_modified",
+      "their_target": "django/utils/cache.py::_not_modified"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 929,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 9429,
+          "named": 6
+        },
+        "C_gcr_sufficient": {
+          "bytes": 16444,
+          "named": 6
+        },
+        "D_hybrid": {
+          "bytes": 8630,
+          "named": 7
+        }
+      },
+      "key_size": 6,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.base_user::AbstractBaseUser.get_session_auth_hash",
+      "their_target": "django/contrib/auth/base_user.py::AbstractBaseUser.get_session_auth_hash"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1347,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5079,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6845,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1761,
+          "named": 4
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.5,
+        "D_hybrid": 0.5
+      },
+      "target": "django.contrib.admin.options::BaseModelAdmin.get_view_on_site_url",
+      "their_target": "django/contrib/admin/options.py::BaseModelAdmin.get_view_on_site_url"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 872,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4606,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6569,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2999,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.options::ModelAdmin._create_formsets.user_deleted_form",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.user_deleted_form"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3936,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4536,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7528,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2001,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.gdal.srs::SpatialReference.import_user_input",
+      "their_target": "django/contrib/gis/gdal/srs.py::SpatialReference.import_user_input"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1733,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3822,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3902,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1768,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.postgres.apps::uninstall_if_needed",
+      "their_target": "django/contrib/postgres/apps.py::uninstall_if_needed"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1133,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3040,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3473,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1096,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.test.html::Parser.format_position",
+      "their_target": "django/test/html.py::Parser.format_position"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2297,
+          "named": 5
+        },
+        "B_gcr_delivered": {
+          "bytes": 9761,
+          "named": 7
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11562,
+          "named": 7
+        },
+        "D_hybrid": {
+          "bytes": 3111,
+          "named": 7
+        }
+      },
+      "key_size": 7,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.7143,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.tasks.base::Task.get_backend",
+      "their_target": "django/tasks/base.py::Task.get_backend"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 5847,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 10278,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 13085,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 9163,
+          "named": 10
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.checks.model_checks::_check_lazy_references",
+      "their_target": "django/core/checks/model_checks.py::_check_lazy_references"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1304,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6047,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6281,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1272,
+          "named": 7
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.lorem_ipsum::sentence",
+      "their_target": "django/utils/lorem_ipsum.py::sentence"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3075,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 6890,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8646,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 2956,
+          "named": 5
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.middleware.csrf::_add_new_csrf_cookie",
+      "their_target": "django/middleware/csrf.py::_add_new_csrf_cookie"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 562,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2565,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4521,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2439,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.indexes::IndexExpression.register_wrappers",
+      "their_target": "django/db/models/indexes.py::IndexExpression.register_wrappers"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1347,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5081,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 10338,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 6602,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.checks.model_checks::_check_lazy_references.extract_operation",
+      "their_target": "django/core/checks/model_checks.py::extract_operation"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3767,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4377,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7360,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3730,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.options::Options._format_names",
+      "their_target": "django/db/models/options.py::Options._format_names"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 10659,
+          "named": 12
+        },
+        "B_gcr_delivered": {
+          "bytes": 20625,
+          "named": 12
+        },
+        "C_gcr_sufficient": {
+          "bytes": 28241,
+          "named": 12
+        },
+        "D_hybrid": {
+          "bytes": 10412,
+          "named": 17
+        }
+      },
+      "key_size": 12,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.html::conditional_escape",
+      "their_target": "django/utils/html.py::conditional_escape"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4062,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 5545,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7940,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 4030,
+          "named": 6
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.http::content_disposition_header",
+      "their_target": "django/utils/http.py::content_disposition_header"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1958,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6636,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8168,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2475,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.html::_strip_once",
+      "their_target": "django/utils/html.py::_strip_once"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1177,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3651,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4089,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1153,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.template.defaultfilters::cut",
+      "their_target": "django/template/defaultfilters.py::cut"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 529,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1240,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1240,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 529,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.migrations.operations.special::RunPython.noop",
+      "their_target": "django/db/migrations/operations/special.py::RunPython.noop"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1947,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 8334,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11075,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 2796,
+          "named": 6
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.3333,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.test.testcases::TestCase._rollback_atomics",
+      "their_target": "django/test/testcases.py::TestCase._rollback_atomics"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 797,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1292,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1292,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 797,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.backends.mysql.features::DatabaseFeatures.allows_auto_pk_0",
+      "their_target": "django/db/backends/mysql/features.py::DatabaseFeatures.allows_auto_pk_0"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1222,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3178,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3715,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1189,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.options::ModelAdmin.save_formset",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.save_formset"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 21397,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 19253,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 32485,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 21203,
+          "named": 19
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.autodetector::MigrationAutodetector.generate_altered_fields",
+      "their_target": "django/db/migrations/autodetector.py::MigrationAutodetector.generate_altered_fields"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1134,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5651,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8325,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3563,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.utils::NestedObjects.nested",
+      "their_target": "django/contrib/admin/utils.py::NestedObjects.nested"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 7228,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 7399,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 13321,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 7732,
+          "named": 7
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.base::Model.clean_fields",
+      "their_target": "django/db/models/base.py::Model.clean_fields"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4337,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 8309,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9166,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 4279,
+          "named": 9
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.0,
+        "D_hybrid": 0.0
+      },
+      "target": "django.contrib.gis.feeds::GeoFeedMixin.add_georss_element",
+      "their_target": "django/contrib/gis/feeds.py::GeoFeedMixin.add_georss_element"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6090,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 4267,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9407,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 6012,
+          "named": 3
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.html::avoid_wrapping",
+      "their_target": "django/utils/html.py::avoid_wrapping"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1306,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2566,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3093,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1282,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.cache.backends.base::BaseCache.decr_version",
+      "their_target": "django/core/cache/backends/base.py::BaseCache.decr_version"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1914,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 7462,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8445,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2192,
+          "named": 6
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.postgresql.base::DatabaseWrapper._configure_timezone",
+      "their_target": "django/db/backends/postgresql/base.py::DatabaseWrapper._configure_timezone"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 5813,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 33680,
+          "named": 26
+        },
+        "C_gcr_sufficient": {
+          "bytes": 92226,
+          "named": 26
+        },
+        "D_hybrid": {
+          "bytes": 63306,
+          "named": 28
+        }
+      },
+      "key_size": 27,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.1111,
+        "C_gcr_sufficient": 0.963,
+        "D_hybrid": 0.963
+      },
+      "target": "django.apps.registry::Apps.get_app_configs",
+      "their_target": "django/apps/registry.py::Apps.get_app_configs"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2568,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 5992,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7554,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2736,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.sessions.backends.file::SessionStore._expiry_date",
+      "their_target": "django/contrib/sessions/backends/file.py::SessionStore._expiry_date"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3137,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3164,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5439,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3105,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.test.runner::ParallelTestSuite.initialize_suite",
+      "their_target": "django/test/runner.py::ParallelTestSuite.initialize_suite"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 713,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6499,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6768,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 681,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.where::WhereNode._contains_aggregate",
+      "their_target": "django/db/models/sql/where.py::WhereNode._contains_aggregate"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2821,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 8764,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 10894,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2765,
+          "named": 7
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.state::ProjectState._find_concrete_model_from_proxy",
+      "their_target": "django/db/migrations/state.py::ProjectState._find_concrete_model_from_proxy"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 540,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1823,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1823,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 540,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.gdal.libgdal::err_handler",
+      "their_target": "django/contrib/gis/gdal/libgdal.py::err_handler"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 5558,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 10080,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 10080,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 5098,
+          "named": 14
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.auth.checks::check_models_permissions",
+      "their_target": "django/contrib/auth/checks.py::check_models_permissions"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 14334,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 7637,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 20587,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 14270,
+          "named": 8
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.management.utils::handle_extensions",
+      "their_target": "django/core/management/utils.py::handle_extensions"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3783,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 5624,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7613,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3750,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.autodetector::MigrationAutodetector._constraint_should_be_dropped_and_recreated",
+      "their_target": "django/db/migrations/autodetector.py::MigrationAutodetector._constraint_should_be_dropped_and_recreated"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1502,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3232,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3457,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1478,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.test.testcases::SimpleTestCase.ensure_connection_patch_method.patched_ensure_connection",
+      "their_target": "django/test/testcases.py::SimpleTestCase.patched_ensure_connection"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 693,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1336,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1336,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 693,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.backends.mysql.features::DatabaseFeatures.supports_expression_indexes",
+      "their_target": "django/db/backends/mysql/features.py::DatabaseFeatures.supports_expression_indexes"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 5298,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 5109,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7164,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 5204,
+          "named": 3
+        }
+      },
+      "key_size": 4,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.75,
+        "C_gcr_sufficient": 0.75,
+        "D_hybrid": 0.75
+      },
+      "target": "django.contrib.auth.decorators::user_passes_test",
+      "their_target": "django/contrib/auth/decorators.py::user_passes_test"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 874,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1887,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1887,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 874,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.views.decorators.debug::sensitive_variables.decorator.sensitive_variables_wrapper",
+      "their_target": "django/views/decorators/debug.py::sensitive_variables_wrapper"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1608,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4557,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5233,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1550,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.checks::InlineModelAdminChecks._check_max_num",
+      "their_target": "django/contrib/admin/checks.py::InlineModelAdminChecks._check_max_num"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 857,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3766,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3956,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 809,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.paginator::AsyncPage.ahas_other_pages",
+      "their_target": "django/core/paginator.py::AsyncPage.ahas_other_pages"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 647,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1786,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1786,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 647,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.tasks.signals::log_task_enqueued",
+      "their_target": "django/tasks/signals.py::log_task_enqueued"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 8542,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 8745,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 14446,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 7950,
+          "named": 10
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.query::QuerySet._batched_insert",
+      "their_target": "django/db/models/query.py::QuerySet._batched_insert"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4178,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 13437,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 23411,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 13621,
+          "named": 13
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.autodetector::MigrationAutodetector.arrange_for_graph",
+      "their_target": "django/db/migrations/autodetector.py::MigrationAutodetector.arrange_for_graph"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2652,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2036,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2036,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 899,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.admin.templatetags.admin_modify::change_form_object_tools_tag",
+      "their_target": "django/contrib/admin/templatetags/admin_modify.py::change_form_object_tools_tag"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4705,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 15594,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 17371,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 5012,
+          "named": 19
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.http.response::FileResponse.set_headers",
+      "their_target": "django/http/response.py::FileResponse.set_headers"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2143,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 5368,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6553,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2089,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.postgresql.creation::DatabaseCreation._database_exists",
+      "their_target": "django/db/backends/postgresql/creation.py::DatabaseCreation._database_exists"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6109,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 8225,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11484,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 6697,
+          "named": 7
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.dispatch.dispatcher::Signal.asend_robust",
+      "their_target": "django/dispatch/dispatcher.py::Signal.asend_robust"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 551,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1168,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1168,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 551,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.utils.dateformat::TimeFormat.H",
+      "their_target": "django/utils/dateformat.py::TimeFormat.H"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1923,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3932,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4984,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1891,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.subqueries::UpdateQuery.add_related_update",
+      "their_target": "django/db/models/sql/subqueries.py::UpdateQuery.add_related_update"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3298,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4539,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4878,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1396,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.management.utils::get_command_line_option",
+      "their_target": "django/core/management/utils.py::get_command_line_option"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2825,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4835,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6664,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2793,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.postgresql.schema::DatabaseSchemaEditor._is_collation_deterministic",
+      "their_target": "django/db/backends/postgresql/schema.py::DatabaseSchemaEditor._is_collation_deterministic"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 10631,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 11309,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 18831,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 10507,
+          "named": 10
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.autodetector::MigrationAutodetector._get_altered_foo_together_operations",
+      "their_target": "django/db/migrations/autodetector.py::MigrationAutodetector._get_altered_foo_together_operations"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2578,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 5817,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7385,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2490,
+          "named": 4
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.models::UserManager._acreate_user",
+      "their_target": "django/contrib/auth/models.py::UserManager._acreate_user"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 18519,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3864,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 21767,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 18495,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.gdal.layer::Layer._get_spatial_filter",
+      "their_target": "django/contrib/gis/gdal/layer.py::Layer._get_spatial_filter"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1709,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 5665,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6236,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 1704,
+          "named": 4
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.duration::duration_string",
+      "their_target": "django/utils/duration.py::duration_string"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1096,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2462,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2462,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1096,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.views.decorators.csrf::csrf_exempt",
+      "their_target": "django/views/decorators/csrf.py::csrf_exempt"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 595,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1168,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1168,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 595,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.utils.dateformat::TimeFormat.g",
+      "their_target": "django/utils/dateformat.py::TimeFormat.g"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1468,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3811,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4996,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1936,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.base_user::AbstractBaseUser.set_unusable_password",
+      "their_target": "django/contrib/auth/base_user.py::AbstractBaseUser.set_unusable_password"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1099,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4642,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8660,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1076,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.gdal.prototypes.srs::units_func",
+      "their_target": "django/contrib/gis/gdal/prototypes/srs.py::units_func"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 12160,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 17588,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 27065,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 15141,
+          "named": 21
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.query::prefetch_one_level",
+      "their_target": "django/db/models/query.py::prefetch_one_level"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 16683,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 14012,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 29775,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 12745,
+          "named": 11
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.compiler::SQLCompiler.get_select_for_update_of_arguments",
+      "their_target": "django/db/models/sql/compiler.py::SQLCompiler.get_select_for_update_of_arguments"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 717,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3831,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4542,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1398,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.models.fields.__init__::Field.error_messages",
+      "their_target": "django/db/models/fields/__init__.py::Field.error_messages"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 20542,
+          "named": 5
+        },
+        "B_gcr_delivered": {
+          "bytes": 9621,
+          "named": 5
+        },
+        "C_gcr_sufficient": {
+          "bytes": 28456,
+          "named": 5
+        },
+        "D_hybrid": {
+          "bytes": 19193,
+          "named": 7
+        }
+      },
+      "key_size": 6,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.8333,
+        "C_gcr_sufficient": 0.8333,
+        "D_hybrid": 0.8333
+      },
+      "target": "django.contrib.admin.utils::flatten_fieldsets",
+      "their_target": "django/contrib/admin/utils.py::flatten_fieldsets"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2161,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 4993,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6210,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2076,
+          "named": 3
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.middleware.csrf::_get_new_csrf_string",
+      "their_target": "django/middleware/csrf.py::_get_new_csrf_string"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4174,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2536,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6063,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 4150,
+          "named": 1
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.0,
+        "D_hybrid": 0.0
+      },
+      "target": "django.views.generic.dates::MonthMixin.get_previous_month",
+      "their_target": "django/views/generic/dates.py::MonthMixin.get_previous_month"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 545,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1824,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1824,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 545,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.models.query::QuerySet.aexplain",
+      "their_target": "django/db/models/query.py::QuerySet.aexplain"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 28385,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 24478,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 42966,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 28150,
+          "named": 21
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.admin.options::ModelAdmin.changelist_view",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.changelist_view"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 926,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2542,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2542,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 926,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.models.query_utils::Q.referenced_base_fields",
+      "their_target": "django/db/models/query_utils.py::Q.referenced_base_fields"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1423,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6666,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7110,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1745,
+          "named": 6
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.options::ModelAdmin.get_inline_instances",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.get_inline_instances"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2234,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 7531,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7860,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 2210,
+          "named": 9
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.checks.urls::check_custom_error_handlers",
+      "their_target": "django/core/checks/urls.py::check_custom_error_handlers"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 31852,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 8723,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 29482,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 22800,
+          "named": 7
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.6667,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.executor::MigrationExecutor._create_project_state",
+      "their_target": "django/db/migrations/executor.py::MigrationExecutor._create_project_state"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1143,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5258,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5458,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1097,
+          "named": 4
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.checks.security.sessions::check_session_cookie_httponly",
+      "their_target": "django/core/checks/security/sessions.py::check_session_cookie_httponly"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 522,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1830,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1830,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 522,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.forms.utils::RenderableErrorMixin.as_json",
+      "their_target": "django/forms/utils.py::RenderableErrorMixin.as_json"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1177,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4711,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 25511,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1177,
+          "named": 4
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.auth.forms::SetPasswordMixin.create_password_fields",
+      "their_target": "django/contrib/auth/forms.py::SetPasswordMixin.create_password_fields"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3422,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 9666,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 30297,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 25557,
+          "named": 9
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 0.5,
+        "D_hybrid": 0.5
+      },
+      "target": "django.core.management.base::BaseCommand.check_migrations",
+      "their_target": "django/core/management/base.py::BaseCommand.check_migrations"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3363,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 9852,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 12695,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 5566,
+          "named": 9
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.contenttypes.models::ContentTypeManager.get_for_models",
+      "their_target": "django/contrib/contenttypes/models.py::ContentTypeManager.get_for_models"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 855,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2564,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2564,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 855,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.messages.storage.base::BaseStorage._get_level",
+      "their_target": "django/contrib/messages/storage/base.py::BaseStorage._get_level"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1605,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 7339,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7670,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1551,
+          "named": 7
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.files.storage.memory::InMemoryFileNode._convert_stream_content",
+      "their_target": "django/core/files/storage/memory.py::InMemoryFileNode._convert_stream_content"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1412,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4329,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4876,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1357,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.ipv6::is_valid_ipv6_address",
+      "their_target": "django/utils/ipv6.py::is_valid_ipv6_address"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 576,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5644,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5840,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 516,
+          "named": 4
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.test.runner::RemoteTestResult.addDuration",
+      "their_target": "django/test/runner.py::RemoteTestResult.addDuration"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3724,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 8543,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 10478,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 3318,
+          "named": 8
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.forms.utils::flatatt",
+      "their_target": "django/forms/utils.py::flatatt"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 8974,
+          "named": 6
+        },
+        "B_gcr_delivered": {
+          "bytes": 22078,
+          "named": 14
+        },
+        "C_gcr_sufficient": {
+          "bytes": 54017,
+          "named": 14
+        },
+        "D_hybrid": {
+          "bytes": 37369,
+          "named": 17
+        }
+      },
+      "key_size": 14,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.4286,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.sites::AdminSite.each_context",
+      "their_target": "django/contrib/admin/sites.py::AdminSite.each_context"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1869,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 2880,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3722,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1838,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.db.backends.spatialite.schema::SpatialiteSchemaEditor.remove_geometry_metadata",
+      "their_target": "django/contrib/gis/db/backends/spatialite/schema.py::SpatialiteSchemaEditor.remove_geometry_metadata"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1713,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3059,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3497,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1374,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.template.defaultfilters::urlizetrunc",
+      "their_target": "django/template/defaultfilters.py::urlizetrunc"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4093,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 9121,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 10629,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 4411,
+          "named": 9
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.test.client::encode_multipart",
+      "their_target": "django/test/client.py::encode_multipart"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 793,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4488,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4748,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1002,
+          "named": 4
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.checks.translation::check_setting_languages",
+      "their_target": "django/core/checks/translation.py::check_setting_languages"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1530,
+          "named": 4
+        },
+        "B_gcr_delivered": {
+          "bytes": 8501,
+          "named": 4
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9010,
+          "named": 4
+        },
+        "D_hybrid": {
+          "bytes": 1402,
+          "named": 7
+        }
+      },
+      "key_size": 4,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_x",
+      "their_target": "django/contrib/gis/geos/coordseq.py::GEOSCoordSeq._get_x"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 545,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2300,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4190,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2359,
+          "named": 1
+        }
+      },
+      "key_size": 17,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.0588,
+        "D_hybrid": 0.0588
+      },
+      "target": "django.utils.dateformat::DateFormat.F",
+      "their_target": "django/utils/dateformat.py::DateFormat.F"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6634,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 13744,
+          "named": 4
+        },
+        "C_gcr_sufficient": {
+          "bytes": 22603,
+          "named": 4
+        },
+        "D_hybrid": {
+          "bytes": 5005,
+          "named": 11
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.compiler::SQLCompiler.results_iter",
+      "their_target": "django/db/models/sql/compiler.py::SQLCompiler.results_iter"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 5412,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 8477,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 12084,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 5288,
+          "named": 6
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.autodetector::MigrationAutodetector._get_dependencies_for_model",
+      "their_target": "django/db/migrations/autodetector.py::MigrationAutodetector._get_dependencies_for_model"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 34890,
+          "named": 8
+        },
+        "B_gcr_delivered": {
+          "bytes": 10784,
+          "named": 6
+        },
+        "C_gcr_sufficient": {
+          "bytes": 126195,
+          "named": 6
+        },
+        "D_hybrid": {
+          "bytes": 2409,
+          "named": 7
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 8,
+        "C_gcr_sufficient": 6,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.utils.translation.__init__::ngettext_lazy",
+      "their_target": "django/utils/translation/__init__.py::ngettext_lazy"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1025,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2511,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3042,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1001,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.http.request::HttpRequest.get_full_path_info",
+      "their_target": "django/http/request.py::HttpRequest.get_full_path_info"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1156,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2821,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3172,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1132,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.db.backends.postgis.operations::PostGISOperations.postgis_version",
+      "their_target": "django/contrib/gis/db/backends/postgis/operations.py::PostGISOperations.postgis_version"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 502,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1184,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1184,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 502,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.test.runner::Shuffler.seed_display",
+      "their_target": "django/test/runner.py::Shuffler.seed_display"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1417,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3906,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5106,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1394,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.staticfiles.urls::staticfiles_urlpatterns",
+      "their_target": "django/contrib/staticfiles/urls.py::staticfiles_urlpatterns"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2053,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3763,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4997,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 2007,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.template.autoreload::template_changed",
+      "their_target": "django/template/autoreload.py::template_changed"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 7171,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 7524,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 12867,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 7099,
+          "named": 6
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.backends.base.schema::BaseDatabaseSchemaEditor.alter_unique_together",
+      "their_target": "django/db/backends/base/schema.py::BaseDatabaseSchemaEditor.alter_unique_together"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 10540,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 13020,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 22974,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 14957,
+          "named": 11
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 0.5,
+        "D_hybrid": 0.5
+      },
+      "target": "django.db.models.fields.related_descriptors::create_forward_many_to_many_manager.ManyRelatedManager._add_items",
+      "their_target": "django/db/models/fields/related_descriptors.py::ManyRelatedManager._add_items"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3661,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 9451,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9451,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 3661,
+          "named": 13
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.checks.model_checks::check_all_models",
+      "their_target": "django/core/checks/model_checks.py::check_all_models"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6469,
+          "named": 7
+        },
+        "B_gcr_delivered": {
+          "bytes": 10698,
+          "named": 7
+        },
+        "C_gcr_sufficient": {
+          "bytes": 15011,
+          "named": 7
+        },
+        "D_hybrid": {
+          "bytes": 4699,
+          "named": 7
+        }
+      },
+      "key_size": 7,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.__init__::get_permission_codename",
+      "their_target": "django/contrib/auth/__init__.py::get_permission_codename"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6007,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 10636,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 17336,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 10385,
+          "named": 11
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.3333,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.base::Model._prepare_related_fields_for_save",
+      "their_target": "django/db/models/base.py::Model._prepare_related_fields_for_save"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2286,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4506,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5881,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2232,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.middleware.http::ConditionalGetMiddleware.needs_etag",
+      "their_target": "django/middleware/http.py::ConditionalGetMiddleware.needs_etag"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 684,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2351,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4766,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3062,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.test.utils::compare_xml.first_node",
+      "their_target": "django/test/utils.py::first_node"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2255,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4321,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5269,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1851,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.forms.models::BaseModelForm._save_m2m",
+      "their_target": "django/forms/models.py::BaseModelForm._save_m2m"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2075,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 5085,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6113,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 1988,
+          "named": 3
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.template.backends.django::reraise",
+      "their_target": "django/template/backends/django.py::reraise"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 12190,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3754,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4725,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2101,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.template.defaulttags::load_from_library",
+      "their_target": "django/template/defaulttags.py::load_from_library"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 780,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1871,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1871,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 780,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.utils.functional::cached_property.__set_name__",
+      "their_target": "django/utils/functional.py::cached_property.__set_name__"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2470,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 5487,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6499,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2390,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.postgresql.base::DatabaseWrapper._configure_connection",
+      "their_target": "django/db/backends/postgresql/base.py::DatabaseWrapper._configure_connection"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 830,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2602,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2712,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 806,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.checks.security.base::check_sts_include_subdomains",
+      "their_target": "django/core/checks/security/base.py::check_sts_include_subdomains"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 19126,
+          "named": 9
+        },
+        "B_gcr_delivered": {
+          "bytes": 14678,
+          "named": 9
+        },
+        "C_gcr_sufficient": {
+          "bytes": 31190,
+          "named": 9
+        },
+        "D_hybrid": {
+          "bytes": 18808,
+          "named": 11
+        }
+      },
+      "key_size": 9,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.utils::strip_quotes",
+      "their_target": "django/db/backends/utils.py::strip_quotes"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2085,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 4358,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5443,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2021,
+          "named": 3
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.test.client::ClientMixin._set_login_cookies",
+      "their_target": "django/test/client.py::ClientMixin._set_login_cookies"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1355,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3318,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3991,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1324,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.views::RedirectURLMixin.get_success_url_allowed_hosts",
+      "their_target": "django/contrib/auth/views.py::RedirectURLMixin.get_success_url_allowed_hosts"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2148,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4099,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5412,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2092,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.oracle.creation::DatabaseCreation._test_database_name",
+      "their_target": "django/db/backends/oracle/creation.py::DatabaseCreation._test_database_name"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 770,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3709,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11601,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 8836,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.models.deletion::CASCADE",
+      "their_target": "django/db/models/deletion.py::CASCADE"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1384,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3282,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3767,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1361,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.admin.tests::AdminSeleniumTestCase.wait_for",
+      "their_target": "django/contrib/admin/tests.py::AdminSeleniumTestCase.wait_for"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1382,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2574,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2574,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1382,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.views.decorators.clickjacking::xframe_options_deny",
+      "their_target": "django/views/decorators/clickjacking.py::xframe_options_deny"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 793,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3495,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3861,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1141,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.dateformat::TimeFormat.e",
+      "their_target": "django/utils/dateformat.py::TimeFormat.e"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4964,
+          "named": 5
+        },
+        "B_gcr_delivered": {
+          "bytes": 9219,
+          "named": 5
+        },
+        "C_gcr_sufficient": {
+          "bytes": 12948,
+          "named": 5
+        },
+        "D_hybrid": {
+          "bytes": 1189,
+          "named": 7
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.utils::get_last_value_from_parameters",
+      "their_target": "django/contrib/admin/utils.py::get_last_value_from_parameters"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1264,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3829,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5114,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1881,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.template.defaultfilters::filesizeformat.filesize_number_format",
+      "their_target": "django/template/defaultfilters.py::filesize_number_format"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6396,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 2578,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8291,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 6363,
+          "named": 1
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 0.5,
+        "D_hybrid": 0.5
+      },
+      "target": "django.contrib.admin.options::InlineModelAdmin.get_extra",
+      "their_target": "django/contrib/admin/options.py::InlineModelAdmin.get_extra"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2418,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 6149,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6737,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 2393,
+          "named": 7
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.template.defaulttags::lorem",
+      "their_target": "django/template/defaulttags.py::lorem"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 31082,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 12816,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 41081,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 30842,
+          "named": 9
+        }
+      },
+      "key_size": 4,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.75,
+        "C_gcr_sufficient": 0.75,
+        "D_hybrid": 0.75
+      },
+      "target": "django.db.backends.base.schema::BaseDatabaseSchemaEditor._create_fk_sql",
+      "their_target": "django/db/backends/base/schema.py::BaseDatabaseSchemaEditor._create_fk_sql"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3874,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 4638,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6420,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3841,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.compiler::SQLInsertCompiler.field_as_sql",
+      "their_target": "django/db/models/sql/compiler.py::SQLInsertCompiler.field_as_sql"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2830,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 2597,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4740,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 2787,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.db.backends.postgis.pgraster::chunk",
+      "their_target": "django/contrib/gis/db/backends/postgis/pgraster.py::chunk"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 987,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2394,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2394,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 987,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.utils.dateformat::TimeFormat.O",
+      "their_target": "django/utils/dateformat.py::TimeFormat.O"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 9140,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 11420,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 17044,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 9100,
+          "named": 10
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.management.commands.loaddata::Command.loaddata",
+      "their_target": "django/core/management/commands/loaddata.py::Command.loaddata"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1315,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 4789,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5460,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 1252,
+          "named": 4
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.6667,
+        "C_gcr_sufficient": 0.6667,
+        "D_hybrid": 0.6667
+      },
+      "target": "django.utils.translation.__init__::trim_whitespace",
+      "their_target": "django/utils/translation/__init__.py::trim_whitespace"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 978,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 2604,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3101,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 947,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.postgres.indexes::PostgresIndex.check_supported",
+      "their_target": "django/contrib/postgres/indexes.py::PostgresIndex.check_supported"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 5640,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 3801,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 31144,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1455,
+          "named": 2
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 0.0,
+        "D_hybrid": 0.0
+      },
+      "target": "django.views.decorators.csp::csp_override",
+      "their_target": "django/views/decorators/csp.py::csp_override"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 8927,
+          "named": 3
+        },
+        "B_gcr_delivered": {
+          "bytes": 6408,
+          "named": 3
+        },
+        "C_gcr_sufficient": {
+          "bytes": 12890,
+          "named": 3
+        },
+        "D_hybrid": {
+          "bytes": 6212,
+          "named": 4
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.conf.__init__::_show_settings_deprecation_warning",
+      "their_target": "django/conf/__init__.py::_show_settings_deprecation_warning"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 28487,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 4209,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4775,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 28421,
+          "named": 2
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.fields.related_descriptors::create_forward_many_to_many_manager",
+      "their_target": "django/db/models/fields/related_descriptors.py::create_forward_many_to_many_manager"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1123,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2627,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3171,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1739,
+          "named": 1
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.5,
+        "D_hybrid": 0.5
+      },
+      "target": "django.db.models.query::QuerySet._next_is_sticky",
+      "their_target": "django/db/models/query.py::QuerySet._next_is_sticky"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3319,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2412,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5247,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 3296,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.test.signals::clear_routers_cache",
+      "their_target": "django/test/signals.py::clear_routers_cache"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1045,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3968,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4237,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1016,
+          "named": 3
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.admin.tests::AdminSeleniumTestCase.trigger_resize",
+      "their_target": "django/contrib/admin/tests.py::AdminSeleniumTestCase.trigger_resize"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 22848,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 16292,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 33848,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 22887,
+          "named": 16
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.options::ModelAdmin.response_action",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.response_action"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1892,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5392,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5797,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1666,
+          "named": 6
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.shortcuts::get_list_or_404",
+      "their_target": "django/shortcuts.py::get_list_or_404"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 909,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2431,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2818,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 885,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.test.signals::update_logging_config",
+      "their_target": "django/test/signals.py::update_logging_config"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1223,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 3320,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11720,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1223,
+          "named": 2
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.admindocs.utils::create_reference_role",
+      "their_target": "django/contrib/admindocs/utils.py::create_reference_role"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1532,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6167,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6388,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1471,
+          "named": 6
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.archive::Archive._archive_cls",
+      "their_target": "django/utils/archive.py::Archive._archive_cls"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 8241,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3623,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 10644,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 8210,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.regex_helper::next_char",
+      "their_target": "django/utils/regex_helper.py::next_char"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 566,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1256,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1256,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 566,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.backends.mysql.base::DatabaseWrapper.display_name",
+      "their_target": "django/db/backends/mysql/base.py::DatabaseWrapper.display_name"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2076,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4562,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5462,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 2052,
+          "named": 4
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.backends.sqlite3._functions::_sqlite_date_trunc",
+      "their_target": "django/db/backends/sqlite3/_functions.py::_sqlite_date_trunc"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1563,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 5680,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6090,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 823,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.models::_auser_has_perm",
+      "their_target": "django/contrib/auth/models.py::_auser_has_perm"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1134,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 2769,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3050,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 1103,
+          "named": 1
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.db.backends.postgis.operations::PostGISOperator.check_geography",
+      "their_target": "django/contrib/gis/db/backends/postgis/operations.py::PostGISOperator.check_geography"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3119,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3268,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5253,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3087,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.options::ModelAdmin.get_list_display_links",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.get_list_display_links"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4044,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6606,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9199,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 3954,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.middleware::RemoteUserMiddleware._aremove_invalid_user",
+      "their_target": "django/contrib/auth/middleware.py::RemoteUserMiddleware._aremove_invalid_user"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2185,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5682,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 6525,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 2135,
+          "named": 5
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.db.models.query::QuerySet.defer",
+      "their_target": "django/db/models/query.py::QuerySet.defer"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 692,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3299,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3406,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 660,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.postgresql.operations::get_json_dumps",
+      "their_target": "django/db/backends/postgresql/operations.py::get_json_dumps"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1015,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3309,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3452,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 977,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.fields.__init__::IntegerField._check_max_length_warning",
+      "their_target": "django/db/models/fields/__init__.py::IntegerField._check_max_length_warning"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 15085,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 20824,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 36321,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 16986,
+          "named": 21
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.compiler::SQLCompiler.find_ordering_name",
+      "their_target": "django/db/models/sql/compiler.py::SQLCompiler.find_ordering_name"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3524,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5544,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11367,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 8272,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.feedgenerator::SyndicationFeed.add_item",
+      "their_target": "django/utils/feedgenerator.py::SyndicationFeed.add_item"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1093,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 9666,
+          "named": 4
+        },
+        "C_gcr_sufficient": {
+          "bytes": 18553,
+          "named": 4
+        },
+        "D_hybrid": {
+          "bytes": 9699,
+          "named": 8
+        }
+      },
+      "key_size": 3,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.sql.where::WhereNode.relabel_aliases",
+      "their_target": "django/db/models/sql/where.py::WhereNode.relabel_aliases"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2370,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4477,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4666,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1785,
+          "named": 4
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 0.0,
+        "D_hybrid": 0.0
+      },
+      "target": "django.views.generic.dates::BaseDateListView.get_dated_queryset",
+      "their_target": "django/views/generic/dates.py::BaseDateListView.get_dated_queryset"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 8462,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 5604,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11639,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 8379,
+          "named": 3
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.backends.oracle.creation::DatabaseCreation._execute_test_db_creation",
+      "their_target": "django/db/backends/oracle/creation.py::DatabaseCreation._execute_test_db_creation"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 10661,
+          "named": 5
+        },
+        "B_gcr_delivered": {
+          "bytes": 10439,
+          "named": 6
+        },
+        "C_gcr_sufficient": {
+          "bytes": 18469,
+          "named": 6
+        },
+        "D_hybrid": {
+          "bytes": 11211,
+          "named": 7
+        }
+      },
+      "key_size": 6,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.8333,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.translation.trans_real::translation",
+      "their_target": "django/utils/translation/trans_real.py::translation"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 511,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2480,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 2580,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 525,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.core.paginator::Page.next_page_number",
+      "their_target": "django/core/paginator.py::Page.next_page_number"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2489,
+          "named": 4
+        },
+        "B_gcr_delivered": {
+          "bytes": 11496,
+          "named": 7
+        },
+        "C_gcr_sufficient": {
+          "bytes": 19511,
+          "named": 7
+        },
+        "D_hybrid": {
+          "bytes": 9865,
+          "named": 8
+        }
+      },
+      "key_size": 8,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.5,
+        "C_gcr_sufficient": 0.875,
+        "D_hybrid": 0.875
+      },
+      "target": "django.contrib.contenttypes.models::ContentType.model_class",
+      "their_target": "django/contrib/contenttypes/models.py::ContentType.model_class"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 795,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 4438,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9132,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 5482,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.utils.ogrinspect::_ogrinspect.get_kwargs_str",
+      "their_target": "django/contrib/gis/utils/ogrinspect.py::get_kwargs_str"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3956,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 9589,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11405,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 5413,
+          "named": 9
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.sites::AdminSite._build_app_dict",
+      "their_target": "django/contrib/admin/sites.py::AdminSite._build_app_dict"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 3140,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6986,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 9493,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 3458,
+          "named": 5
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.functions.text::Concat._paired",
+      "their_target": "django/db/models/functions/text.py::Concat._paired"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 11393,
+          "named": 6
+        },
+        "B_gcr_delivered": {
+          "bytes": 10428,
+          "named": 6
+        },
+        "C_gcr_sufficient": {
+          "bytes": 20206,
+          "named": 6
+        },
+        "D_hybrid": {
+          "bytes": 7725,
+          "named": 7
+        }
+      },
+      "key_size": 6,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.inspect::get_func_args",
+      "their_target": "django/utils/inspect.py::get_func_args"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 4189,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 19173,
+          "named": 11
+        },
+        "C_gcr_sufficient": {
+          "bytes": 30616,
+          "named": 11
+        },
+        "D_hybrid": {
+          "bytes": 14919,
+          "named": 15
+        }
+      },
+      "key_size": 11,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0909,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.http.request::HttpRequest.get_host",
+      "their_target": "django/http/request.py::HttpRequest.get_host"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 11963,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 15883,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 23006,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 11733,
+          "named": 16
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.html::Urlizer.handle_word",
+      "their_target": "django/utils/html.py::Urlizer.handle_word"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1156,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1847,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1847,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 720,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.shortcuts::render_to_kml",
+      "their_target": "django/contrib/gis/shortcuts.py::render_to_kml"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 835,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5817,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 8052,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2526,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.forms.models::BaseModelFormSet.add_fields.pk_is_not_editable",
+      "their_target": "django/forms/models.py::BaseModelFormSet.pk_is_not_editable"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 9887,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 6862,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 15166,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 9821,
+          "named": 6
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.auth.management.commands.createsuperuser::Command._validate_username",
+      "their_target": "django/contrib/auth/management/commands/createsuperuser.py::Command._validate_username"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 2466,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 9516,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 11342,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2410,
+          "named": 9
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.expressions::Expression._identity",
+      "their_target": "django/db/models/expressions.py::Expression._identity"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1047,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 3880,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 4091,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 991,
+          "named": 2
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.core.serializers.xml_serializer::check_element_type",
+      "their_target": "django/core/serializers/xml_serializer.py::check_element_type"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1843,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 7784,
+          "named": 4
+        },
+        "C_gcr_sufficient": {
+          "bytes": 33800,
+          "named": 4
+        },
+        "D_hybrid": {
+          "bytes": 27684,
+          "named": 5
+        }
+      },
+      "key_size": 4,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.25,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.migrations.loader::MigrationLoader.project_state",
+      "their_target": "django/db/migrations/loader.py::MigrationLoader.project_state"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 6653,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 9777,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 13081,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 6597,
+          "named": 12
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.utils.html::Urlizer.trim_punctuation",
+      "their_target": "django/utils/html.py::Urlizer.trim_punctuation"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 14282,
+          "named": 1
+        },
+        "B_gcr_delivered": {
+          "bytes": 10477,
+          "named": 1
+        },
+        "C_gcr_sufficient": {
+          "bytes": 21206,
+          "named": 1
+        },
+        "D_hybrid": {
+          "bytes": 14619,
+          "named": 8
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.admin.options::ModelAdmin.render_change_form",
+      "their_target": "django/contrib/admin/options.py::ModelAdmin.render_change_form"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 869,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 5799,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 7328,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 2042,
+          "named": 4
+        }
+      },
+      "key_size": 1,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 1,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 0.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.contrib.gis.gdal.geometries::OGRGeometry.set_measured",
+      "their_target": "django/contrib/gis/gdal/geometries.py::OGRGeometry.set_measured"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1468,
+          "named": 2
+        },
+        "B_gcr_delivered": {
+          "bytes": 5034,
+          "named": 2
+        },
+        "C_gcr_sufficient": {
+          "bytes": 5611,
+          "named": 2
+        },
+        "D_hybrid": {
+          "bytes": 999,
+          "named": 4
+        }
+      },
+      "key_size": 2,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": 1.0,
+        "C_gcr_sufficient": 1.0,
+        "D_hybrid": 1.0
+      },
+      "target": "django.db.models.utils::create_namedtuple_class",
+      "their_target": "django/db/models/utils.py::create_namedtuple_class"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 1690,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 2511,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 3724,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 1666,
+          "named": 1
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.admin.helpers::InlineAdminForm.pk_field",
+      "their_target": "django/contrib/admin/helpers.py::InlineAdminForm.pk_field"
+    },
+    {
+      "arms": {
+        "A_code_steward": {
+          "bytes": 649,
+          "named": 0
+        },
+        "B_gcr_delivered": {
+          "bytes": 1364,
+          "named": 0
+        },
+        "C_gcr_sufficient": {
+          "bytes": 1364,
+          "named": 0
+        },
+        "D_hybrid": {
+          "bytes": 649,
+          "named": 0
+        }
+      },
+      "key_size": 0,
+      "outside_key": {
+        "A_code_steward": 0,
+        "C_gcr_sufficient": 0,
+        "D_hybrid": 0
+      },
+      "recall": {
+        "A_code_steward": null,
+        "C_gcr_sufficient": null,
+        "D_hybrid": null
+      },
+      "target": "django.contrib.gis.db.backends.base.features::BaseSpatialFeatures.supports_extent_aggr",
+      "their_target": "django/contrib/gis/db/backends/base/features.py::BaseSpatialFeatures.supports_extent_aggr"
+    }
+  ],
+  "unique_name_units": 3513
+}

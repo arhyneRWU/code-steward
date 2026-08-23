@@ -101,7 +101,14 @@ def measure(
         their_nodes.extend(nodes)
 
     arm_c_bytes = raw_total + span_bytes(root, their_nodes)
-    arm_d = render_markdown(root, _as_slice(target, their_nodes, by_key, roles))
+    hybrid = _as_slice(target, their_nodes, by_key, roles)
+    arm_d = render_markdown(root, hybrid)
+    # The hybrid can only carry nodes that map onto one of our units.
+    # Assuming it inherits their recall would beg the question the
+    # decision table asks, so it is scored on what it actually holds.
+    hybrid_callers = {
+        (m.unit.path, m.unit.name) for m in hybrid.members if m.role in {"caller", "test"}
+    }
 
     ours_claimed = {(unit.path, unit.name) for unit in our_callers}
     theirs_claimed = {(node.path, node.name) for node in their_callers}
@@ -122,12 +129,14 @@ def measure(
         "recall": {
             "A_code_steward": recall(ours_claimed),
             "C_gcr_sufficient": recall(theirs_claimed),
+            "D_hybrid": recall(hybrid_callers),
         },
         # Claims absent from the independent key. Reported, not
         # folded into a score: the key misses dynamic dispatch too.
         "outside_key": {
             "A_code_steward": len(ours_claimed - key),
             "C_gcr_sufficient": len(theirs_claimed - key),
+            "D_hybrid": len(hybrid_callers - key),
         },
     }
 

@@ -199,3 +199,117 @@ Run once, over all 200 targets. No dropping targets that behave
 badly, no swapping the arms' definitions after seeing bytes, no
 re-running one arm. If a bug is found afterwards, the fix, the re-run
 and the original numbers are all published.
+
+---
+
+# Results
+
+Run once, 200 targets, Django. Everything above this line was written
+before the run; nothing above it has been edited since.
+
+## What each arm cost, and what it found
+
+| Arm | mean bytes | median bytes | mean recall |
+| --- | --- | --- | --- |
+| **A -- Code Steward** | **4,266** | **2,064** | 0.708 |
+| B -- GCR as delivered | 6,303 | 4,961 | no bodies |
+| C -- GCR to sufficiency | 10,825 | 6,701 | **0.915** |
+| **D -- Hybrid** | 5,165 | 2,296 | **0.915** |
+
+Recall is over the 134 targets of 200 that have a non-empty caller
+key. The other 66 have no callers anywhere in the corpus.
+
+## The pre-registered result: not a win
+
+| Comparison | Difference | p |
+| --- | --- | --- |
+| Bytes, A vs C | **-6,559** in our favour | < 0.001 |
+| Recall, A vs C | **-0.207**, against us | 1.0 |
+
+Code Steward delivers a slice in **39% of the bytes** their arm needs
+to reach the same question -- and finds **21 points less** of the
+real caller set while doing it.
+
+The rule fixed before the run says a win on bytes at lower coverage
+is not a win. **It is not a win.** Fewer bytes for a less complete
+answer is a smaller answer, and this page will not call it
+compression.
+
+Direction, across the 134 scored targets: they beat us on **38**, we
+beat them on **1**.
+
+## The hybrid is the finding
+
+Their node selection, rendered through our bundle:
+
+| Comparison | Difference | p |
+| --- | --- | --- |
+| Recall, D vs A | **+0.207** | < 0.001 |
+| Recall, D vs C | 0.000, tied on all 134 | -- |
+| Bytes, D vs A | +899 mean, **-24 median** | 1.0 |
+
+**Their selection is better than ours, and our packaging is better
+than theirs.** The hybrid carries their complete caller set at 48% of
+the bytes their own surface needs, for a median byte cost against our
+bundle of *negative twenty-four*. Every node they named mapped onto
+one of our units; nothing was lost in translation, and the hybrid
+never named a unit outside the key.
+
+By the decision table, this fires the row that says adopt their
+selection. Before doing that, the next section explains why it may
+not be necessary.
+
+## Why they find callers we miss
+
+The mechanism is not that they see calls we cannot. **We see them and
+decline to resolve them.**
+
+Their gap over us is `obj.method()`. Our indexer records such a call
+as an unresolved symbol row -- `response.has_header` -- and never
+promotes it to an edge, so it never enters a slice. On
+`HttpResponseBase.has_header`, an 11-caller key where we scored 0.0,
+every missing caller is sitting in our own index under exactly that
+shape.
+
+Across Django:
+
+| | count |
+| --- | --- |
+| `CALLS` edges recorded | 29,895 |
+| of those, unresolved | 23,161 |
+| of those, attribute-style `obj.method()` | 13,957 |
+| **of those, whose method name is unique in the index** | **2,738** |
+
+Resolving only the unambiguous ones would move edge resolution from
+**22.5% to 31.7%** without a single guess: if exactly one unit in the
+index is named `has_header`, then `response.has_header` is that unit
+or it is nothing.
+
+That is a change to this project, not an integration with theirs.
+
+## What this does not license
+
+- **Do not measure that fix on this sample.** These 200 targets are
+  spent. A repair evaluated on the set that motivated it is tuned,
+  not tested; a fresh hash-order draw is required, and the sample
+  must exclude these.
+- **The key rewards name matching.** It is built by name, on targets
+  chosen for having unique names, and name matching appears to be
+  their mechanism. On a unique name that is close to exact -- a call
+  to a name only one function has is that function -- but the
+  restriction removed the cases where their approach is weakest, and
+  their 0.915 should be read with that in mind.
+- **Their 20 claims outside the key against our 8** is not
+  necessarily over-claiming by either side. The key misses dynamic
+  dispatch, and both numbers are small.
+- **Python only.** This is the language where a 55-language tool has
+  least to show, and it still won the coverage comparison.
+
+## Deviations from the pre-registration
+
+1. **The run was executed twice.** The first pass omitted arm D's
+   recall, which the decision table requires and which I failed to
+   collect. The re-run added it and changed nothing else: arms A, B
+   and C are **byte-identical** across both passes, which was checked
+   rather than assumed. Both files are in the repository.
+2. Everything else ran as written.

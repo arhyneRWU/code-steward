@@ -61,7 +61,7 @@ def score(payload: dict[str, Any]) -> dict[str, Any]:
         for arm in ARMS
     }
     scored = [r for r in rows if r["recall"]["A_code_steward"] is not None]
-    for arm in ("A_code_steward", "C_gcr_sufficient"):
+    for arm in ("A_code_steward", "C_gcr_sufficient", "D_hybrid"):
         per_arm[arm]["mean_recall"] = round(statistics.fmean(r["recall"][arm] for r in scored), 4)
         per_arm[arm]["outside_key_total"] = sum(r["outside_key"][arm] for r in rows)
 
@@ -82,6 +82,12 @@ def score(payload: dict[str, Any]) -> dict[str, Any]:
         "hybrid": {
             "bytes_D_minus_A": _test(
                 _paired(rows, "D_hybrid", "A_code_steward", "bytes"), lower_is_better=True
+            ),
+            "recall_D_minus_A": _test(
+                _paired(scored, "D_hybrid", "A_code_steward", "recall"), lower_is_better=False
+            ),
+            "recall_D_minus_C": _test(
+                _paired(scored, "D_hybrid", "C_gcr_sufficient", "recall"), lower_is_better=False
             ),
         },
     }
