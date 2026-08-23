@@ -8,6 +8,7 @@ from code_steward.db import (
     connect,
     replace_file,
     replace_hard_relationships,
+    replace_hard_relationships_for_provenance,
     replace_soft_relationships,
 )
 from code_steward.models import CodeUnit, HardRelationship, SoftRelationship
@@ -115,7 +116,9 @@ def test_hard_and_soft_relationships_are_stored_independently(tmp_path: Path) ->
     assert len(all_soft_relationships(conn)) == 1
 
 
-def test_reindexing_related_unit_invalidates_relationship_cache(tmp_path: Path) -> None:
+def test_reindexing_target_preserves_hard_edge_but_invalidates_soft_edge(
+    tmp_path: Path,
+) -> None:
     conn = connect(tmp_path / "index.sqlite3")
     _seed(conn)
 
@@ -132,7 +135,9 @@ def test_reindexing_related_unit_invalidates_relationship_cache(tmp_path: Path) 
 
     replace_file(conn, "b.py", [_unit("b.target", "b.py", "hash-b2")], [])
 
-    assert all_hard_relationships(conn) == []
+    hard = all_hard_relationships(conn)
+    assert len(hard) == 1
+    assert hard[0].target_hash == "hash-b2"
     assert all_soft_relationships(conn) == []
 
 
@@ -168,3 +173,28 @@ def test_invalid_soft_score_does_not_replace_valid_edges(tmp_path: Path) -> None
         )
 
     assert all_soft_relationships(conn)[0].score == pytest.approx(0.8)
+
+
+def test_provenance_refresh_does_not_clobber_other_hard_edges(tmp_path: Path) -> None:
+    conn = connect(tmp_path / "index.sqlite3")
+    _seed(conn)
+    replace_hard_relationships(
+        conn,
+        "a.source",
+        [
+            HardRelationship("a.source", "IMPORTS", "module", "json", "python-ast"),
+            HardRelationship("a.source", "ROUTE_FOR", "route", "/items", "fastapi"),
+        ],
+    )
+
+    replace_hard_relationships_for_provenance(
+        conn,
+        "a.source",
+        "python-ast",
+        [HardRelationship("a.source", "CALLS", "unit", "b.target", "python-ast")],
+    )
+
+    assert [(edge.relation, edge.provenance) for edge in all_hard_relationships(conn)] == [
+        ("CALLS", "python-ast"),
+        ("ROUTE_FOR", "fastapi"),
+    ]
