@@ -10,3 +10,4 @@ build/
 .code-steward/
 .code-review-graph/
 .DS_Store
+.claude/
