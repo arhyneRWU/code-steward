@@ -197,6 +197,7 @@ def test_every_benchmark_module_imports():
         "benchmarks.similarity.make_pairs",
         "benchmarks.similarity.score",
         "benchmarks.similarity.floor",
+        "benchmarks.similarity.alarm",
         "benchmarks.verdict.draft_prompts",
         "benchmarks.verdict.draft_score",
         "benchmarks.verdict.run",

@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .check import alarm_rate, changed_python_files, check_files
 from .config import resolve_excludes
 from .db import all_endpoints, all_units, connect, get_unit
 from .indexer import is_excluded
@@ -149,6 +150,66 @@ def cmd_packet(args: argparse.Namespace) -> int:
     packet = build_packet(args.query, results, endpoints, args.input, args.returns, duplicates)
     print(json.dumps(packet, indent=2))
     return 0
+
+
+def cmd_check(args: argparse.Namespace) -> int:
+    """Compare functions changed in this tree against the index."""
+    root = root_from(args.root)
+    conn, units, _ = _load(root)
+    conn.close()
+
+    if args.rate:
+        fired, total = alarm_rate(root, units, floor=args.floor)
+        share = fired / total if total else 0.0
+        print(
+            f"{fired} of {total} indexed function(s) overlap another "
+            f"at floor {args.floor:.2f} ({share:.1%})"
+        )
+        print(
+            "This is your repository's baseline duplication, not a fault. "
+            "A high share means `check` will fire often on new code, and "
+            "--fail-on-overlap is probably not worth switching on."
+        )
+        return 0
+
+    paths = (
+        [Path(name).resolve() for name in args.paths]
+        if args.paths
+        else changed_python_files(root, args.base)
+    )
+    if not paths:
+        print("no changed Python files")
+        return 0
+
+    findings, checked = check_files(root, paths, units, floor=args.floor, limit=args.limit)
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "checked": checked,
+                    "floor": args.floor,
+                    "findings": [finding.to_dict() for finding in findings],
+                },
+                indent=2,
+            )
+        )
+        return 1 if findings and args.fail_on_overlap else 0
+
+    if not findings:
+        # An assertion, not a failed search. The floor is what makes
+        # it one: spurious matches were measured at roughly 0.6%.
+        print(f"{checked} changed function(s) checked, none overlap existing code")
+        return 0
+
+    for finding in findings:
+        print(f"{finding.unit.path}:{finding.unit.start_line}  {finding.unit.name}")
+        for row in finding.matches:
+            print(
+                f"    {row.score:.2f}  {row.unit.unit_id}  ({row.unit.path}:{row.unit.start_line})"
+            )
+    print(f"\n{len(findings)} of {checked} changed function(s) overlap existing code")
+    return 1 if args.fail_on_overlap else 0
 
 
 def cmd_similar(args: argparse.Namespace) -> int:
@@ -338,6 +399,34 @@ def build_parser() -> argparse.ArgumentParser:
     )
     similar.add_argument("--json", action="store_true")
     similar.set_defaults(func=cmd_similar)
+
+    check = sub.add_parser(
+        "check", help="compare functions you changed against the existing index"
+    )
+    check.add_argument(
+        "paths", nargs="*", help="files to check; defaults to what this tree changes"
+    )
+    check.add_argument("--base", default="main", help="branch to diff against (default main)")
+    check.add_argument("--limit", type=int, default=3)
+    check.add_argument(
+        "--floor",
+        type=float,
+        default=REUSE_FLOOR,
+        metavar="SCORE",
+        help=f"discard overlaps below this score (default {REUSE_FLOOR})",
+    )
+    check.add_argument(
+        "--fail-on-overlap",
+        action="store_true",
+        help="exit 1 when an overlap is found, for use in a hook or CI",
+    )
+    check.add_argument(
+        "--rate",
+        action="store_true",
+        help="report how much of the whole index already overlaps, and exit",
+    )
+    check.add_argument("--json", action="store_true")
+    check.set_defaults(func=cmd_check)
 
     read = sub.add_parser("read", help="extract exactly one indexed code unit")
     read.add_argument("unit")

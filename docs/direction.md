@@ -144,3 +144,58 @@ own benchmark. What is unusual is the *placement*: running the
 comparison against stable code-unit IDs, before the change is kept,
 and handing the result to an agent as a packet rather than to a human
 as a report.
+
+## Second revision: the entry point is the code, not a sketch
+
+Recorded 2026-08-23, after the draft measurement above came back.
+
+The reframe on this page moved the entry point from a task sentence to
+a *sketch*. The sketch was then measured and scored 0.460 end to end
+-- the same as the sentence path it replaced. The sketch is not where
+the value was.
+
+What the same measurement showed is that the **real body** scores
+1.000 on those cases. The comparison was never the variable. How much
+of the function exists when you run it is.
+
+So the entry point moves once more, and this time toward something
+that already exists rather than something that has to be produced:
+
+> Compare the functions you **changed** against the functions already
+> there, after they are written and before they are kept.
+
+That is `code-steward check`, and [`check.md`](check.md) documents it.
+
+**What this costs.** The pre-write claim is gone. Code Steward does
+not tell an agent what to build; it tells a developer or an agent what
+they have just duplicated. That is a smaller product than the one this
+page described a few hours earlier, and it is the one the numbers
+support.
+
+**What it gains.** The strongest measurement the project has -- 1.000
+-- is now the one on the primary path, rather than an upper bound
+quoted next to a workflow that could not reach it. The floor is also
+much cheaper here: it drops 12 of 35 duplicates found from agent
+sketches, and far fewer from real bodies, because a real body scores
+far higher than a sketch of one.
+
+**What that measurement then showed.** How often `check` fires on
+ordinary code was the open question, because the floor had only been
+chosen against a cross-corpus null. Measured within repositories at
+the shipped floor: Airflow 63.3%, Home Assistant 45.5%, Django 29.7%,
+this repository's own `src/` 14.3%.
+
+That is a wide range and it is a property of the codebase rather than
+the tool. Most of Airflow's alarms are probably correct -- its
+providers duplicate each other by design -- and it is unusable as a
+gate there regardless. Django is the deliberately low-duplication
+corpus and is still near 30%, so this is not only a template-repo
+problem.
+
+The consequence is a smaller claim again, and a concrete one:
+`check` is a **report**, not a gate. `--fail-on-overlap` exists, is
+opt-in, and the docs tell you to run `check --rate` on your own
+repository before trusting it. The obvious improvement -- reporting
+only overlaps a change *introduces*, rather than every overlap a
+changed function has -- is not built and is the next thing worth
+building.
