@@ -183,22 +183,38 @@ def _unit_ids_for_paths(conn: sqlite3.Connection, paths: set[str]) -> set[str]:
     return {row["unit_id"] for row in rows}
 
 
-def _delete_relationships_for_units(
+def _invalidate_relationships(
     conn: sqlite3.Connection,
-    unit_ids: set[str],
-) -> None:
-    if not unit_ids:
-        return
-    placeholders = ",".join("?" for _ in unit_ids)
-    values = tuple(sorted(unit_ids))
-    conn.execute(
-        f"""
-        DELETE FROM hard_relationships
-        WHERE source_unit_id IN ({placeholders})
-           OR (target_kind = 'unit' AND target_ref IN ({placeholders}))
-        """,
-        (*values, *values),
-    )
+    released_unit_ids: set[str],
+    replacement_unit_ids: set[str],
+) -> set[str]:
+    if not released_unit_ids:
+        return set()
+
+    placeholders = ",".join("?" for _ in released_unit_ids)
+    values = tuple(sorted(released_unit_ids))
+    removed_unit_ids = released_unit_ids - replacement_unit_ids
+
+    if removed_unit_ids:
+        removed_placeholders = ",".join("?" for _ in removed_unit_ids)
+        removed_values = tuple(sorted(removed_unit_ids))
+        conn.execute(
+            f"""
+            DELETE FROM hard_relationships
+            WHERE source_unit_id IN ({placeholders})
+               OR (
+                    target_kind = 'unit'
+                    AND target_ref IN ({removed_placeholders})
+               )
+            """,
+            (*values, *removed_values),
+        )
+    else:
+        conn.execute(
+            f"DELETE FROM hard_relationships WHERE source_unit_id IN ({placeholders})",
+            values,
+        )
+
     conn.execute(
         f"""
         DELETE FROM soft_relationships
@@ -207,6 +223,23 @@ def _delete_relationships_for_units(
         """,
         (*values, *values),
     )
+    return released_unit_ids & replacement_unit_ids
+
+
+def _refresh_hard_target_hashes(
+    conn: sqlite3.Connection,
+    target_unit_ids: set[str],
+) -> None:
+    for unit_id in sorted(target_unit_ids):
+        target_hash = _unit_hash(conn, unit_id)
+        conn.execute(
+            """
+            UPDATE hard_relationships
+            SET target_hash = ?
+            WHERE target_kind = 'unit' AND target_ref = ?
+            """,
+            (target_hash, unit_id),
+        )
 
 
 def replace_files(
@@ -221,12 +254,18 @@ def replace_files(
 
     with conn:
         released_unit_ids = _unit_ids_for_paths(conn, released_paths)
-        _delete_relationships_for_units(conn, released_unit_ids)
+        replacement_unit_ids = {unit.unit_id for _, units, _ in replacements for unit in units}
+        retained_targets = _invalidate_relationships(
+            conn,
+            released_unit_ids,
+            replacement_unit_ids,
+        )
         for path in sorted(released_paths):
             conn.execute("DELETE FROM endpoints WHERE path = ?", (path,))
             conn.execute("DELETE FROM units WHERE path = ?", (path,))
         for _, units, endpoints in replacements:
             _insert_file(conn, units, endpoints)
+        _refresh_hard_target_hashes(conn, retained_targets)
 
 
 def replace_file(
@@ -266,12 +305,12 @@ def _unit_hash(conn: sqlite3.Connection, unit_id: str) -> str:
     return str(row["body_hash"])
 
 
-def replace_hard_relationships(
+def _prepare_hard_relationships(
     conn: sqlite3.Connection,
     source_unit_id: str,
     relationships: list[HardRelationship],
-) -> None:
-    """Replace hard outgoing relationships for one code unit."""
+    required_provenance: str | None = None,
+) -> tuple[str, list[tuple[HardRelationship, str]]]:
     source_hash = _unit_hash(conn, source_unit_id)
     prepared: list[tuple[HardRelationship, str]] = []
     seen: set[tuple[str, str, str, str]] = set()
@@ -283,6 +322,8 @@ def replace_hard_relationships(
             raise ValueError("Hard relationship fields must be non-empty")
         if not relationship.provenance:
             raise ValueError("Hard relationship provenance must be non-empty")
+        if required_provenance is not None and relationship.provenance != required_provenance:
+            raise ValueError("Hard relationship provenance does not match replacement provenance")
 
         key = (
             relationship.relation,
@@ -299,25 +340,73 @@ def replace_hard_relationships(
             target_hash = _unit_hash(conn, relationship.target_ref)
         prepared.append((relationship, target_hash))
 
+    return source_hash, prepared
+
+
+def _insert_hard_relationships(
+    conn: sqlite3.Connection,
+    source_hash: str,
+    prepared: list[tuple[HardRelationship, str]],
+) -> None:
+    for relationship, target_hash in prepared:
+        conn.execute(
+            "INSERT INTO hard_relationships VALUES (?,?,?,?,?,?,?,?)",
+            (
+                relationship.source_unit_id,
+                relationship.relation,
+                relationship.target_kind,
+                relationship.target_ref,
+                relationship.provenance,
+                json.dumps(relationship.evidence, separators=(",", ":"), sort_keys=True),
+                source_hash,
+                target_hash,
+            ),
+        )
+
+
+def replace_hard_relationships(
+    conn: sqlite3.Connection,
+    source_unit_id: str,
+    relationships: list[HardRelationship],
+) -> None:
+    """Replace every hard outgoing relationship for one code unit."""
+    source_hash, prepared = _prepare_hard_relationships(
+        conn,
+        source_unit_id,
+        relationships,
+    )
     with conn:
         conn.execute(
             "DELETE FROM hard_relationships WHERE source_unit_id = ?",
             (source_unit_id,),
         )
-        for relationship, target_hash in prepared:
-            conn.execute(
-                "INSERT INTO hard_relationships VALUES (?,?,?,?,?,?,?,?)",
-                (
-                    relationship.source_unit_id,
-                    relationship.relation,
-                    relationship.target_kind,
-                    relationship.target_ref,
-                    relationship.provenance,
-                    json.dumps(relationship.evidence, separators=(",", ":"), sort_keys=True),
-                    source_hash,
-                    target_hash,
-                ),
-            )
+        _insert_hard_relationships(conn, source_hash, prepared)
+
+
+def replace_hard_relationships_for_provenance(
+    conn: sqlite3.Connection,
+    source_unit_id: str,
+    provenance: str,
+    relationships: list[HardRelationship],
+) -> None:
+    """Replace hard relationships from one provenance source."""
+    if not provenance:
+        raise ValueError("Hard relationship provenance must be non-empty")
+    source_hash, prepared = _prepare_hard_relationships(
+        conn,
+        source_unit_id,
+        relationships,
+        provenance,
+    )
+    with conn:
+        conn.execute(
+            """
+            DELETE FROM hard_relationships
+            WHERE source_unit_id = ? AND provenance = ?
+            """,
+            (source_unit_id, provenance),
+        )
+        _insert_hard_relationships(conn, source_hash, prepared)
 
 
 def replace_soft_relationships(

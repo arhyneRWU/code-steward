@@ -16,6 +16,7 @@ from .db import (
     unit_owners,
 )
 from .indexer import index_python_file, iter_python_files
+from .relationships import refresh_python_call_relationships
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +60,7 @@ def rebuild_index(
             unit_count += len(units)
             endpoint_count += len(endpoints)
 
+        refresh_python_call_relationships(conn, project_root)
         conn.close()
         conn = None
         os.replace(temporary, destination)
@@ -88,6 +90,7 @@ def update_index_file(
 
     if not path.exists():
         remove_file(conn, rel)
+        refresh_python_call_relationships(conn, project_root)
         return UpdateStats(0, (), (rel,))
 
     primary = _index_replacement(project_root, path)
@@ -115,6 +118,7 @@ def update_index_file(
             replacements[conflict_rel] = _index_replacement(project_root, conflict_path)
 
     replace_files(conn, list(replacements.values()), remove_paths)
+    refresh_python_call_relationships(conn, project_root)
     return UpdateStats(
         primary_units=len(primary[1]),
         updated_paths=tuple(sorted(replacements)),
