@@ -225,3 +225,18 @@ def test_no_caller_invokes_a_benchmark_as_a_bare_script():
         text = path.read_text(encoding="utf-8")
         offenders = re.findall(r"\S*python\S*\)?\s+benchmarks/\S+\.py", text)
         assert not offenders, f"{path.name} runs a benchmark as a script: {offenders}"
+
+
+def test_the_corpus_loader_uses_the_product_definition_of_a_function():
+    """A benchmark that filters differently measures a different tool.
+
+    `benchmarks/similarity/units.py` kept its own copy of
+    `FUNCTION_KINDS`, and the two diverged: the product's was fixed to
+    include `async_function` while the benchmark's was not, so the
+    published alarm rates were still computed on a population that
+    excluded every `async def` -- 43.4% of Home Assistant.
+    """
+    from benchmarks.similarity import units as corpus_units
+    from code_steward.similarity import FUNCTION_KINDS
+
+    assert corpus_units.FUNCTION_KINDS is FUNCTION_KINDS

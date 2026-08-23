@@ -102,10 +102,23 @@ at the shipped 0.27 floor:
 
 | Codebase | Functions | Overlap something |
 | --- | --- | --- |
-| Airflow providers | 5,638 | **63.3%** |
-| Home Assistant integrations | 1,176 | **45.5%** |
-| Django | 5,541 | **29.7%** |
+| Airflow providers | 5,912 | **63.8%** |
+| Home Assistant integrations | 2,185 | **50.8%** |
+| Django | 5,659 | **31.3%** |
 | Code Steward, `src/` only | 147 | **14.3%** |
+
+**Re-measured 2026-08-23, upward.** These were previously 63.3%,
+45.5% and 29.7%, computed on populations that silently excluded every
+`async def`. `similarity.FUNCTION_KINDS` omitted the
+`async_function` kind the indexer emits, and
+`benchmarks/similarity/units.py` kept its own copy of the constant,
+so fixing the product alone changed nothing. Home Assistant's sampled
+population rose 86% -- its held-out slice holds 1,172 async functions
+against 1,510 synchronous ones -- and its alarm rate rose with it,
+because templated `async def async_setup_entry` handlers are exactly
+the duplication this measures. Code Steward's own row is unchanged
+because this repository contains no async functions.
+
 
 Raising the floor moves it but does not remove it — Airflow is still
 40% at 0.50.
@@ -119,7 +132,7 @@ unusable as a blocking gate there. Being right and being useful are
 different properties.
 
 Django is the corpus deliberately chosen as the low-duplication hard
-negative, and it is still 29.7%. So this is not only a
+negative, and it is still 31.3%. So this is not only a
 template-repository problem.
 
 ### What follows from it

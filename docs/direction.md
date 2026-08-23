@@ -182,7 +182,7 @@ far higher than a sketch of one.
 **What that measurement then showed.** How often `check` fires on
 ordinary code was the open question, because the floor had only been
 chosen against a cross-corpus null. Measured within repositories at
-the shipped floor: Airflow 63.3%, Home Assistant 45.5%, Django 29.7%,
+the shipped floor: Airflow 63.8%, Home Assistant 50.8%, Django 31.3%,
 this repository's own `src/` 14.3%.
 
 That is a wide range and it is a property of the codebase rather than

@@ -3,34 +3,34 @@
   "per_corpus": {
     "airflow": {
       "alarm_rate": {
-        "0.2": 0.7001,
-        "0.27": 0.6328,
-        "0.35": 0.5513,
-        "0.5": 0.3994
+        "0.2": 0.7065,
+        "0.27": 0.6377,
+        "0.35": 0.5533,
+        "0.5": 0.4027
       },
-      "functions": 5638,
+      "functions": 5912,
       "held_out": true,
       "role": "organic-duplication"
     },
     "django": {
       "alarm_rate": {
-        "0.2": 0.3862,
-        "0.27": 0.2969,
-        "0.35": 0.2243,
-        "0.5": 0.1294
+        "0.2": 0.4017,
+        "0.27": 0.3128,
+        "0.35": 0.2389,
+        "0.5": 0.14
       },
-      "functions": 5541,
+      "functions": 5659,
       "held_out": false,
       "role": "hard-negative"
     },
     "home-assistant": {
       "alarm_rate": {
-        "0.2": 0.5561,
-        "0.27": 0.4549,
-        "0.35": 0.358,
-        "0.5": 0.2415
+        "0.2": 0.6146,
+        "0.27": 0.508,
+        "0.35": 0.3982,
+        "0.5": 0.2618
       },
-      "functions": 1176,
+      "functions": 2185,
       "held_out": true,
       "role": "template-duplication"
     }

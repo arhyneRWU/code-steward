@@ -238,9 +238,9 @@ Treating every function as newly written and comparing it against the rest of it
 
 | Codebase | Functions | Overlap something |
 | --- | --- | --- |
-| Airflow providers | 5,638 | 63.3% |
-| Home Assistant integrations | 1,176 | 45.5% |
-| Django | 5,541 | 29.7% |
+| Airflow providers | 5,912 | 63.8% |
+| Home Assistant integrations | 2,185 | 50.8% |
+| Django | 5,659 | 31.3% |
 | Code Steward, `src/` only | 147 | 14.3% |
 
 **Alarm rates, not error rates** — nothing there is labelled. Airflow's providers duplicate each other by design, so most of that 63% is probably the tool being right, and it is unusable as a blocking gate there anyway. Django is the low-duplication corpus and is still near 30%.
