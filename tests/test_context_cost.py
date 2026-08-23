@@ -39,11 +39,7 @@ def test_overlapping_spans_are_counted_once(tmp_path: Path) -> None:
 def test_a_claim_is_confirmed_only_when_the_call_is_there(tmp_path: Path) -> None:
     source = tmp_path / "m.py"
     source.write_text(
-        "def caller():\n"
-        "    return target()\n"
-        "\n"
-        "def bystander():\n"
-        "    return 1\n",
+        "def caller():\n    return target()\n\ndef bystander():\n    return 1\n",
         encoding="utf-8",
     )
     claims = [_node("m.py", "caller", 1, 2), _node("m.py", "bystander", 4, 5)]
