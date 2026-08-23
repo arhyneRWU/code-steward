@@ -19,6 +19,7 @@ class CodeUnit:
     parameters: list[dict[str, str]] = field(default_factory=list)
     returns: str = ""
     purpose: str = ""
+    doc_text: str = ""
     concepts: list[str] = field(default_factory=list)
     decorators: list[str] = field(default_factory=list)
     dependencies: list[str] = field(default_factory=list)

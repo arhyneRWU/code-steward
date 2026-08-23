@@ -8,7 +8,7 @@ Instead of repeatedly searching large files, rediscovering callers and tests, or
 
 > **Project status:** early development. The architecture is being implemented and tested first against Python and FastAPI codebases. The public API, plugin behavior, and storage format may change.
 
-> **What is measured today:** on `psf/requests`, Code Steward's retrieval is **worse than plain text search** on every ranking metric (see [Measured position](#measured-position)). Its demonstrated value is **compression** — 4,104 bytes of packet against 21,107 bytes of source for the same candidates, and 3.6x fewer wasted bytes per query — not better recall or a cleaner packet. Read the roadmap as a set of open questions, not a set of delivered features.
+> **What is measured today:** on `psf/requests`, Code Steward's retrieval is **worse than plain text search** on every ranking metric (see [Measured position](#measured-position)). Its demonstrated value is **compression** — 4,039 bytes of packet against 21,107 bytes of source for the same candidates, and 3.6x fewer wasted bytes per query — not better recall or a cleaner packet. Read the roadmap as a set of open questions, not a set of delivered features.
 
 ## Goals
 
@@ -56,18 +56,19 @@ The control arm is plain text search: drop stopwords from the query, scan every 
 
 | Metric | Code Steward | Text-search control |
 | --- | --- | --- |
-| Hit@1 | 40.00% | **53.33%** |
-| Hit@3 | 53.33% | **80.00%** |
+| Hit@1 | 46.67% | **53.33%** |
+| Hit@3 | 60.00% | **80.00%** |
 | Hit@K | 73.33% | **86.67%** |
-| MRR | 0.500 | **0.667** |
-| Known trap rate | 2.63% | **1.67%** |
-| Bytes handed to the reviewer | **4,104** | 21,107 |
+| MRR | 0.550 | **0.667** |
+| Bytes handed to the reviewer | **4,039** | 21,107 |
 
-Read that honestly: **the ranker loses on every ranking metric, including the one closest to noise.** The four cases Code Steward missed entirely, the control ranked 1st, 1st, 3rd, and 2nd.
+Read that honestly: **the ranker loses on every ranking metric.** The four cases Code Steward missed entirely, the control ranked 1st, 1st, 3rd, and 2nd.
+
+The Code Steward column reflects the current pipeline, which scores whole docstring bodies as well as summaries. Before that change it read Hit@1 40.00% and MRR 0.500; the improvement is real and does not close the gap. `docs/retrieval.md` carries both.
 
 Two things follow.
 
-**What survives is compression, not recall.** 4,104 bytes against 21,107 to inspect the same candidates is a real 5.1x, and it understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more still to work out where each match begins and ends.
+**What survives is compression, not recall.** 4,039 bytes against 21,107 to inspect the same candidates is a real 5.2x, and it understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more still to work out where each match begins and ends.
 
 **What does not survive is the premise that fuzzy field scoring is the differentiator.** It is not. The fix is to adopt lexical body matching and fuse it with field scoring, not to keep tuning the weights. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
 
@@ -75,7 +76,7 @@ Two things follow.
 
 The project's goal is to reduce what an agent has to read *and* how much of it is irrelevant. Both halves are now measured.
 
-Every candidate either arm returned — 204 across the 15 cases — carries a relevance label. Labels were assigned blind: the labeler saw the query and the unit's source, never which arm produced the candidate, its rank, or the recorded gold unit. As a check on the labels themselves, they independently reproduced the gold key on 15 of 15 cases.
+Every candidate either arm returned — 204 across the 15 cases — carries a relevance label. The candidate sets were captured before docstring-body indexing landed, so the precision figures below describe that pipeline; re-running the arms regenerates any candidate the labels do not yet cover, and `precision.py` refuses to score a packet with an unlabeled candidate rather than quietly understating noise. Labels were assigned blind: the labeler saw the query and the unit's source, never which arm produced the candidate, its rank, or the recorded gold unit. As a check on the labels themselves, they independently reproduced the gold key on 15 of 15 cases.
 
 | Arm | Precision (strict) | Precision (lenient) | Noise rate | Wasted bytes per query |
 | --- | --- | --- | --- | --- |
@@ -118,9 +119,9 @@ The first implementation targets Python and FastAPI and extracts information tha
 
 ### Low-context retrieval
 
-Candidate generation should happen before model reasoning whenever possible. The current implementation scores five fields per unit — purpose, signature, concepts, name, and qualname — with RapidFuzz-style similarity.
+Candidate generation should happen before model reasoning whenever possible. The current implementation scores five fields per unit — purpose, signature, concepts, name, and qualname — with RapidFuzz-style similarity. The purpose field scores the better of the docstring summary and the whole docstring body, so documentation below the summary line reaches the ranker without reaching the packet.
 
-The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision. The packet part works. The ranking does not yet beat a stopword-stripped keyword scan, and the diagnosis is that none of those five fields is body text, which is where the discriminating terms live in long multi-concept functions. See [Measured position](#measured-position).
+The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision. The packet part works. The ranking does not yet beat a stopword-stripped keyword scan. Indexing docstring bodies recovered part of the gap and none of the Hit@K gap, which places the remaining signal in **code** bodies — identifiers such as `rebuild_proxies` — that no scored field currently reads. See [Measured position](#measured-position).
 
 ### Isolated review agents
 
@@ -209,6 +210,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - read-only reuse reviewer agent and the search-before-implement skill
 - conservative `CALLS` and `TESTED_BY` relationship extraction
 - Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
+- docstring-body indexing as a scoring input
 - blind candidate labeling and packet precision/noise measurement
 - documentation coverage enforcement in CI
 

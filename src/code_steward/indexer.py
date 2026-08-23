@@ -58,6 +58,9 @@ def _module_key(rel_path: str) -> str:
     return value.replace("/", ".").replace("\\", ".")
 
 
+DOC_TEXT_LIMIT = 4000
+
+
 def _purpose(node: ast.AST, fallback: str) -> str:
     """Summarize a declaration from its docstring first line."""
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
@@ -65,6 +68,20 @@ def _purpose(node: ast.AST, fallback: str) -> str:
         if doc:
             return doc.strip().splitlines()[0][:240]
     return fallback.replace("_", " ")
+
+
+def _doc_text(node: ast.AST) -> str:
+    """Return the whole docstring for retrieval scoring.
+
+    ``purpose`` stays a short summary because it is emitted into
+    reviewer packets. The body is indexed separately so a searcher's
+    behavioural wording can match text that never reaches a packet.
+    """
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        doc = ast.get_docstring(node, clean=True)
+        if doc:
+            return " ".join(doc.split())[:DOC_TEXT_LIMIT]
+    return ""
 
 
 def _concepts(*values: str) -> list[str]:
@@ -231,6 +248,7 @@ class UnitVisitor(ast.NodeVisitor):
             parameters=_parameter_rows(node.args),
             returns=_expr(node.returns),
             purpose=_purpose(node, node.name),
+            doc_text=_doc_text(node),
             concepts=_concepts(node.name, unit_id),
             decorators=[_expr(decorator) for decorator in node.decorator_list],
             dependencies=_dependencies(node),
@@ -289,6 +307,7 @@ class UnitVisitor(ast.NodeVisitor):
                     f"class {node.name}({', '.join(bases)})" if bases else f"class {node.name}"
                 ),
                 purpose=_purpose(node, node.name),
+                doc_text=_doc_text(node),
                 concepts=_concepts(node.name, unit_id),
                 decorators=[_expr(decorator) for decorator in node.decorator_list],
                 body_hash=_hash_source(

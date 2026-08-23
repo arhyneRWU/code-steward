@@ -165,6 +165,58 @@ v1 remains valid as a regression guard against itself, but its
 absolute numbers should not be read as retrieval quality on real
 repositories.
 
+## Docstring bodies as a scoring input
+
+`_purpose()` stores the first docstring line, truncated at 240
+characters, and that value is emitted into reviewer packets. Until
+now it was also the only documentation the scorer ever saw, so every
+description paragraph, parameter note, and caveat below the summary
+line was discarded before ranking.
+
+`doc_text` now stores the whole docstring, whitespace collapsed and
+capped at 4000 characters. It is indexed and scored; it is never
+emitted. `purpose` remains the short summary the packet carries, so
+richer scoring costs no packet bytes.
+
+### Take the better of summary and body, not the body
+
+The first attempt scored the body in place of the summary and made
+things worse: real-repository Hit@K fell from 73.33% to 66.67%.
+
+The cause is specific. `cookiejar_from_dict` has the summary
+"Returns a CookieJar from a key/value dictionary", which almost
+exactly matches an intent asking for a helper that converts a cookie
+dictionary into a `CookieJar`. Its full docstring adds 293 characters
+of parameter description that the intent does not mention, so
+scoring the body alone diluted a near-perfect summary match and
+pushed the gold unit out of the packet entirely.
+
+The production policy therefore scores
+`max(summary, body)`. A body match can only ever raise a unit's
+score, and a strong summary can no longer be diluted by its own
+documentation.
+
+| Metric | Baseline | Body replaces summary | Better of the two |
+| --- | ---: | ---: | ---: |
+| Hit@1 | 40.00% | 40.00% | **46.67%** |
+| Hit@3 | 53.33% | 66.67% | 60.00% |
+| Hit@5 | 66.67% | 66.67% | 66.67% |
+| Hit@K | 73.33% | 66.67% | 73.33% |
+| MRR | 0.500 | 0.511 | **0.550** |
+| Mean packet bytes | 4104.3 | 4055.3 | **4039.1** |
+
+Measured on the pinned `psf/requests` target. The final policy
+improves Hit@1 and MRR, regresses nothing, and slightly reduces
+packet size.
+
+### Neither fixture benchmark can see this
+
+Frozen v1 and the v2 matrix are byte-identical before and after,
+because every fixture docstring is a single line, so `doc_text`
+equals `purpose` for every fixture unit. This change was measurable
+only against `benchmarks/real_repo`. See the fourth validity gap in
+`benchmarks/retrieval/README.md`.
+
 ## The text-search control arm
 
 Every result above compares Code Steward against Code Steward. The

@@ -39,7 +39,10 @@ def search_units(
         concept_text = " ".join(unit.concepts + unit.owns)
         scores = {
             "name": _ratio(query, unit.name),
-            "purpose": _ratio(query, unit.purpose, "token_set"),
+            "purpose": max(
+                _ratio(query, unit.purpose, "token_set"),
+                _ratio(query, unit.doc_text, "token_set") if unit.doc_text else 0.0,
+            ),
             "signature": _ratio(query, unit.signature, "token_set"),
             "concepts": _ratio(query, concept_text, "token_set"),
             "qualname": _ratio(query, unit.qualname),
