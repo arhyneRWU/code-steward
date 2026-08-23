@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS endpoints (
 CREATE INDEX IF NOT EXISTS idx_endpoints_route ON endpoints(route);
 """
 
+FileReplacement = tuple[str, list[CodeUnit], list[Endpoint]]
+
 
 def connect(db_path: Path) -> sqlite3.Connection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -53,22 +55,105 @@ def connect(db_path: Path) -> sqlite3.Connection:
     return conn
 
 
-def _validate_unit_ids(conn: sqlite3.Connection, path: str, units: list[CodeUnit]) -> None:
-    seen: set[str] = set()
-    for unit in units:
-        if unit.unit_id in seen:
-            raise ValueError(f"Duplicate Code Steward unit ID in {path!r}: {unit.unit_id!r}")
-        seen.add(unit.unit_id)
+def _validate_replacements(
+    conn: sqlite3.Connection,
+    replacements: list[FileReplacement],
+    released_paths: set[str],
+) -> None:
+    seen_paths: set[str] = set()
+    seen_ids: dict[str, str] = {}
 
+    for path, units, _ in replacements:
+        if path in seen_paths:
+            raise ValueError(f"Duplicate Code Steward replacement path: {path!r}")
+        seen_paths.add(path)
+
+        for unit in units:
+            previous_path = seen_ids.get(unit.unit_id)
+            if previous_path is not None:
+                if previous_path == path:
+                    raise ValueError(
+                        f"Duplicate Code Steward unit ID in {path!r}: {unit.unit_id!r}"
+                    )
+                raise ValueError(
+                    f"Duplicate Code Steward unit ID {unit.unit_id!r} across "
+                    f"{previous_path!r} and {path!r}"
+                )
+            seen_ids[unit.unit_id] = path
+
+    for unit_id, path in seen_ids.items():
         existing = conn.execute(
-            "SELECT path FROM units WHERE unit_id = ? AND path <> ?",
-            (unit.unit_id, path),
+            "SELECT path FROM units WHERE unit_id = ?",
+            (unit_id,),
         ).fetchone()
-        if existing is not None:
+        if existing is not None and existing["path"] not in released_paths:
             raise ValueError(
-                f"Code Steward unit ID {unit.unit_id!r} in {path!r} conflicts "
+                f"Code Steward unit ID {unit_id!r} in {path!r} conflicts "
                 f"with existing unit in {existing['path']!r}"
             )
+
+
+def _insert_file(
+    conn: sqlite3.Connection,
+    units: list[CodeUnit],
+    endpoints: list[Endpoint],
+) -> None:
+    for unit in units:
+        conn.execute(
+            """INSERT INTO units VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            (
+                unit.unit_id,
+                unit.path,
+                unit.kind,
+                unit.name,
+                unit.qualname,
+                unit.start_line,
+                unit.end_line,
+                unit.signature,
+                json.dumps(unit.parameters, separators=(",", ":")),
+                unit.returns,
+                unit.purpose,
+                json.dumps(unit.concepts, separators=(",", ":")),
+                json.dumps(unit.decorators, separators=(",", ":")),
+                json.dumps(unit.dependencies, separators=(",", ":")),
+                json.dumps(unit.owns, separators=(",", ":")),
+                json.dumps(unit.not_owns, separators=(",", ":")),
+                unit.body_hash,
+                unit.git_file_commit,
+                int(unit.explicit_region),
+            ),
+        )
+
+    for endpoint in endpoints:
+        conn.execute(
+            "INSERT INTO endpoints VALUES (?,?,?,?,?,?)",
+            (
+                endpoint.unit_id,
+                endpoint.path,
+                endpoint.method,
+                endpoint.route,
+                endpoint.response_model,
+                json.dumps(endpoint.dependencies, separators=(",", ":")),
+            ),
+        )
+
+
+def replace_files(
+    conn: sqlite3.Connection,
+    replacements: list[FileReplacement],
+    remove_paths: set[str] | None = None,
+) -> None:
+    """Apply several file replacements as one validated transaction."""
+    replacement_paths = {path for path, _, _ in replacements}
+    released_paths = replacement_paths | set(remove_paths or ())
+    _validate_replacements(conn, replacements, released_paths)
+
+    with conn:
+        for path in sorted(released_paths):
+            conn.execute("DELETE FROM endpoints WHERE path = ?", (path,))
+            conn.execute("DELETE FROM units WHERE path = ?", (path,))
+        for _, units, endpoints in replacements:
+            _insert_file(conn, units, endpoints)
 
 
 def replace_file(
@@ -77,48 +162,25 @@ def replace_file(
     units: list[CodeUnit],
     endpoints: list[Endpoint],
 ) -> None:
-    _validate_unit_ids(conn, path, units)
+    replace_files(conn, [(path, units, endpoints)])
 
-    with conn:
-        conn.execute("DELETE FROM endpoints WHERE path = ?", (path,))
-        conn.execute("DELETE FROM units WHERE path = ?", (path,))
-        for unit in units:
-            conn.execute(
-                """INSERT INTO units VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                (
-                    unit.unit_id,
-                    unit.path,
-                    unit.kind,
-                    unit.name,
-                    unit.qualname,
-                    unit.start_line,
-                    unit.end_line,
-                    unit.signature,
-                    json.dumps(unit.parameters, separators=(",", ":")),
-                    unit.returns,
-                    unit.purpose,
-                    json.dumps(unit.concepts, separators=(",", ":")),
-                    json.dumps(unit.decorators, separators=(",", ":")),
-                    json.dumps(unit.dependencies, separators=(",", ":")),
-                    json.dumps(unit.owns, separators=(",", ":")),
-                    json.dumps(unit.not_owns, separators=(",", ":")),
-                    unit.body_hash,
-                    unit.git_file_commit,
-                    int(unit.explicit_region),
-                ),
-            )
-        for endpoint in endpoints:
-            conn.execute(
-                "INSERT INTO endpoints VALUES (?,?,?,?,?,?)",
-                (
-                    endpoint.unit_id,
-                    endpoint.path,
-                    endpoint.method,
-                    endpoint.route,
-                    endpoint.response_model,
-                    json.dumps(endpoint.dependencies, separators=(",", ":")),
-                ),
-            )
+
+def remove_file(conn: sqlite3.Connection, path: str) -> None:
+    replace_files(conn, [], {path})
+
+
+def indexed_paths(conn: sqlite3.Connection) -> set[str]:
+    rows = conn.execute("SELECT path FROM units UNION SELECT path FROM endpoints").fetchall()
+    return {row["path"] for row in rows}
+
+
+def unit_owners(conn: sqlite3.Connection, unit_ids: set[str]) -> dict[str, str]:
+    if not unit_ids:
+        return {}
+    placeholders = ",".join("?" for _ in unit_ids)
+    query = f"SELECT unit_id, path FROM units WHERE unit_id IN ({placeholders})"
+    rows = conn.execute(query, tuple(sorted(unit_ids))).fetchall()
+    return {row["unit_id"]: row["path"] for row in rows}
 
 
 def _row_to_unit(row: sqlite3.Row) -> CodeUnit:
