@@ -241,3 +241,25 @@ axes.
 
 As with v1, CI checks structure and metric ranges. It does **not** enforce a
 quality threshold on any cell.
+
+## Fourth validity gap: docstring shape
+
+Both the v1 fixture and the v2 scaled corpus use **single-line
+docstrings only**. Nineteen of the twenty v1 units are documented, but
+none has a body.
+
+That makes both benchmarks blind to any change involving docstring
+bodies. Full-docstring indexing left every cell of the matrix, and
+every frozen v1 number, byte-identical, while moving the real
+repository baseline from Hit@1 40.0% / MRR 0.500 to 46.7% / 0.550. The
+change was only measurable against `benchmarks/real_repo`.
+
+The documentation axis is therefore binary in a second sense already
+noted here: it distinguishes documented from undocumented, but not a
+one-line summary from a real multi-paragraph docstring. Real projects
+are full of the latter, and that is where body text earns its place.
+
+Closing this gap means multi-paragraph docstrings in the fixture, with
+queries whose wording appears only in a body and never in a summary.
+Until then, treat the matrix as silent on body indexing rather than
+supportive of it.
