@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions, checked_rate
 from code_steward.indexer import index_python_file, iter_python_files
 from code_steward.packet import build_packet
 from code_steward.search import search_units
@@ -176,18 +177,24 @@ def run_benchmark() -> dict[str, Any]:
             "hit_rate_at_k": _mean([float(result["hit"]) for result in results]),
             "macro_recall_at_k": _mean([result["recall_at_k"] for result in results]),
             "mrr": _mean([result["reciprocal_rank"] for result in results]),
-            "known_trap_rate": total_traps / total_candidates if total_candidates else 0.0,
-            "known_redundancy_rate": (
-                total_redundant / total_candidates if total_candidates else 0.0
+            # See benchmarks/guards.py: a zero denominator here would
+            # publish "no traps returned" for an arm that returned
+            # nothing at all.
+            "known_trap_rate": checked_rate(
+                total_traps, total_candidates, metric="known_trap_rate"
             ),
-            "duplicate_candidate_rate": (
-                total_duplicates / total_candidates if total_candidates else 0.0
+            "known_redundancy_rate": checked_rate(
+                total_redundant, total_candidates, metric="known_redundancy_rate"
+            ),
+            "duplicate_candidate_rate": checked_rate(
+                total_duplicates, total_candidates, metric="duplicate_candidate_rate"
             ),
             "mean_packet_chars": _mean([float(result["packet_chars"]) for result in results]),
             "mean_packet_bytes": _mean([float(result["packet_bytes"]) for result in results]),
             "mean_retrieval_ms": _mean([result["retrieval_ms"] for result in results]),
         },
         "cases": results,
+        "excluded": Exclusions().to_dict(),
     }
 
 

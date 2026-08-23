@@ -17,6 +17,9 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
 dev = ["pytest>=8,<10", "ruff==0.16.3"]
+# Calibration only. Deliberately outside `dev` so the five-version CI
+# matrix does not pay for a wheel to re-derive a committed number.
+bench = ["tiktoken>=0.7"]
 
 [project.scripts]
 code-steward = "code_steward.cli:main"

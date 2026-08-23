@@ -193,3 +193,8 @@ bench-similarity: guard-venv ## Score every reuse-similarity arm (CHECKOUTS=, WO
 	  --checkouts $(CHECKOUTS) --work $(WORK) \
 	  --labels benchmarks/similarity/reuse_pair_labels.json \
 	  --output $(WORK)/similarity-scores.json
+
+.PHONY: bench-tokens
+bench-tokens: guard-venv ## Recalibrate byte figures against tiktoken (CHECKOUTS= required)
+	@$(PY) -m benchmarks.tokens \
+	  --checkouts $(CHECKOUTS) --output benchmarks/token_calibration.json
