@@ -1,0 +1,325 @@
+{
+  "comparison": {
+    "arms": "control - skill",
+    "detectable_effect": 0.2,
+    "mean_difference": -0.0552,
+    "n": 20,
+    "note": "Pre-registered: detects a 0.20 F1 gap at n=20 with ~91% power and cannot reliably detect 0.10. A null is evidence against a large effect, not evidence of no effect.",
+    "one_sided_95_lower": -0.0988,
+    "skill_helps": false
+  },
+  "per_arm": {
+    "control": {
+      "answered": 20,
+      "mean_f1": 0.9287,
+      "mean_precision": 0.9533,
+      "mean_recall": 0.9293,
+      "outside_key_total": 7,
+      "questions": [
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.retrieval::select_review_candidates",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.relationships::_resolved_unit",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.db::replace_files",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.8571,
+          "id": "impact:src.code_steward.lexical::body_terms",
+          "outside_key": [
+            "tests.test_search::test_body_terms_lift_a_unit_whose_metadata_says_nothing"
+          ],
+          "precision": 0.75,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.9474,
+          "id": "impact:src.code_steward.cli::root_from",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 0.9
+        },
+        {
+          "f1": 0.875,
+          "id": "calls:src.code_steward.retrieval::rank_units",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 0.7778
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.db::_row_to_hard_relationship",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.maintenance::_located",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.indexer::_signature",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.check::check_files",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.8696,
+          "id": "calls:src.code_steward.relationships::refresh_tested_by_relationships",
+          "outside_key": [
+            "src.code_steward.db::_unit_hash",
+            "src.code_steward.relationships::_is_fixture"
+          ],
+          "precision": 0.8333,
+          "recall": 0.9091
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.db::all_soft_relationships",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.7692,
+          "id": "impact:src.code_steward.lexical::query_terms",
+          "outside_key": [
+            "tests.test_grep_baseline::test_query_terms_deduplicates_case_insensitively",
+            "tests.test_grep_baseline::test_query_terms_drops_boilerplate_and_keeps_order",
+            "tests.test_grep_baseline::test_query_terms_ignores_tokens_shorter_than_three_characters"
+          ],
+          "precision": 0.625,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.indexer::_expr",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.6667,
+          "id": "calls:src.code_steward.similarity::rank_with_floor",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 0.5
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.trace::_summary",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.cli::cmd_read",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.6667,
+          "id": "calls:src.code_steward.db::all_hard_relationships",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 0.5
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.db::_row_to_unit",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.9231,
+          "id": "calls:src.code_steward.db::replace_file",
+          "outside_key": [
+            "src.code_steward.db::_unit_hash"
+          ],
+          "precision": 0.8571,
+          "recall": 1.0
+        }
+      ]
+    },
+    "skill": {
+      "answered": 20,
+      "mean_f1": 0.984,
+      "mean_precision": 0.9875,
+      "mean_recall": 0.9839,
+      "outside_key_total": 1,
+      "questions": [
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.retrieval::select_review_candidates",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.relationships::_resolved_unit",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.db::replace_files",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.8571,
+          "id": "impact:src.code_steward.lexical::body_terms",
+          "outside_key": [
+            "tests.test_search::test_body_terms_lift_a_unit_whose_metadata_says_nothing"
+          ],
+          "precision": 0.75,
+          "recall": 1.0
+        },
+        {
+          "f1": 0.9474,
+          "id": "impact:src.code_steward.cli::root_from",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 0.9
+        },
+        {
+          "f1": 0.875,
+          "id": "calls:src.code_steward.retrieval::rank_units",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 0.7778
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.db::_row_to_hard_relationship",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.maintenance::_located",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.indexer::_signature",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.check::check_files",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.relationships::refresh_tested_by_relationships",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.db::all_soft_relationships",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.lexical::query_terms",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.indexer::_expr",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.similarity::rank_with_floor",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.trace::_summary",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.cli::cmd_read",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.db::all_hard_relationships",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "impact:src.code_steward.db::_row_to_unit",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        {
+          "f1": 1.0,
+          "id": "calls:src.code_steward.db::replace_file",
+          "outside_key": [],
+          "precision": 1.0,
+          "recall": 1.0
+        }
+      ]
+    }
+  },
+  "schema_version": 1
+}

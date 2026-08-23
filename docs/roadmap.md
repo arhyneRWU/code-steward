@@ -140,11 +140,26 @@ tells a reader which answers to trust.*
 The paired A/B above. Keep the existing discipline: blind scoring,
 provenance stripped, negative result published either way.
 
-*Exit: a number saying whether an agent with the skill does better
-work, with a confidence interval -- or a documented kill.*
+*Exit met, and the number is null.* See
+[`skill-ab.md`](skill-ab.md). Skill arm 0.984 mean F1, control 0.929,
+paired difference +0.055 with a one-sided 95% lower bound of -0.099.
+The pre-registered detectable effect was 0.20, so this does not show
+the skill helping.
 
-This is the keystone. Everything after it is worth more once it
-exists, and it has a real chance of being unflattering.
+**The design could not answer the question, and that is the finding.**
+At 0.929 the control nearly saturates: this repository is 4,400 lines
+and an agent can just read it. The skill's claim is about
+repositories too large to read, and a repository small enough to read
+cannot test it. The next run needs Django or Home Assistant, harder
+questions, one question per agent, and the sign test pre-registered
+as primary -- most questions tie, and a mean difference is the wrong
+instrument for that.
+
+Recorded, and explicitly not the result: the arms differed on 5 of 20
+questions and **all five favoured the skill**, one-sided sign-test p
+= 0.031. Choosing that test after seeing 5/5 is how false positives
+are made, so it is a direction to power the next run against, not a
+finding.
 
 ### Stage 2 -- use it in anger for a week
 

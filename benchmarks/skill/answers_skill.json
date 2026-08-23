@@ -1,0 +1,130 @@
+{
+ "calls:src.code_steward.retrieval::select_review_candidates": [
+  "src.code_steward.retrieval::metadata_similarity",
+  "src.code_steward.retrieval::_metadata_text"
+ ],
+ "calls:src.code_steward.relationships::_resolved_unit": [
+  "src.code_steward.relationships::_same_class_self_target",
+  "src.code_steward.relationships::_attribute_parts"
+ ],
+ "calls:src.code_steward.db::replace_files": [
+  "src.code_steward.db::_validate_replacements",
+  "src.code_steward.db::_unit_ids_for_paths",
+  "src.code_steward.db::_invalidate_relationships",
+  "src.code_steward.db::_insert_file",
+  "src.code_steward.db::_refresh_hard_target_hashes",
+  "src.code_steward.db::_unit_hash"
+ ],
+ "impact:src.code_steward.lexical::body_terms": [
+  "src.code_steward.indexer::UnitVisitor._body_terms",
+  "tests.test_lexical::test_body_terms_keeps_distinct_tokens_only",
+  "tests.test_lexical::test_body_terms_lowercases",
+  "tests.test_search::test_body_terms_lift_a_unit_whose_metadata_says_nothing"
+ ],
+ "impact:src.code_steward.cli::root_from": [
+  "src.code_steward.cli::cmd_build",
+  "src.code_steward.cli::cmd_update",
+  "src.code_steward.cli::_search",
+  "src.code_steward.cli::cmd_check",
+  "src.code_steward.cli::cmd_similar",
+  "src.code_steward.cli::cmd_trace",
+  "src.code_steward.cli::cmd_read",
+  "src.code_steward.cli::cmd_endpoints",
+  "src.code_steward.cli::cmd_map"
+ ],
+ "calls:src.code_steward.retrieval::rank_units": [
+  "src.code_steward.search::search_units",
+  "src.code_steward.retrieval::expand_query",
+  "src.code_steward.retrieval::_term_pattern",
+  "src.code_steward.lexical::query_terms",
+  "src.code_steward.lexical::term_coverage",
+  "src.code_steward.search::_ratio",
+  "src.code_steward.search::_types"
+ ],
+ "impact:src.code_steward.db::_row_to_hard_relationship": [
+  "src.code_steward.db::all_hard_relationships",
+  "src.code_steward.db::hard_relationships_for_provenance"
+ ],
+ "impact:src.code_steward.maintenance::_located": [
+  "src.code_steward.maintenance::_index_replacement",
+  "src.code_steward.maintenance::rebuild_index"
+ ],
+ "calls:src.code_steward.indexer::_signature": [
+  "src.code_steward.indexer::_parameter_rows",
+  "src.code_steward.indexer::_expr"
+ ],
+ "impact:src.code_steward.check::check_files": [
+  "src.code_steward.cli::cmd_check",
+  "benchmarks.check_history::main"
+ ],
+ "calls:src.code_steward.relationships::refresh_tested_by_relationships": [
+  "src.code_steward.db::all_units",
+  "src.code_steward.db::hard_relationships_for_provenance",
+  "src.code_steward.db::replace_hard_relationships_for_provenance",
+  "src.code_steward.relationships::extract_tested_by_relationships",
+  "src.code_steward.db::_insert_hard_relationships",
+  "src.code_steward.db::_prepare_hard_relationships",
+  "src.code_steward.db::_row_to_hard_relationship",
+  "src.code_steward.db::_row_to_unit",
+  "src.code_steward.models::HardRelationship",
+  "src.code_steward.relationships::is_test_file",
+  "src.code_steward.relationships::is_test_unit"
+ ],
+ "impact:src.code_steward.db::all_soft_relationships": [
+  "tests.test_relationship_storage::test_hard_and_soft_relationships_are_stored_independently",
+  "tests.test_relationship_storage::test_invalid_soft_score_does_not_replace_valid_edges",
+  "tests.test_relationship_storage::test_reindexing_target_preserves_hard_edge_but_invalidates_soft_edge",
+  "tests.test_relationship_storage::test_soft_relationships_store_score_provenance_evidence_and_hashes"
+ ],
+ "impact:src.code_steward.lexical::query_terms": [
+  "src.code_steward.search::search_units",
+  "benchmarks.real_repo.grep_baseline::evaluate_case",
+  "tests.test_lexical::test_query_terms_deduplicates_and_lowercases",
+  "tests.test_lexical::test_query_terms_drops_stopwords",
+  "tests.test_lexical::test_query_terms_ignores_runs_shorter_than_three"
+ ],
+ "impact:src.code_steward.indexer::_expr": [
+  "src.code_steward.indexer::UnitVisitor._add_function",
+  "src.code_steward.indexer::UnitVisitor.visit_ClassDef",
+  "src.code_steward.indexer::_dependencies",
+  "src.code_steward.indexer::_parameter_rows",
+  "src.code_steward.indexer::_route_info",
+  "src.code_steward.indexer::_signature"
+ ],
+ "calls:src.code_steward.similarity::rank_with_floor": [
+  "src.code_steward.similarity::Ranking",
+  "src.code_steward.similarity::_rank_all",
+  "src.code_steward.similarity::SimilarUnit",
+  "src.code_steward.similarity::jaccard"
+ ],
+ "impact:src.code_steward.trace::_summary": [
+  "src.code_steward.trace::render_markdown",
+  "src.code_steward.trace::slice_to_dict"
+ ],
+ "calls:src.code_steward.cli::cmd_read": [
+  "src.code_steward.cli::_load",
+  "src.code_steward.cli::root_from",
+  "src.code_steward.db::get_unit",
+  "src.code_steward.cli::db_path",
+  "src.code_steward.db::_row_to_unit",
+  "src.code_steward.db::all_endpoints",
+  "src.code_steward.db::all_units",
+  "src.code_steward.db::connect"
+ ],
+ "calls:src.code_steward.db::all_hard_relationships": [
+  "src.code_steward.db::_row_to_hard_relationship",
+  "src.code_steward.models::HardRelationship"
+ ],
+ "impact:src.code_steward.db::_row_to_unit": [
+  "src.code_steward.db::all_units",
+  "src.code_steward.db::get_unit"
+ ],
+ "calls:src.code_steward.db::replace_file": [
+  "src.code_steward.db::replace_files",
+  "src.code_steward.db::_insert_file",
+  "src.code_steward.db::_invalidate_relationships",
+  "src.code_steward.db::_refresh_hard_target_hashes",
+  "src.code_steward.db::_unit_ids_for_paths",
+  "src.code_steward.db::_validate_replacements"
+ ]
+}
