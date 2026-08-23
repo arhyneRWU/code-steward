@@ -7,6 +7,7 @@ from collections.abc import Iterable
 from pathlib import Path
 
 from .gitmeta import file_last_commit
+from .lexical import body_terms as _body_terms
 from .markers import ParsedMarkers, UnitAlias, parse_markers_text
 from .models import CodeUnit, Endpoint
 
@@ -246,6 +247,15 @@ class UnitVisitor(ast.NodeVisitor):
         self._used_alias_lines.add(alias.line)
         return alias.unit_id, True
 
+    def _body_terms(self, start_line: int, end_line: int) -> str:
+        """Collect the distinct tokens of one unit's source.
+
+        The control arm scans raw file text, docstrings included, so
+        this does too. Keeping the two matching rules identical is
+        what makes the comparison between them meaningful.
+        """
+        return _body_terms("\n".join(self.lines[start_line - 1 : end_line]))
+
     def _append_unit(self, unit: CodeUnit, *, tagged: bool = False) -> None:
         """Store a unit, disambiguating a generated ID that collides.
 
@@ -301,6 +311,7 @@ class UnitVisitor(ast.NodeVisitor):
             returns=_expr(node.returns),
             purpose=_purpose(node, node.name),
             doc_text=_doc_text(node),
+            body_terms=self._body_terms(start_line, node.end_lineno or node.lineno),
             concepts=_concepts(node.name, unit_id),
             decorators=[_expr(decorator) for decorator in node.decorator_list],
             dependencies=_dependencies(node),
@@ -370,6 +381,7 @@ class UnitVisitor(ast.NodeVisitor):
                 ),
                 purpose=_purpose(node, node.name),
                 doc_text=_doc_text(node),
+                body_terms=self._body_terms(start_line, node.end_lineno or node.lineno),
                 concepts=_concepts(node.name, unit_id),
                 decorators=[_expr(decorator) for decorator in node.decorator_list],
                 body_hash=_hash_source(
@@ -399,6 +411,7 @@ class UnitVisitor(ast.NodeVisitor):
                 end_line=end_line,
                 purpose=" ".join(_concepts(unit_id)),
                 concepts=_concepts(unit_id),
+                body_terms=self._body_terms(start_line, end_line),
                 body_hash=_hash_source(
                     self.lines,
                     start_line,

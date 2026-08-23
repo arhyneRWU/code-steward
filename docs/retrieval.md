@@ -381,3 +381,100 @@ judged `plausible`, not `irrelevant`. They are reasonable near-misses.
 Every trap-rate number recorded in this document therefore measures
 "returned a near-miss", not "returned noise", and must not be cited as
 evidence about noise in either direction.
+
+## Body term coverage as a scored field
+
+The text-search control arm has beaten the five-field metadata ranker
+on every retrieval metric since it was built. The diagnosis recorded
+at the time was that the signal the control finds lives in **code
+bodies** — identifiers like `rebuild_proxies` — and that no scored
+field read them. This is that diagnosis acted on.
+
+A sixth field, `body`, scores the fraction of distinct query terms
+that appear as a substring of the unit's source tokens. The matching
+rule is the control's, not a new one: `code_steward/lexical.py` holds
+it and `grep_baseline.py` now imports from there, so the control and
+the thing it controls cannot disagree about what a query term is.
+
+### The weight was fixed before measuring
+
+`body` takes 0.50; the five existing fields share 0.50 in their
+previous proportions. The rationale, decided in advance and not
+revisited: a control consisting of nothing but body term coverage
+outscored all five metadata fields together, so weighting the body
+equal to the whole existing stack is the least presumptuous reading of
+that result.
+
+**No weight search was run.** Searching for a weight against these
+fifteen cases would convert the benchmark into a target.
+
+### Result on `psf/requests`
+
+| Metric | Five fields | + body | Text-search control |
+| --- | --- | --- | --- |
+| Hit@1 | 46.67% | **33.33%** | **53.33%** |
+| Hit@3 | 60.00% | 66.67% | **80.00%** |
+| Hit@5 | — | 86.67% | — |
+| Hit@K | 73.33% | **93.33%** | 86.67% |
+| MRR | 0.550 | 0.534 | **0.667** |
+| Mean packet bytes | 4,039 | 3,987 | 21,107 |
+
+This is a mixed result and both halves matter.
+
+**Recall improved sharply, and the ranker beats the control on Hit@K
+for the first time.** Four cases that previously returned *no correct
+unit at all* — 007, 010, 011, 013 — now find one. The standing
+complaint that "roughly one query in four returns a packet that does
+not contain the correct unit" is now roughly one in fifteen.
+
+**Hit@1 regressed, from 46.67% to 33.33%.** Four cases that ranked the
+right unit first no longer do, and one case that previously ranked its
+unit fourth now misses entirely. Units whose metadata matched well but
+whose bodies do not contain the query terms were demoted.
+
+Per case, six improved, five regressed, four were unmoved.
+
+### Why this shipped anyway
+
+The decision to keep the change was made **after** seeing this table,
+and a reader is entitled to weigh it differently. The reasoning:
+
+The product emits a **packet of eight candidates**, not a top-1
+answer. Both the skill and the reviewer agent already state that the
+top candidate is wrong more often than not and require reading a body
+before any reuse decision. For a packet, the binding constraint is
+whether the correct unit is present at all, and that is the metric
+that moved most.
+
+The packet is also no longer the primary path. Measured on 250
+held-out functions, drafting the code and comparing it surfaces the
+existing duplicate 99.4% of the time against the packet ranker's
+45.3%; see [`docs/verdict.md`](verdict.md). The ranker is the fallback
+for tasks that cannot be sketched, and a fallback that fails to
+contain the answer is worse than one that ranks it third.
+
+### What it costs
+
+The unit's distinct source tokens are stored in the index as a new
+`body_terms` column — distinct tokens rather than source, because the
+score only asks whether a term occurs. On `psf/requests` the index
+grew from 604 KB to 712 KB, about 18%. Build time was unchanged.
+Nothing is computed at query time that was not computed before.
+
+### Caveats
+
+**Fifteen cases.** Every difference above is between one and four
+cases. Hit@1 46.67% versus 33.33% is seven cases versus five. Treat
+the direction as informative and the magnitude as noisy.
+
+**A weight between 0 and 0.5 may get both.** It very likely exists.
+Finding it requires a held-out query set, which is
+[roadmap item 2](../README.md#next-in-priority-order) and does not
+exist yet. Searching for it on these fifteen cases is the thing this
+project has committed not to do.
+
+**Frozen Benchmark v1 moved cleanly and says less than it appears
+to.** MRR 0.651 → 0.799 and the trap rate halved, with Hit@K unmoved.
+That fixture documents 19 of 20 units and uses queries averaging under
+four words; it is a regression guard against itself, not evidence
+about real code. The mixed table above is the one that counts.

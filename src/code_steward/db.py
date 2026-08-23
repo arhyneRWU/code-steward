@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS units (
     returns TEXT NOT NULL,
     purpose TEXT NOT NULL,
     doc_text TEXT NOT NULL DEFAULT '',
+    body_terms TEXT NOT NULL DEFAULT '',
     concepts_json TEXT NOT NULL,
     decorators_json TEXT NOT NULL,
     dependencies_json TEXT NOT NULL,
@@ -137,7 +138,7 @@ def _insert_file(
 ) -> None:
     for unit in units:
         conn.execute(
-            """INSERT INTO units VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            """INSERT INTO units VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 unit.unit_id,
                 unit.path,
@@ -151,6 +152,7 @@ def _insert_file(
                 unit.returns,
                 unit.purpose,
                 unit.doc_text,
+                unit.body_terms,
                 json.dumps(unit.concepts, separators=(",", ":")),
                 json.dumps(unit.decorators, separators=(",", ":")),
                 json.dumps(unit.dependencies, separators=(",", ":")),
@@ -537,6 +539,7 @@ def _row_to_unit(row: sqlite3.Row) -> CodeUnit:
         returns=row["returns"],
         purpose=row["purpose"],
         doc_text=row["doc_text"],
+        body_terms=row["body_terms"],
         concepts=json.loads(row["concepts_json"]),
         decorators=json.loads(row["decorators_json"]),
         dependencies=json.loads(row["dependencies_json"]),

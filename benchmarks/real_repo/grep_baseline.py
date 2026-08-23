@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sqlite3
 import time
 from bisect import bisect_right
@@ -25,26 +24,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from code_steward.lexical import query_terms
+
+
 # Words that carry no discriminating signal in a code-search query.
 # "Find", "code", and "helper" appear in nearly every case prompt, so a
 # baseline that searched for them would rank by file size.
-_STOPWORD_TEXT = """
-    a an and are as at be been being but by can code could did do does
-    doing done for from get gets given handle handles has have having
-    how in into is it its like make makes of on or over per put return
-    returns should so some such take takes than that the their them then
-    there these they this those to use used uses using was were what
-    when where which while who why will with would
-    find locate search identify show where's wheres helper helpers
-    function functions method methods class classes reusable existing
-    logic implementation implementations piece part area thing
-"""
-
-STOPWORDS = frozenset(_STOPWORD_TEXT.split())
-
-TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
-
-
 @dataclass(slots=True, frozen=True)
 class UnitSpan:
     unit_id: str
@@ -88,17 +73,6 @@ def enclosing_unit(spans: list[UnitSpan], line: int) -> str | None:
         if best is None or span.start_line >= best.start_line:
             best = span
     return None if best is None else best.unit_id
-
-
-def query_terms(query: str) -> list[str]:
-    """Extract discriminating terms from a natural-language query."""
-    seen: dict[str, None] = {}
-    for match in TOKEN_RE.finditer(query):
-        term = match.group(0).lower()
-        if term in STOPWORDS:
-            continue
-        seen.setdefault(term, None)
-    return list(seen)
 
 
 def python_files(root: Path) -> list[Path]:

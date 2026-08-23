@@ -12,7 +12,7 @@ The main coding session should receive **decisions and selected code units, not 
 >
 > - **Reuse detection** works and ships. Five-token shingle comparison measures macro precision **1.000** and F1 **0.577** across three pinned public repositories, ahead of jscpd (0.506) and of this project's own metadata comparison (0.385), at 2.3× to 3.6× fewer bytes. See [Reuse similarity](#reuse-similarity).
 > - **Drafting and comparing beats describing the task.** On 250 held-out functions, sketching the code and comparing it surfaces the existing duplicate **99.4%** of the time, against **45.3%** for the packet ranker given a task sentence — and at slightly fewer bytes. See [Does the evidence arrive](#does-the-evidence-arrive).
-> - **Retrieval ranking** does not beat plain text search on `psf/requests`, on any ranking metric. What it contributes is compression: 4,039 bytes of packet against 21,107 bytes of source for the same candidates. See [Measured position](#measured-position).
+> - **Retrieval ranking** is split against plain text search on `psf/requests`: ahead on Hit@K (93.33% vs 86.67%) after body term coverage became a scored field, behind on Hit@1 (33.33% vs 53.33%) and MRR. Its larger contribution is still compression — 3,987 bytes of packet against 21,107 bytes of source. See [Measured position](#measured-position).
 >
 > Treat the roadmap as open questions rather than delivered features.
 
@@ -62,21 +62,25 @@ The control arm is plain text search: drop stopwords from the query, scan every 
 
 | Metric | Code Steward | Text-search control |
 | --- | --- | --- |
-| Hit@1 | 46.67% | **53.33%** |
-| Hit@3 | 60.00% | **80.00%** |
-| Hit@K | 73.33% | **86.67%** |
-| MRR | 0.550 | **0.667** |
-| Bytes handed to the reviewer | **4,039** | 21,107 |
+| Hit@1 | 33.33% | **53.33%** |
+| Hit@3 | 66.67% | **80.00%** |
+| Hit@K | **93.33%** | 86.67% |
+| MRR | 0.534 | **0.667** |
+| Bytes handed to the reviewer | **3,987** | 21,107 |
 
-The ranker is behind the control on every ranking metric. The four cases Code Steward missed entirely, the control ranked 1st, 1st, 3rd, and 2nd.
+The position is now split rather than a clean loss. Body term coverage was added as a scored field — the control's own matching rule, shared from one implementation — with the weight fixed before measuring and no weight search run.
+
+**Recall improved sharply and the ranker beats the control on Hit@K for the first time**, 93.33% against 86.67%. Four cases that previously returned no correct unit at all now find one. **Hit@1 regressed**, 46.67% to 33.33%, because units whose metadata matched but whose bodies do not contain the query terms were demoted.
+
+The change shipped on the grounds that the product emits a packet of eight, not a top-1 answer, and that the packet is now the fallback path rather than the primary one — see [Does the evidence arrive](#does-the-evidence-arrive). That decision was made after seeing the numbers and a reader may weigh it differently. Fifteen cases, so every difference above is one to four cases. Full table, per-case movement, and reasoning in [`docs/retrieval.md`](docs/retrieval.md).
 
 The Code Steward column reflects the current pipeline, which scores whole docstring bodies as well as summaries. Before that change it read Hit@1 40.00% and MRR 0.500; the improvement is real and does not close the gap. `docs/retrieval.md` carries both.
 
 Two things follow.
 
-**The contribution is compression, not recall.** 4,039 bytes against 21,107 to inspect the same candidates is 5.2x, and that understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more again to work out where each match begins and ends.
+**Compression is still the larger contribution.** 3,987 bytes against 21,107 to inspect the same candidates is 5.3x, and that understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more again to work out where each match begins and ends.
 
-**Fuzzy field scoring is not the differentiator.** The next step is lexical body matching fused with field scoring, rather than more weight tuning. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
+**Fuzzy field scoring was not the differentiator.** Lexical body matching is now a scored field. It fixed recall and cost top-1 accuracy; finding a weight that keeps both needs a held-out query set rather than more passes over these fifteen cases. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
 
 ### Noise
 
@@ -205,9 +209,9 @@ The first implementation targets Python and FastAPI and extracts information tha
 
 ### Low-context retrieval
 
-Candidate generation should happen before model reasoning whenever possible. The current implementation scores five fields per unit — purpose, signature, concepts, name, and qualname — with RapidFuzz-style similarity. The purpose field scores the better of the docstring summary and the whole docstring body, so documentation below the summary line reaches the ranker without reaching the packet.
+Candidate generation should happen before model reasoning whenever possible. The current implementation scores six fields per unit — body, purpose, signature, concepts, name, and qualname. Five are RapidFuzz-style similarity over metadata; `body` is term coverage over the unit's source tokens, using the same matching rule as the text-search control arm and sharing one implementation with it. The purpose field scores the better of the docstring summary and the whole docstring body, so documentation below the summary line reaches the ranker without reaching the packet.
 
-The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision. The packet part works. The ranking does not yet beat a stopword-stripped keyword scan. Indexing docstring bodies recovered part of the gap and none of the Hit@K gap, which places the remaining signal in **code** bodies — identifiers such as `rebuild_proxies` — that no scored field currently reads. See [Measured position](#measured-position).
+The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision. The packet part works. The ranking now beats a stopword-stripped keyword scan on Hit@K and loses to it on Hit@1 and MRR. See [Measured position](#measured-position).
 
 ### Comparison before implementation
 
@@ -336,6 +340,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - conservative `CALLS` and `TESTED_BY` relationship extraction
 - Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
 - docstring-body indexing as a scoring input
+- body term coverage as a scored field, sharing one implementation with the control arm
 - blind candidate labeling and packet precision/noise measurement
 - a reuse-similarity gold set over three pinned public repositories, with four scored arms
 - reuse detection (`similar`, `packet --reuse`), including comparison against unwritten drafts
@@ -349,13 +354,12 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 ### Next, in priority order
 
-1. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
-2. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
-3. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-4. **Run a reviewer agent over the held-out cases.** Evidence arrival is measured; whether it changes a REUSE/EXTEND/REFACTOR verdict is not, and that needs agent runs rather than a deterministic harness. See [`docs/verdict.md`](docs/verdict.md).
-5. **Decide whether `similar` needs a score floor**, on a held-out set rather than this one. The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
-6. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and this gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator. Building a structural comparator before that measurement would repeat the mistake this project already made once.
-7. **Post-change DRY and blast-radius review.**
+1. **Write a second query set from documentation rather than source.** It sizes the vocabulary-overlap bias in every retrieval number above, and it is the held-out set needed to choose a body weight without tuning against the fifteen `requests` cases.
+2. **Run a reviewer agent over the held-out cases.** Evidence arrival is measured; whether it changes a REUSE/EXTEND/REFACTOR verdict is not, and that needs agent runs rather than a deterministic harness. See [`docs/verdict.md`](docs/verdict.md).
+3. **Decide whether `similar` needs a score floor.** Every arm surfaces something on a fifth to a quarter of negative cases. Must be decided on a held-out set, never the frozen one.
+4. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and the gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator.
+5. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
+6. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing
 
