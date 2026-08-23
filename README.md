@@ -8,12 +8,16 @@ Instead of repeatedly searching large files, rediscovering callers and tests, or
 
 > **Project status:** early development. The architecture is being implemented and tested first against Python and FastAPI codebases. The public API, plugin behavior, and storage format may change.
 
+> **What is measured today:** on `psf/requests`, Code Steward's retrieval is **worse than plain text search** on every ranking metric (see [Measured position](#measured-position)). Its demonstrated value is **compression** — 4,104 bytes of packet against 21,107 bytes of source for the same candidates — not better recall. Read the roadmap as a set of open questions, not a set of delivered features.
+
 ## Goals
 
 Code Steward is being designed around two forms of stewardship:
 
 1. **Steward the context window.** Keep broad repository exploration, graph traversal, history inspection, and duplicate analysis out of the main coding context whenever they can be handled deterministically or inside a disposable subagent context.
 2. **Steward the codebase.** Search before implementation, reuse existing behavior where appropriate, understand the impact of changes, and avoid unnecessary duplication or parallel abstractions.
+
+Both goals reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and they have very different evidence behind them. The first — fewer bytes — is measured and holds. The second — a higher share of what the agent sees being relevant — is not yet measurable, because the benchmark labels one correct unit per query and leaves most returned candidates unlabeled. Treat it as the project's central open question rather than a property it has.
 
 The intended workflow is:
 
@@ -44,13 +48,51 @@ isolated review agent
 main coding agent receives only the selected units and decision
 ```
 
-## Planned architecture
+## Measured position
 
-Code Steward is intended to combine several complementary sources of code intelligence rather than rebuild all of them.
+Code Steward is validated against `psf/requests` pinned at `8f8b212d`, using 15 hand-verified retrieval cases. Frozen Benchmark v1 runs on a synthetic fixture and reports much better numbers; those numbers are a regression guard against themselves and should not be read as quality on real code.
+
+The control arm is plain text search: drop stopwords from the query, scan every `.py` file case-insensitively for each remaining term, rank units by how many distinct terms they contain. No Code Steward code is involved in its ranking.
+
+| Metric | Code Steward | Text-search control |
+| --- | --- | --- |
+| Hit@1 | 40.00% | **53.33%** |
+| Hit@3 | 53.33% | **80.00%** |
+| Hit@K | 73.33% | **86.67%** |
+| MRR | 0.500 | **0.667** |
+| Known trap rate | 2.63% | **1.67%** |
+| Bytes handed to the reviewer | **4,104** | 21,107 |
+
+Read that honestly: **the ranker loses on every ranking metric, including the one closest to noise.** The four cases Code Steward missed entirely, the control ranked 1st, 1st, 3rd, and 2nd.
+
+Two things follow.
+
+**What survives is compression, not recall.** 4,104 bytes against 21,107 to inspect the same candidates is a real 5.1x, and it understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more still to work out where each match begins and ends.
+
+**What does not survive is the premise that fuzzy field scoring is the differentiator.** It is not. The fix is to adopt lexical body matching and fuse it with field scoring, not to keep tuning the weights. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
+
+### The noise question is open
+
+The project's goal is to reduce what an agent has to read *and* how much of it is irrelevant. Only the first half is currently measurable.
+
+Each benchmark case labels one correct unit and a small number of named traps. The remaining candidates in an 8-unit packet are unlabeled, so a packet of seven plausible near-misses and a packet of seven unrelated functions score identically. Precision@K cannot be computed, and the noise-reduction claim therefore has no evidence behind it in either direction — except the trap rate, which currently runs against us.
+
+Closing this requires labeling every returned candidate as relevant, plausible, or irrelevant, not only the gold one. Until that exists, this README does not claim Code Steward reduces noise.
+
+### Validity threats on record
+
+- The benchmark queries were written while reading the Requests source, so their wording shares vocabulary with the code. That inflates any lexical method, and it inflates the raw-text control more than the field-based ranker. A query set written from public documentation would test it.
+- Frozen Benchmark v1's fixture documents 19 of 20 units and uses queries averaging under four words. Real code does neither.
+
+Full numbers, per-case results, and diagnosis live in [`docs/retrieval.md`](docs/retrieval.md). The control arm is `benchmarks/real_repo/grep_baseline.py`; run it with `make bench-grep`.
+
+## Architecture
+
+Code Steward combines several complementary sources of code intelligence rather than rebuilding all of them. Each subsection below states whether the piece is built, tested and rejected, or not yet implemented.
 
 ### Local Python and FastAPI index
 
-The first implementation targets Python and FastAPI and will extract information that is cheap and deterministic to obtain:
+The first implementation targets Python and FastAPI and extracts information that is cheap and deterministic to obtain:
 
 - functions, classes, and exact source boundaries
 - function signatures and parameter names
@@ -62,19 +104,23 @@ The first implementation targets Python and FastAPI and will extract information
 
 ### Low-context retrieval
 
-Candidate generation should happen before model reasoning whenever possible. The initial approach uses structured metadata plus lexical and fuzzy matching, including RapidFuzz-style similarity over names, summaries, signatures, and concepts.
+Candidate generation should happen before model reasoning whenever possible. The current implementation scores five fields per unit — purpose, signature, concepts, name, and qualname — with RapidFuzz-style similarity.
 
-The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision.
+The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision. The packet part works. The ranking does not yet beat a stopword-stripped keyword scan, and the diagnosis is that none of those five fields is body text, which is where the discriminating terms live in long multi-concept functions. See [Measured position](#measured-position).
 
 ### Isolated review agents
 
 A reviewer should receive only the task and a small candidate packet. It can then pull exact code units, tests, history, and graph relationships only when needed. Its final result should be compact and structured so that exploratory material does not accumulate in the main coding session.
 
-### Graph Code Review integration
+### Structural graph integration (tested, not adopted)
 
-[Graph Code Review](https://github.com/tirth8205/code-review-graph) already provides structural graph capabilities such as callers, callees, tests, flows, change analysis, and minimal-context retrieval. Code Steward is intended to integrate with that capability rather than fork or duplicate the underlying graph engine.
+An earlier plan was to enrich retrieval with an external structural graph such as [Graph Code Review](https://github.com/tirth8205/code-review-graph). That plan was tested and dropped.
 
-### DRY and clone analysis
+Code Steward extracts its own conservative `CALLS` edges. Reranking candidates by one resolved `CALLS` hop moved no retrieval metric in any direction — not Hit@K, not MRR, not the trap rate. Importing a second, less carefully verified source of the same edge type cannot be justified on ranking grounds when the carefully verified one does nothing. The verdict and its caveat — only 27.72% of extracted edges resolve to indexed units, so this rejects the tested fusion at the current resolution rate rather than structural retrieval in general — are recorded in [`docs/retrieval.md`](docs/retrieval.md).
+
+Structural relationships are still stored and still useful for impact analysis and test discovery. They are simply not a ranking input, and the case for an external graph has to rest on a capability other than ranking.
+
+### DRY and clone analysis (not implemented)
 
 [jscpd](https://github.com/kucherenko/jscpd) provides mature duplicate-code detection. Code Steward is intended to treat clone findings as evidence for a reuse or refactoring decision, not as an automatic instruction to abstract every duplicated block.
 
@@ -121,6 +167,8 @@ For the full draft semantics being tested, see [`docs/tag-protocol.md`](docs/tag
 - **Return compact decisions, not investigation transcripts.**
 - **Prefer integration with mature tools over unnecessary reimplementation.**
 - **Measure context savings and decision quality, not just feature count.**
+- **Measure against a control, not against yourself.** Every feature that claims to beat ordinary agent behavior is compared to ordinary agent behavior on the same cases. A number that only improves against a previous version of Code Steward proves nothing about whether Code Steward is worth running.
+- **Publish results that go against the project.** The text-search control arm and the rejected graph fusion are both in this README because a tool that hides its negative results cannot be trusted about its positive ones.
 
 ## Initial scope
 
@@ -132,23 +180,35 @@ The first development target is:
 - local AST-based indexing
 - fuzzy and typed candidate retrieval
 - exact code-unit extraction
-- optional Graph Code Review enrichment
-- optional jscpd duplicate evidence
+- optional jscpd duplicate evidence (not implemented)
 
 The architecture is intentionally broader than FastAPI so that support for other Python frameworks and languages can be considered later without changing the core model.
 
 ## Roadmap
 
-The first public milestones are expected to focus on:
+### Built
 
-1. repository and plugin scaffold
-2. Python AST index and stable unit identifiers
-3. FastAPI endpoint enrichment
-4. compact candidate search and reviewer packets
-5. read-only reuse reviewer agent
-6. Graph Code Review integration
-7. post-change DRY and blast-radius review
-8. benchmarks for context use, retrieval quality, and incorrect reuse decisions
+- repository and plugin scaffold
+- Python AST index with stable unit identifiers and optional source tags
+- FastAPI endpoint enrichment
+- compact candidate search and reviewer packets (`search`, `packet`, `read`, `map`)
+- read-only reuse reviewer agent and the search-before-implement skill
+- conservative `CALLS` and `TESTED_BY` relationship extraction
+- Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
+- documentation coverage enforcement in CI
+
+### Next, in priority order
+
+1. **Make noise measurable.** Label every candidate in each benchmark packet, not only the gold unit, so precision@K exists. Nothing else on this list can be evaluated as noise reduction until this lands.
+2. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
+3. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
+4. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
+5. **Post-change DRY and blast-radius review.**
+
+### Deliberately not doing
+
+- **External structural graph integration for ranking.** Tested, no metric moved. See [Structural graph integration](#structural-graph-integration-tested-not-adopted).
+- **Further tuning of the existing five-field fuzzy weights.** The control arm shows the ceiling of that approach is below plain keyword search.
 
 ## Claude Code plugin surface
 
@@ -170,12 +230,13 @@ agents/reuse-reviewer.md                        # read-only reviewer subagent
   task, runs `packet` and `read` in its own context, and returns a compact structured decision
   so candidate evaluation never lands in the main session.
 
-Both are deliberately conservative about the retriever's current quality. On `psf/requests` the
-production retriever measures **Hit@1 40%, Hit@K 73.33%, MRR 0.500** — the top candidate is
-wrong most of the time, and roughly one query in four returns a packet that does not contain
-the correct unit at all. The skill and the agent both require verification before any reuse
-decision, and neither is permitted to treat "not in the packet" as proof that code is absent.
-The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not find it"), not `CREATE`.
+Both are deliberately conservative about the retriever's current quality, for the reasons set
+out in [Measured position](#measured-position): the top candidate is wrong most of the time,
+roughly one query in four returns a packet that does not contain the correct unit at all, and
+a plain keyword scan does better on both counts. The skill and the agent both require
+verification before any reuse decision, and neither is permitted to treat "not in the packet"
+as proof that code is absent. The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not
+find it"), not `CREATE`.
 
 Known gaps in this surface:
 
@@ -185,6 +246,8 @@ Known gaps in this surface:
   `code-steward update <path>` or `code-steward build` is run.
 - The reviewer agent holds `Bash` because that is the only way to invoke the CLI. Its
   read-only contract is enforced by instruction, not by the tool allowlist.
+- Neither the skill nor the agent runs a text search alongside the packet, even though the
+  control arm shows that would find units the packet misses. Doing so is roadmap item 2.
 
 ## Why this project exists
 
@@ -204,4 +267,4 @@ Code Steward is released under the MIT License. See [`LICENSE`](LICENSE).
 
 ## Acknowledgments
 
-Code Steward is designed to integrate with, learn from, and complement existing open-source code intelligence and duplicate-analysis tools. In particular, the project draws on ideas and capabilities from Graph Code Review and jscpd. Code Steward is an independent project and is not affiliated with those projects or Anthropic.
+Code Steward learns from existing open-source code intelligence and duplicate-analysis tools, in particular Graph Code Review and jscpd. Neither is currently a dependency: graph-based reranking was tested and rejected on measured evidence, and clone analysis is not implemented. Code Steward is an independent project and is not affiliated with those projects or Anthropic.
