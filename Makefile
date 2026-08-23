@@ -203,3 +203,8 @@ bench-tokens: guard-venv ## Recalibrate byte figures against tiktoken (CHECKOUTS
 bench-similarity-depth: guard-venv ## Measure the gold set's usable depth (CHECKOUTS= required)
 	@$(PY) -m benchmarks.similarity.depth \
 	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/depth.json
+
+.PHONY: bench-verdict
+bench-verdict: guard-venv ## Measure whether reuse evidence reaches the reviewer (CHECKOUTS=)
+	@$(PY) -m benchmarks.verdict.run \
+	  --checkouts $(CHECKOUTS) --output benchmarks/verdict/evidence.json

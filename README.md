@@ -11,6 +11,7 @@ The main coding session should receive **decisions and selected code units, not 
 > **What is measured today.** Both halves of the project have been compared against a simple control on real repositories.
 >
 > - **Reuse detection** works and ships. Five-token shingle comparison measures macro precision **1.000** and F1 **0.577** across three pinned public repositories, ahead of jscpd (0.506) and of this project's own metadata comparison (0.385), at 2.3× to 3.6× fewer bytes. See [Reuse similarity](#reuse-similarity).
+> - **Drafting and comparing beats describing the task.** On 250 held-out functions, sketching the code and comparing it surfaces the existing duplicate **99.4%** of the time, against **45.3%** for the packet ranker given a task sentence — and at slightly fewer bytes. See [Does the evidence arrive](#does-the-evidence-arrive).
 > - **Retrieval ranking** does not beat plain text search on `psf/requests`, on any ranking metric. What it contributes is compression: 4,039 bytes of packet against 21,107 bytes of source for the same candidates. See [Measured position](#measured-position).
 >
 > Treat the roadmap as open questions rather than delivered features.
@@ -152,6 +153,30 @@ Comparison runs over normalised function bodies — `ast.unparse` output, so com
 A function that was copied, pasted, and tidied is found. A function that was independently reimplemented in different words is not. Catching that needs a structural comparator, which is a different tool and has not been measured here. The limitation is pinned by a test so it cannot quietly change.
 
 There is nothing novel in the comparison itself — near-duplicate detection by token shingles is long-established, and jscpd is a mature tool that placed second on this benchmark. What is different here is where it sits: at indexed-unit granularity, keyed to stable IDs, answering the question before the code is written, and returning a packet an agent acts on rather than a report a person reads. The measured edge over jscpd is modest on F1 (0.571 against 0.521) and larger on bytes (2.3x fewer), and bytes are what make it affordable inside an agent's context.
+
+### Does the evidence arrive
+
+The numbers above are about a comparison arm. This one is about the product: given a function someone is about to write, does the existing duplicate actually reach the reviewer?
+
+A case takes a function whose duplicate is already labelled, removes it from the repository, and uses its docstring summary as the task an agent would type. 496 cases built, 250 scored, 246 excluded.
+
+| Arm | Duplicate surfaced | False positives | Mean bytes |
+| --- | --- | --- | --- |
+| `packet` (control) | 0.453 | 0.198 | 2,663 |
+| `packet --reuse` | 0.616 | 0.275 | 4,260 |
+| **`similar --draft`** | **0.994** | 0.264 | **2,636** |
+
+**Drafting and comparing dominates.** It finds the existing function in 158 of 159 cases, at fewer bytes than the plain packet and no worse a false-positive rate. The skill and reviewer agent were already told to draft-and-compare before falling back to the ranker; that ordering was reasoned from a component number and is now measured.
+
+**`--reuse` is a real trade rather than a free win.** Sixteen more cases in a hundred where the duplicate arrives, for 60% more bytes. That is why it is opt-in.
+
+Three limits, none of them small:
+
+- **No verdict was scored.** No reviewer agent was run, so this measures evidence *arriving*, not a decision *changing*. A detector that surfaces perfectly and changes no verdicts would score perfectly here.
+- **246 of 496 cases were excluded** because the function has no docstring, so its task text would have been its own identifier. That means this speaks only about documented functions — and undocumented code is where the ranker is documented to do worst, so the control's 0.453 is its score on favourable ground.
+- **`similar` has no score floor**, which is visible in the false positives on negative cases. Choosing one is deliberately not done here: it would be tuning against the gold set.
+
+Full method and caveats in [`docs/verdict.md`](docs/verdict.md). Reproduce with `make bench-verdict`.
 
 ### Validity threats on record
 
@@ -315,6 +340,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - a reuse-similarity gold set over three pinned public repositories, with four scored arms
 - reuse detection (`similar`, `packet --reuse`), including comparison against unwritten drafts
 - the skill and reviewer agent updated to draft-and-compare before falling back to the ranker
+- a held-out measurement of whether the reuse evidence reaches the reviewer at all
 - benchmark anti-inflation guards: a rate with no denominator raises rather than publishing a perfect zero
 - exclusion accounting: a run that drops a file or a case reports it as dropped
 - pins enforced by tests rather than by documentation
@@ -326,9 +352,10 @@ The architecture is intentionally broader than FastAPI so that support for other
 1. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
 2. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
 3. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-4. **Measure whether reuse evidence changes the verdict.** The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
-5. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and this gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator. Building a structural comparator before that measurement would repeat the mistake this project already made once.
-6. **Post-change DRY and blast-radius review.**
+4. **Run a reviewer agent over the held-out cases.** Evidence arrival is measured; whether it changes a REUSE/EXTEND/REFACTOR verdict is not, and that needs agent runs rather than a deterministic harness. See [`docs/verdict.md`](docs/verdict.md).
+5. **Decide whether `similar` needs a score floor**, on a held-out set rather than this one. The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
+6. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and this gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator. Building a structural comparator before that measurement would repeat the mistake this project already made once.
+7. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing
 
