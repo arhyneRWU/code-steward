@@ -6,7 +6,7 @@ abandon Code Steward for ordinary exploration.
 ## The measured numbers
 
 Benchmark repository: `psf/requests`. Production retriever (`retrieve_units`, the path used by
-`code-steward packet`).
+`code-steward search`). The `packet` command that also used it has since been retired.
 
 | Metric | Ranker | Plain text search |
 | --- | --- | --- |
@@ -100,7 +100,7 @@ than a grep would have.
 Run against Code Steward's own source, asking for the ranking function:
 
 ```bash
-code-steward packet "rank code units for an intent" --limit 3
+code-steward search "rank code units for an intent" --limit 3
 ```
 
 Top three candidates, abbreviated:

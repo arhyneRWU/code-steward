@@ -1,8 +1,16 @@
 {
   "name": "code-steward",
-  "description": "Context-efficient code intelligence and stewardship for Claude Code.",
+  "description": "Assemble a small, complete slice of a Python repository so a model can act on it.",
   "version": "0.1.0",
   "license": "MIT",
-  "keywords": ["python", "fastapi", "code-intelligence", "code-review", "reuse", "claude-code"],
-  "agents": "./agents"
+  "keywords": [
+    "python",
+    "fastapi",
+    "code-intelligence",
+    "code-review",
+    "reuse",
+    "claude-code"
+  ],
+  "agents": "./agents",
+  "skills": "./skills"
 }
