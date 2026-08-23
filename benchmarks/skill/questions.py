@@ -84,8 +84,13 @@ def build_questions(
     *,
     prefix: str = "",
     limit: int = 15,
+    min_answer: int = MIN_ANSWER,
 ) -> list[dict[str, Any]]:
-    """Build questions with a ground-truth answer set for each."""
+    """Build questions with a ground-truth answer set for each.
+
+    ``min_answer`` is a parameter rather than a rewritten constant so
+    that run 1, which used a floor of two, stays reproducible.
+    """
     by_id = {unit.unit_id: unit for unit in units}
     callees = _edges(relationships, "CALLS")
     callers: dict[str, set[str]] = {}
@@ -122,7 +127,7 @@ def build_questions(
             ),
         ):
             answer = {value for value in _closure(graph, unit_id, depth) if value in by_id}
-            if not (MIN_ANSWER <= len(answer) <= MAX_ANSWER):
+            if not (min_answer <= len(answer) <= MAX_ANSWER):
                 continue
             questions.append(
                 {
@@ -142,6 +147,12 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--prefix", default="", help="restrict targets to this unit-ID prefix")
     parser.add_argument("--limit", type=int, default=15)
+    parser.add_argument(
+        "--min-answer",
+        type=int,
+        default=MIN_ANSWER,
+        help="smallest answer set worth asking about",
+    )
     parser.add_argument("--output", type=Path, required=True)
     return parser
 
@@ -153,7 +164,13 @@ def main() -> None:
     relationships = all_hard_relationships(conn)
     conn.close()
 
-    questions = build_questions(units, relationships, prefix=args.prefix, limit=args.limit)
+    questions = build_questions(
+        units,
+        relationships,
+        prefix=args.prefix,
+        limit=args.limit,
+        min_answer=args.min_answer,
+    )
     resolved = sum(
         1 for edge in relationships if edge.relation == "CALLS" and edge.target_kind == "unit"
     )
