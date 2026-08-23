@@ -2,17 +2,19 @@
 
 **Context-efficient code intelligence and stewardship for Claude Code.**
 
-Code Steward tells you when you have just written a function the repository already has. It indexes a repository into stable code-unit IDs, compares the functions you changed against them, and reports the overlaps — or asserts that there are none.
+Code Steward assembles a small, complete slice of a repository so a cheap model can act on it — and tells you when the function you just wrote is one the repository already has.
 
 ```bash
-code-steward trace "pkg.mod::fn"      # this function, its callers, callees, tests
-code-steward check                    # what does this branch duplicate?
-code-steward check --rate             # is this repo quiet enough to gate on?
+code-steward trace "pkg.mod::fn"   # the function, its callers, callees, tests, and where each call happens
+code-steward check                 # what did this branch duplicate?
+code-steward check --rate          # is this repo quiet enough to gate on?
 ```
 
-`trace` is the context-window half: one function plus the path around it as a self-contained bundle, for handing to a model that cannot hold the repository. Measured at **10.3x** compression against reading the files on Django, mean bundle 4,170 bytes — with the honest caveat that call resolution only reaches 54.7% of Django's functions. See [`docs/trace.md`](docs/trace.md).
+**`trace` is the function follower.** One unit plus the path around it, as a self-contained bundle: full bodies, and the exact line in each caller where the call happens. Measured at **10.3x** compression against reading the files on Django, mean bundle 4,170 bytes.
 
-**And a small model can use it.** Given a 5.9 KB bundle of eight functions and asked which two duplicate each other, Haiku 4.5 scores **0.917** against blind labels — 25/30 on bundles containing a labelled duplicate, **30/30** on bundles containing none. All five misses were declines; it never named a wrong pair and never invented one. That is the first direct evidence that the pipeline this project was built for works. See [`docs/small-model.md`](docs/small-model.md).
+**A cheap model can use that bundle.** Given a 5.9 KB bundle and asked which two of eight functions duplicate each other, Haiku 4.5 scores **0.917** against blind labels — 25/30 where a labelled duplicate exists, **30/30** where none does. All five misses were declines; it never named a wrong pair and never invented one.
+
+**`check` is the duplication pass.** It compares the functions your branch changed against the index, reports only overlaps the change *introduced*, and asserts when there are none.
 
 **Where this landed, and why.** The project set out to make the reuse decision *before* any code existed — from a task sentence. Measurement moved it twice, and the second move was the important one:
 
@@ -26,9 +28,13 @@ Same held-out cases. The comparison is not the variable — how much of the func
 
 The main coding session should receive **decisions and selected code units, not the full history of repository exploration**. Instead of repeatedly searching large files, rediscovering callers and tests, or writing something that already exists, Code Steward builds a compact map of a codebase, retrieves the relevant existing units, and delegates deeper investigation to isolated review agents.
 
-> **Project status:** early development. The architecture is being implemented and tested first against Python and FastAPI codebases. The public API, plugin behavior, and storage format may change.
+> **Project status:** early development, Python and FastAPI first. The public API, plugin behavior, and storage format may change. Current direction and work order: [issue #55](https://github.com/arhyneRWU/code-steward/issues/55).
 
-> **What is measured today.** Both halves of the project have been compared against a simple control on real repositories.
+> **What is measured today.** Every claim below is against a control or a blind label set, on real repositories.
+>
+> - **A cheap model can act on an assembled slice.** Haiku 4.5 scores **0.917** on duplicate judgement from a 5.9 KB bundle, against blind labels — and **30/30** on bundles containing no duplicate. See [`docs/small-model.md`](docs/small-model.md).
+> - **Assembling beats ranking, and the gap is not subtle.** A larger reviewer handed a *ranked packet* was talked into a duplicate that was not there on **33%** of clean cases. The cheap model handed a *complete bundle* did it on **0 of 30**. See [Goals](#goals), point 4.
+> - **Slices compress.** `trace` is **10.3x** smaller than reading the files it draws from on Django, 4.7x here — measured over slices that found neighbours, against whole files, which is what an agent without an index actually reads. See [`docs/trace.md`](docs/trace.md).
 >
 > - **Reuse detection** works and ships. Five-token shingle comparison measures macro precision **1.000** and F1 **0.577** across three pinned public repositories, ahead of jscpd (0.506) and of this project's own metadata comparison (0.385), at 2.3× to 3.6× fewer bytes. See [Reuse similarity](#reuse-similarity).
 > - **Drafting and comparing beats describing the task — on recall, not by as much as it looked.** Comparing a function's real body surfaces its duplicate **99.4%** of the time against **45.9%** for a task sentence. With bodies an agent drafted from a name and docstring, that becomes **46.0%** end to end. The remaining advantage is precision, not recall. See [What a realistic draft is actually worth](#what-a-realistic-draft-is-actually-worth).
@@ -429,17 +435,16 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 ### Next, in priority order
 
-Reordered after the reviewer measurement. See [`docs/direction.md`](docs/direction.md) for why the old order was wrong: it was built on the assumption that recall was the binding constraint, and it isn't.
+Tracked in [issue #55](https://github.com/arhyneRWU/code-steward/issues/55), which is the authoritative version. Reordered after the small-model result: the far end of the pipeline is now measured to work, so building the assembler pays off in a way it did not before.
 
-1. ~~**Report only the overlaps a change introduces.**~~ Done and now the default: 16.3x fewer findings on Django, 3.1x on this repository.
-2. ~~**Let the packet return nothing.**~~ Done for the `similar` path: a 0.27 floor chosen on held-out data, an empty result that reports how many candidates it suppressed, and a decision contract where writing new code is a normal outcome. Still open for the packet ranker, which needs its own null distribution first.
-3. ~~**Point the skill and reviewer agent at `check`.**~~ Done. Both now lead with the 0.459 / 0.460 / 1.000 table, treat pre-implementation search as one cheap attempt, and end on `check`. The reviewer agent grades its own `NO_CANDIDATE` by which route produced it.
-4. ~~**Measure draft-and-compare on a realistic draft.**~~ Done, and it came back low: 0.700 unfloored, **0.460** with the shipped floor and counting unusable drafts. The reframe's headline margin is gone; a precision-based justification remains and has not itself been put to a reviewer. See [`docs/verdict.md`](docs/verdict.md).
-5. **Test whether the draft path escapes the docstring problem.** The verdict benchmark excludes 246 of 496 cases for having no docstring, and undocumented code is where the ranker is worst. Draft-and-compare never reads a docstring, so it may simply not have this failure — testable, untested.
-6. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and the gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator.
-7. **Write a second query set from documentation rather than source.** It sizes the vocabulary-overlap bias in every retrieval number above. Demoted, not dropped: it bears on the fallback path rather than the primary one.
-8. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-9. ~~**Post-change DRY and blast-radius review.**~~ The DRY half is `check`. Blast radius is still open.
+1. **Compose `trace` and `check` into one path-level pass.** The intended pipeline is *search → check the whole path → DRY*, and those two commands do not compose today: `check` works on changed files, `trace` emits a slice. Wanted is one command that traces the path, runs DRY across the whole slice, and emits a single bundle. This is the missing middle and it is what a small model would actually be handed.
+2. **Budget-aware assembly.** Every command emits a fixed shape. The target takes a token budget — "the best 8 KB for this task" — and fills it. Selection is by hop count today, so `--callers 2` on a hub explodes while depth 1 on a thin chain misses.
+3. **Raise call resolution above 54.7%.** Dynamic dispatch, callables passed as arguments, registry lookups and metaclass machinery produce no edge, so a slice is a lower bound on the real path. Two options worth comparing rather than assuming: fix the resolver, or let an external Tree-sitter graph supply edges and keep Code Steward as the slicer and DRY pass. Includes the `_module_key` src-layout defect, where `src/pkg/mod.py` is keyed `src.pkg.mod` while the import says `pkg.mod`.
+4. **Label a few hundred `check` findings.** The largest credibility gap. Every alarm-rate figure counts how often the command *says something*, never how often it is right to.
+5. **Use it on a real repository for a week.** Actual commits, and a record of which findings were acted on. Everything so far is retrospective replay.
+6. **Size the reimplementation blind spot.** Shingles miss a function rewritten in different words, and the gold set cannot say how often — two of its three generators are lexical, so that population is absent from the pool by construction. Needs a non-lexical generator.
+7. **Test whether the draft path escapes the docstring problem.** The verdict benchmark excludes 246 of 496 cases for having no docstring. Comparison never reads one, so it may not have that failure — testable, untested.
+8. **Write a second query set from documentation rather than source.** Sizes the vocabulary-overlap bias in the retrieval numbers. Bears on the fallback path only.
 
 ### Deliberately not doing
 
@@ -449,6 +454,7 @@ Reordered after the reviewer measurement. See [`docs/direction.md`](docs/directi
 - **jscpd as a dependency.** Second of four arms, but it needs Node and returns 3.6x the bytes.
 - **Tuning any arm against the similarity gold set.** The set was built, frozen, and measured once. Tuning against it would convert a benchmark into a target.
 - **Adding further signal to the packet.** Two of the last three changes did exactly that. Recall improved both times; the verdict did not move. Until something moves verdict accuracy with abstention, more evidence per candidate is not the lever.
+- **Better ranking.** The measured position is that a ranked shortlist is itself a suggestion, and that a complete bundle beats one even given to a weaker model. Effort goes into assembly.
 
 ## Claude Code plugin surface
 
