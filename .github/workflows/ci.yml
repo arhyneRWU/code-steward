@@ -39,6 +39,9 @@ jobs:
       - name: Run Ruff lint
         run: ruff check --output-format=github .
 
+      - name: Run mypy
+        run: mypy
+
   format:
     name: Format
     runs-on: ubuntu-latest

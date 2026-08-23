@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from difflib import SequenceMatcher
+from typing import Any
 
 from .lexical import query_terms, term_coverage
 from .models import CodeUnit, SearchResult
 
+# Optional dependency. Declared as Any first so the real module and
+# the None fallback can share a name without redefining it.
+fuzz: Any
 try:
-    from rapidfuzz import fuzz
+    from rapidfuzz import fuzz as fuzz
 except ImportError:  # pragma: no cover
     fuzz = None
 

@@ -137,7 +137,7 @@ def rank_units(
 
     results: list[SearchResult] = []
     for row in rows.values():
-        baseline_result: SearchResult = row["result"]
+        baseline_result = row["result"]
         bonus = float(row["bonus"])
         evidence = dict(baseline_result.evidence)
         evidence["alias_bonus"] = bonus

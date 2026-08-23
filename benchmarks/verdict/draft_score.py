@@ -30,6 +30,7 @@ from dataclasses import replace as dataclass_replace
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files
 from benchmarks.similarity.units import load_units
 from code_steward.similarity import (
@@ -79,7 +80,9 @@ def main() -> None:
         if not rows:
             continue
         checkout = (args.checkouts / corpus.name).resolve()
-        corpus_units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        corpus_units = load_units(
+            corpus.name, checkout, corpus_files(corpus, checkout), Exclusions()
+        )
         by_id = {unit.unit_id: unit for unit in corpus_units}
         prepared = {unit.unit_id: shingles(unit.tokens) for unit in corpus_units}
         units = [dataclass_replace(entry.unit, unit_id=entry.unit_id) for entry in corpus_units]
