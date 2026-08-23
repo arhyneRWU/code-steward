@@ -21,7 +21,7 @@ from .similarity import (
     rank_with_floor,
     unit_shingles,
 )
-from .trace import build_slice, render_markdown, slice_to_dict
+from .trace import build_slice, render_markdown, slice_to_dict, undocumented_units
 
 
 def root_from(value: str | None) -> Path:
@@ -284,15 +284,41 @@ def cmd_trace(args: argparse.Namespace) -> int:
     relationships = all_hard_relationships(conn)
     conn.close()
 
-    sliced = build_slice(
-        args.unit,
-        units,
-        relationships,
-        callers_depth=args.callers,
-        callees_depth=args.callees,
-        include_tests=not args.no_tests,
-        limit=args.limit,
-    )
+    def slice_for(unit_id: str):
+        return build_slice(
+            unit_id,
+            units,
+            relationships,
+            callers_depth=args.callers,
+            callees_depth=args.callees,
+            include_tests=not args.no_tests,
+            limit=args.limit,
+        )
+
+    if args.undocumented:
+        targets = undocumented_units(units)
+        if not targets:
+            print("no undocumented functions in scope")
+            return 0
+        bundles = [sliced for unit in targets if (sliced := slice_for(unit.unit_id))]
+        if args.json:
+            print(json.dumps([slice_to_dict(one) for one in bundles], indent=2))
+            return 0
+        # A separator, because the reader is a model being handed
+        # several bundles at once and needs to know where one ends.
+        print(
+            "\n---\n\n".join(
+                render_markdown(root, one, source=not args.signatures) for one in bundles
+            ),
+            end="",
+        )
+        return 0
+
+    if not args.unit:
+        print("trace needs a unit ID, or --undocumented", file=sys.stderr)
+        return 2
+
+    sliced = slice_for(args.unit)
     if sliced is None:
         print(f"unknown unit: {args.unit}", file=sys.stderr)
         return 2
@@ -474,7 +500,12 @@ def build_parser() -> argparse.ArgumentParser:
     trace = sub.add_parser(
         "trace", help="bundle one function with its callers, callees, and tests"
     )
-    trace.add_argument("unit", help="an indexed unit ID")
+    trace.add_argument("unit", nargs="?", help="an indexed unit ID")
+    trace.add_argument(
+        "--undocumented",
+        action="store_true",
+        help="bundle every function that has no docstring, instead of one unit",
+    )
     trace.add_argument("--callers", type=int, default=1, help="how far to walk up (default 1)")
     trace.add_argument("--callees", type=int, default=1, help="how far to walk down (default 1)")
     trace.add_argument("--limit", type=int, default=40, help="maximum units in the slice")
