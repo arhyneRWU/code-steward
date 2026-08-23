@@ -65,6 +65,41 @@ to `x.close()` on a file handle, where `close` happens to be unique
 among our own units, would have the rule confidently invent an edge
 into our own code.
 
+## A second instrument, added before the run
+
+A five-site smoke test of the harness came back **four unverified**,
+which would trip the inconclusive rule below on its own. Two jedi
+configurations and both `goto` and `infer` were tried on three of
+those sites; all six combinations resolved nothing. This is not a
+misconfiguration. Type inference genuinely fails on the receivers
+Django uses -- managers, descriptors, objects assembled at runtime --
+and those are exactly the receivers this rule is aimed at.
+
+An instrument that abstains on the population of interest cannot
+decide the question. So a second one is fixed here, before the run:
+
+**Hand adjudication of 25 sites drawn in hash order from the
+jedi-unverified stratum.** For each, the enclosing function is read
+and the receiver identified from the source: a parameter annotation,
+an assignment, an obvious construction, a documented contract.
+
+| What the source shows | Class |
+| --- | --- |
+| The receiver is one of our indexed types, and the unique unit is its method | **confirmed** |
+| The receiver is a stdlib, third-party, or otherwise non-indexed type | **contradicted** |
+| The source does not determine the receiver | **undetermined** |
+
+Because the method name is unique across our index, the failure mode
+is narrow and legible: the receiver being something we do not index.
+That is a question the source usually answers.
+
+**The bias here is real and unmitigated.** I proposed the rule and I
+am judging it. The protocol is written before the sites are read, the
+per-site judgements and reasons are committed so anyone can check
+them, and the hand pass is **secondary** -- it cannot rescue a
+primary that fails, only decide a primary that abstains. If the two
+instruments disagree in direction, that disagreement is the result.
+
 ## Primary outcome and the decision rule
 
 **Precision** = confirmed / (confirmed + contradicted).
@@ -74,7 +109,7 @@ into our own code.
 | Precision >= 0.95 **and** one-sided 95% Wilson lower bound >= 0.90 | **Adopt the rule.** |
 | Precision >= 0.95 but the bound falls short | Sample is too small to support it. Do not adopt on the point estimate. |
 | Precision < 0.95 | **Reject**, or restrict to a narrower population and pre-register that separately. Do not tune the threshold to make the result pass. |
-| Unverified > 25% of the sample | **Inconclusive.** The oracle is too weak on this corpus to decide, and no adoption follows from a null it could not have detected. |
+| Unverified > 25% of the sample | The primary abstains. The hand pass above decides, under the same 0.95 / 0.90 thresholds, or the result is **inconclusive** if it too returns more than 25% undetermined. |
 
 The 0.95 floor is chosen to match how this project already treats
 false positives elsewhere: the reuse floor of 0.27 was set at the
