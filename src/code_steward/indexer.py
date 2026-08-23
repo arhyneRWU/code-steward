@@ -32,6 +32,12 @@ def _call_name(node: ast.AST) -> str:
     return ""
 
 
+def _is_overload(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+    return any(
+        _call_name(decorator).split(".")[-1] == "overload" for decorator in node.decorator_list
+    )
+
+
 def _hash_source(
     lines: list[str],
     start: int,
@@ -247,12 +253,16 @@ class UnitVisitor(ast.NodeVisitor):
             )
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        if _is_overload(node):
+            return
         self._add_function(node)
         self.stack.append(node.name)
         self.generic_visit(node)
         self.stack.pop()
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        if _is_overload(node):
+            return
         self._add_function(node)
         self.stack.append(node.name)
         self.generic_visit(node)
