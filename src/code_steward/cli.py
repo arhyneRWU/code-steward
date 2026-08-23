@@ -12,12 +12,12 @@ from .config import resolve_excludes
 from .db import all_endpoints, all_units, connect, get_unit
 from .indexer import is_excluded
 from .maintenance import rebuild_index, update_index_file
-from .packet import build_packet
+from .packet import DUPLICATE_LIMIT, build_packet
 from .retrieval import rank_units, retrieve_units
 from .similarity import (
+    REUSE_FLOOR,
     draft_shingles,
-    rank_against,
-    rank_similar_units,
+    rank_with_floor,
     unit_shingles,
 )
 
@@ -137,9 +137,15 @@ def cmd_packet(args: argparse.Namespace) -> int:
         prepared = unit_shingles(root, units, cache=True)
         duplicates = {}
         for result in results:
-            near = rank_similar_units(result.unit.unit_id, units, prepared, limit=3)
-            if near:
-                duplicates[result.unit.unit_id] = near
+            near = rank_with_floor(
+                prepared.get(result.unit.unit_id, frozenset()),
+                units,
+                prepared,
+                DUPLICATE_LIMIT,
+                result.unit.unit_id,
+            )
+            if near.matches:
+                duplicates[result.unit.unit_id] = near.matches
     packet = build_packet(args.query, results, endpoints, args.input, args.returns, duplicates)
     print(json.dumps(packet, indent=2))
     return 0
@@ -162,20 +168,32 @@ def cmd_similar(args: argparse.Namespace) -> int:
         if not needle:
             print("draft is too small to compare", file=sys.stderr)
             return 0
-        matches = rank_against(needle, units, prepared, args.limit)
+        exclude = ""
     else:
         if args.unit not in {unit.unit_id for unit in units}:
             print(f"unknown unit: {args.unit}", file=sys.stderr)
             return 2
-        matches = rank_similar_units(args.unit, units, prepared, args.limit)
+        needle = prepared.get(args.unit, frozenset())
+        exclude = args.unit
+
+    ranking = rank_with_floor(needle, units, prepared, args.limit, exclude, floor=args.floor)
+    matches = ranking.matches
 
     if args.json:
-        print(json.dumps([match.to_dict() for match in matches], indent=2))
+        print(json.dumps(ranking.to_dict(), indent=2))
         return 0
     if not matches:
-        # The common and correct answer. On the benchmark's random
-        # probe stratum it was right 45 times out of 45.
-        print("no existing unit overlaps this one")
+        # A complete answer, not a failed search. The floor is what
+        # lets the tool assert this rather than hand over its best
+        # weak candidates and leave the judgement to the reader.
+        if ranking.below_floor:
+            noun = "candidate" if ranking.below_floor == 1 else "candidates"
+            print(
+                f"nothing above the {ranking.floor:.2f} floor "
+                f"({ranking.below_floor} weaker {noun} suppressed)"
+            )
+        else:
+            print("no existing unit overlaps this one")
         return 0
     for match in matches:
         unit = match.unit
@@ -311,6 +329,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="compare a function you have not written yet; '-' reads stdin",
     )
     similar.add_argument("--limit", type=int, default=8)
+    similar.add_argument(
+        "--floor",
+        type=float,
+        default=REUSE_FLOOR,
+        metavar="SCORE",
+        help=f"discard matches below this overlap (default {REUSE_FLOOR})",
+    )
     similar.add_argument("--json", action="store_true")
     similar.set_defaults(func=cmd_similar)
 

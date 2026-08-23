@@ -122,6 +122,64 @@ def _sample_dirs(parent: Path, minimum_files: int, size: int, subdir: str = "") 
     return [(parent / name / subdir if subdir else parent / name) for name in sorted(chosen)]
 
 
+def _eligible_dirs(parent: Path, minimum_files: int, subdir: str = "") -> list[str]:
+    """Name every directory under ``parent`` big enough to sample."""
+    eligible = []
+    for child in sorted(parent.iterdir()):
+        if not child.is_dir() or child.name.startswith((".", "_")):
+            continue
+        scoped = child / subdir if subdir else child
+        if not scoped.is_dir():
+            continue
+        if len(_python_files(scoped)) < minimum_files:
+            continue
+        eligible.append(child.name)
+    return eligible
+
+
+def _held_out_slice(parent: Path, minimum_files: int, taken: int, size: int, subdir: str = ""):
+    """Take the hash-order slice immediately after the gold sample.
+
+    The slicing happens in hash order, before the alphabetical sort
+    that ``_sample_dirs`` applies to its result. Slicing the sorted
+    output instead would return alphabetically-late members of a
+    larger hash-order prefix, which overlaps the gold sample rather
+    than avoiding it.
+    """
+    ordered = hash_order(_eligible_dirs(parent, minimum_files, subdir))
+    chosen = ordered[taken : taken + size]
+    return [(parent / name / subdir if subdir else parent / name) for name in sorted(chosen)]
+
+
+def held_out_roots(corpus: Corpus, checkout: Path, size: int) -> list[Path]:
+    """Resolve directories the gold sample provably never touched.
+
+    The gold set took the first ``corpus.sample_size`` directories in
+    hash order. This takes the next ``size``. Disjointness is a
+    property of the slice rather than a claim in a docstring, which
+    matters because a threshold chosen on this sample must not have
+    been chosen on the labelled one.
+
+    Django has no held-out slice: its rule selects the whole subtree,
+    so no disjoint slice exists and the caller gets nothing back.
+    """
+    if corpus.name == "home-assistant":
+        parent = checkout / "homeassistant" / "components"
+        return _held_out_slice(parent, 3, corpus.sample_size, size)
+    if corpus.name == "airflow":
+        parent = checkout / "providers"
+        return _held_out_slice(parent, 10, corpus.sample_size, size, subdir="src")
+    return []
+
+
+def held_out_files(corpus: Corpus, checkout: Path, size: int) -> list[Path]:
+    """List every non-test Python file in a corpus's held-out slice."""
+    files: list[Path] = []
+    for root in held_out_roots(corpus, checkout, size):
+        files.extend(_python_files(root))
+    return sorted(set(files))
+
+
 def corpus_roots(corpus: Corpus, checkout: Path) -> list[Path]:
     """Resolve a corpus to the directories its sample rule selects."""
     if corpus.name == "home-assistant":

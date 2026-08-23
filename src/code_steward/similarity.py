@@ -25,6 +25,7 @@ adjusting the prose.
 from __future__ import annotations
 
 import ast
+import hashlib
 from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -53,6 +54,14 @@ MIN_LINES = 5
 MIN_TOKENS = 20
 
 FUNCTION_KINDS = frozenset({"function", "method"})
+
+# Below this overlap a match is treated as coincidence and is not
+# returned at all. Chosen on a held-out cross-corpus null distribution
+# as the smallest floor holding the false-positive rate at or under
+# 1%; see `benchmarks/similarity/floor.py` and `docs/floor.md`. It was
+# not chosen on the frozen gold set, and it is not tuned to maximise
+# anything. Changing it requires re-running that benchmark.
+REUSE_FLOOR = 0.27
 
 
 @dataclass(slots=True, frozen=True)
@@ -123,12 +132,27 @@ def tokenise(text: str) -> tuple[str, ...]:
     return tuple(tokens)
 
 
+def _window_hash(window: tuple[str, ...]) -> int:
+    """Hash one token window to a stable signed 64-bit value.
+
+    Python's built-in ``hash`` is seeded per process, so values it
+    produces are meaningful only inside the run that produced them.
+    That is fine in memory and wrong the moment a value is written to
+    disk: the shingle cache persisted built-in hashes and every entry
+    it returned on a later run was noise, so `similar` silently
+    compared a draft against nothing. A keyed digest costs a few
+    seconds on a large first build and makes the cache work at all.
+    """
+    digest = hashlib.blake2b("\x00".join(window).encode("utf-8"), digest_size=8).digest()
+    return int.from_bytes(digest, "big", signed=True)
+
+
 def shingles(tokens: tuple[str, ...]) -> frozenset[int]:
     """Hash every five-token window of a normalised body."""
     if len(tokens) < SHINGLE_SIZE:
         return frozenset()
     return frozenset(
-        hash(tokens[index : index + SHINGLE_SIZE])
+        _window_hash(tokens[index : index + SHINGLE_SIZE])
         for index in range(len(tokens) - SHINGLE_SIZE + 1)
     )
 
@@ -274,14 +298,13 @@ def draft_shingles(source: str) -> frozenset[int]:
     return shingles(tokens) if len(tokens) >= MIN_TOKENS else frozenset()
 
 
-def rank_against(
+def _rank_all(
     needle: frozenset[int],
     units: list[CodeUnit],
     prepared: dict[str, frozenset[int]],
-    limit: int = 8,
     exclude: str = "",
 ) -> list[SimilarUnit]:
-    """Rank indexed units against any shingle set, drafts included."""
+    """Score every unit surviving blocking, best first, untruncated."""
     if not needle:
         return []
 
@@ -299,7 +322,75 @@ def rank_against(
         ranked.append(SimilarUnit(unit, jaccard(needle, candidate), shared))
 
     ranked.sort(key=lambda row: (-row.score, row.unit.path, row.unit.start_line))
-    return ranked[:limit]
+    return ranked
+
+
+@dataclass(slots=True, frozen=True)
+class Ranking:
+    """Survivors of a floored comparison, and what it discarded."""
+
+    matches: list[SimilarUnit]
+    below_floor: int
+    floor: float
+
+    @property
+    def checked(self) -> int:
+        """How many candidates were scored, kept or not."""
+        return len(self.matches) + self.below_floor
+
+    def to_dict(self) -> dict[str, object]:
+        payload: dict[str, object] = {
+            "matches": [row.to_dict() for row in self.matches],
+            "floor": self.floor,
+        }
+        # Omitted rather than zeroed when nothing was suppressed, so a
+        # present key always means something was actually discarded.
+        if self.below_floor:
+            payload["below_floor"] = self.below_floor
+        return payload
+
+
+def rank_against(
+    needle: frozenset[int],
+    units: list[CodeUnit],
+    prepared: dict[str, frozenset[int]],
+    limit: int = 8,
+    exclude: str = "",
+) -> list[SimilarUnit]:
+    """Rank indexed units against any shingle set, drafts included.
+
+    No floor is applied. Every published figure for this arm was
+    measured through this function, so it stays unfiltered and the
+    benchmarks keep reproducing. Callers that need the product
+    behaviour want `rank_with_floor`.
+    """
+    return _rank_all(needle, units, prepared, exclude)[:limit]
+
+
+def rank_with_floor(
+    needle: frozenset[int],
+    units: list[CodeUnit],
+    prepared: dict[str, frozenset[int]],
+    limit: int = 8,
+    exclude: str = "",
+    floor: float = REUSE_FLOOR,
+) -> Ranking:
+    """Rank, then discard everything below ``floor``.
+
+    This is the product path. Returning nothing is a real answer here
+    rather than a failure: the ranker previously handed back its best
+    candidates however weak they were, and a reviewer shown eight
+    plausible functions picks one. On a third of the cases where the
+    right answer was to write the function, that is what happened.
+
+    The count of suppressed candidates travels with the result.
+    "Checked, found eleven, none close enough" is a different fact
+    from "checked, found none", and a reviewer should be able to tell
+    them apart.
+    """
+    ranked = _rank_all(needle, units, prepared, exclude)
+    kept = [row for row in ranked if row.score >= floor]
+    return Ranking(matches=kept[:limit], below_floor=len(ranked) - len(kept), floor=floor)
 
 
 def rank_similar_units(

@@ -222,3 +222,8 @@ bench-reviewer-score: guard-venv ## Score reviewer verdicts (PROMPTS=, ANSWERS= 
 	@$(PY) -m benchmarks.verdict.agent_score \
 	  --prompts $(PROMPTS) --answers $(ANSWERS) \
 	  --output benchmarks/verdict/reviewer.json
+
+.PHONY: bench-floor
+bench-floor: guard-venv ## Choose the relevance floor on held-out data (CHECKOUTS= required)
+	@$(PY) -m benchmarks.similarity.floor \
+	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/floor.json

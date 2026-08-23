@@ -13,6 +13,13 @@ by construction: a changed body produces a different hash and misses.
 There is no invalidation logic to get wrong, and no approximation that
 would change what the benchmark measured.
 
+**This only holds because shingle values are stable across
+processes.** They were not originally: they came from the built-in
+`hash`, which is seeded per process, so every row this cache returned
+on a later run decoded to values nothing could match. `similar`
+compared drafts against noise and reported no overlap. See
+`similarity._window_hash`.
+
 The cache is disposable. Deleting it costs one slow call.
 """
 
@@ -24,14 +31,19 @@ import zlib
 from collections.abc import Iterable
 from pathlib import Path
 
+# Versioned in the table name. Rows written before the shingle hash
+# became stable across processes hold values from a dead process's
+# hash seed; they are unrecognisable rather than merely stale, and a
+# new table is the cheapest way to leave them behind.
 SCHEMA = """
-CREATE TABLE IF NOT EXISTS shingles (
+CREATE TABLE IF NOT EXISTS shingles_v2 (
     body_hash TEXT PRIMARY KEY,
     payload   BLOB NOT NULL
 ) WITHOUT ROWID;
+DROP TABLE IF EXISTS shingles;
 """
 
-# Signed 64-bit, because these are Python hash() values.
+# Signed 64-bit, matching similarity._window_hash.
 _PACK = "<q"
 
 
@@ -76,7 +88,7 @@ def read(conn: sqlite3.Connection, body_hashes: Iterable[str]) -> dict[str, froz
         chunk = wanted[start : start + block]
         placeholders = ",".join("?" * len(chunk))
         rows = conn.execute(
-            f"SELECT body_hash, payload FROM shingles WHERE body_hash IN ({placeholders})",
+            f"SELECT body_hash, payload FROM shingles_v2 WHERE body_hash IN ({placeholders})",
             chunk,
         ).fetchall()
         for body_hash, payload in rows:
@@ -92,7 +104,7 @@ def read(conn: sqlite3.Connection, body_hashes: Iterable[str]) -> dict[str, froz
 def write(conn: sqlite3.Connection, entries: dict[str, frozenset[int]]) -> None:
     """Store newly computed sets, replacing any stale row."""
     conn.executemany(
-        "INSERT OR REPLACE INTO shingles (body_hash, payload) VALUES (?, ?)",
+        "INSERT OR REPLACE INTO shingles_v2 (body_hash, payload) VALUES (?, ?)",
         [(body_hash, _encode(values)) for body_hash, values in entries.items() if body_hash],
     )
     conn.commit()
