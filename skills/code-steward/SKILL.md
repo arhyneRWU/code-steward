@@ -30,6 +30,7 @@ to misuse this tool.
 | Compare code to code | `similar "<unit>"` | **Strong.** Precision 1.000 on 308 blind-labelled pairs. |
 | Duplication across a whole path | `trace --dry` | **A report.** Fires on ~53% of paths; the rate compounds with slice size. |
 | Docstrings for undocumented code | `trace --undocumented` | Selector is exact. **The docstring itself is unverifiable — propose, do not apply.** |
+| Understand a function, with a broader graph installed | `trace ... --members-from` | **Strong, and better.** +0.207 caller recall over our own selection on 200 Django functions. |
 | Guess where something lives | `search "<intent>"` | **Weak.** Hit@1 33%; plain grep scores 53%. Use grep first. |
 | Predict a duplicate before writing | `similar --draft` | **Weak.** 0.460. One cheap attempt, then move on. |
 
@@ -169,6 +170,63 @@ it cleared the bar — do not second-guess the score, open it.
 Its blind spot is worth memorising: it compares text. A function copied and
 tidied scores 0.941; the same function with every local variable renamed
 scores 0.015.
+
+## When a broader graph is installed: select there, assemble here
+
+**Measured, on 200 Django functions.** Our own call resolution is
+conservative: it records `obj.method()` as unresolved and never turns it into
+an edge, so slices miss real callers. A broader graph -- Graph Code Review, or
+anything else -- finds them. Rendering *its* selection through *our* bundle
+scored **+0.207 caller recall** over our own selection, at a **median of 24
+bytes fewer** than our own bundle, and matched that graph's own coverage
+exactly while costing **48% of the bytes** its own output needs.
+[`docs/context-cost.md`](../../docs/context-cost.md) has the run and the
+caveats.
+
+So when such a graph is present and current, use it. The order is: **select
+there, assemble here.**
+
+### The pattern
+
+```bash
+# 1. Gate on currency FIRST. A stale graph is treated as an absent one.
+built=$(code-review-graph status --repo . | sed -n 's/^Built at commit: //p')
+case "$(git rev-parse HEAD)" in "$built"*) ;; *) echo "stale graph: use plain trace"; exit 0;; esac
+
+# 2. Select: ask the broader graph who the neighbours are.
+code-review-graph query --repo . callers_of "$PWD/django/http/response.py::HttpResponseBase.has_header" \
+  | jq -r '.results[] | "caller:" + (.file_path | ltrimstr(env.PWD + "/")) + "::" + (.qualified_name | split("::")[-1])' \
+  > members.txt
+
+# 3. Assemble: one bundle, full bodies, call sites recomputed from our AST.
+code-steward trace "django.http.response::HttpResponseBase.has_header" --members-from members.txt
+```
+
+That example is the real one: plain `trace` on `has_header` finds **no
+callers**, and the two-step finds **nine**, each with the line inside it where
+the call happens.
+
+`--members-from` reads one ref per line -- a unit ID, `path:line`, or
+`path::name` -- each optionally prefixed `caller:`, `callee:` or `test:`. It
+does not know or care which tool produced the list. A ref that resolves to
+nothing indexed is **printed to stderr, never dropped**.
+
+### The rules that come with it
+
+- **Gate before you trust.** If the graph cannot prove it matches the current
+  tree, treat it as absent and run plain `trace`. Do not use it "with a
+  caveat" -- a caveat is a cost the reader pays to reach the same decision.
+- **Absence is the supported configuration.** No such graph installed means
+  plain `trace`, no warning, no degradation. Every number this project
+  publishes is reproducible without it.
+- **Selection only.** Use the external graph to decide *which units belong in
+  the slice*. Do not use it to rank candidates or score reuse: that was tested
+  here and moved no retrieval metric in any direction.
+- **Our edges win a disagreement**, because they are the ones this project can
+  reproduce and test.
+- **Check what came back.** The bundle header prints the member count. If
+  `--members-from` yields fewer members than plain `trace` did, something is
+  wrong with the list, not with the repository.
 
 ## Empty results are answers
 

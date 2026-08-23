@@ -22,10 +22,13 @@ from .similarity import (
 )
 from .trace import (
     build_slice,
+    parse_member_refs,
     path_duplication,
     render_duplication,
     render_markdown,
+    resolve_member_refs,
     resolve_target,
+    slice_from_members,
     slice_to_dict,
     undocumented_units,
 )
@@ -388,7 +391,26 @@ def cmd_trace(args: argparse.Namespace) -> int:
             )
         return 2
 
-    sliced = slice_for(targets[0].unit_id)
+    if args.members_from:
+        # Someone else selected the members; we assemble them. The
+        # 200-target Django run in `docs/context-cost.md` found an
+        # external selector reached 21 points more of the real caller
+        # set than our own conservative resolution, at a median of 24
+        # bytes fewer once rendered here.
+        text = (
+            sys.stdin.read()
+            if args.members_from == "-"
+            else Path(args.members_from).read_text(encoding="utf-8")
+        )
+        resolved, unresolved = resolve_member_refs(parse_member_refs(text), units)
+        sliced = slice_from_members(root, targets[0], resolved)
+        for ref in unresolved:
+            # Reported, never dropped: a bundle silently missing a
+            # member is worse than one that says what it could not
+            # place.
+            print(f"unresolved member: {ref}", file=sys.stderr)
+    else:
+        sliced = slice_for(targets[0].unit_id)
     if sliced is None:
         print(f"unknown unit: {args.unit}", file=sys.stderr)
         return 2
@@ -604,6 +626,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="how far to walk down (default 1, or 2 with --endpoints)",
     )
     trace.add_argument("--limit", type=int, default=40, help="maximum units in the slice")
+    trace.add_argument(
+        "--members-from",
+        default="",
+        metavar="FILE",
+        help="assemble the slice from this member list instead of our own edges "
+        "('-' for stdin); one ref per line, optionally prefixed caller:/callee:/test:",
+    )
     trace.add_argument("--no-tests", action="store_true", help="leave TESTED_BY units out")
     trace.add_argument(
         "--signatures", action="store_true", help="signatures instead of full bodies"

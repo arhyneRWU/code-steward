@@ -1,6 +1,9 @@
 # The companion contract
 
-**Status: specification. Nothing here is implemented.** This document
+**Status: partly implemented, and amended by measurement.** One
+piece is now built and measured -- external neighbourhood enumeration
+through `trace --members-from`, see [`context-cost.md`](context-cost.md).
+The rest is still specification. This document
 says what an integration between Code Steward and
 [Graph Code Review](https://github.com/tirth8205/code-review-graph)
 would have to satisfy before it could be built. It deliberately stops
@@ -58,8 +61,33 @@ graph that cannot prove currency is treated as absent.
 
 ## What the integration would actually read
 
-Their graph is queried for facts about *one already-selected unit*,
-never for candidate generation and never for scoring:
+**Amended after measurement.** This section originally read "never
+for candidate generation and never for scoring". The scoring half
+stands and was never in doubt. The other half was written before any
+evidence existed, and the evidence, when it arrived, contradicted it:
+on 200 Django functions their node selection rendered through this
+project's bundle reached **+0.207 caller recall** over this project's
+own selection, at a median of **24 bytes fewer**. See
+[`context-cost.md`](context-cost.md).
+
+The rule is therefore narrowed to what was actually tested and
+rejected:
+
+- **Permitted: neighbourhood enumeration.** Their graph may decide
+  *which units belong in a slice*, through `trace --members-from`,
+  which accepts a member list from any producer and knows nothing
+  about theirs.
+- **Still forbidden: ranking and scoring.** Reranking retrieval by
+  one resolved `CALLS` hop was measured and moved no metric in any
+  direction. Nothing here revisits that.
+
+The distinction is real rather than verbal: enumeration answers *what
+is adjacent*, which their graph demonstrably knows better, while
+ranking answers *what matters most*, where the measured answer is
+that it adds nothing.
+
+Their graph is also queried for facts about *one already-selected
+unit*, never for scoring:
 
 | Fact | Why it belongs in a decision, not a ranking |
 | --- | --- |
@@ -129,7 +157,8 @@ this text already exist here*.
 
 - Not a dependency. Neither project may require the other to run.
 - Not a ranking input. Tested, rejected, and not revisited here.
-- Not a claim of measured value. Nothing in this document has been
-  measured. It is a design constraint set, and a design that has not
-  been measured is a hypothesis. It should not be cited as evidence
-  that composing the two tools helps.
+- Not a claim of measured value, **except for the one part that now
+  is**. Neighbourhood enumeration has been measured on 200 Django
+  functions and the result is in [`context-cost.md`](context-cost.md).
+  Everything else in this document remains a design constraint set,
+  and a design that has not been measured is a hypothesis.
