@@ -58,6 +58,45 @@ Resolution is deliberately conservative. Same-module declarations and unambiguou
 
 Call extraction does not by itself change retrieval ranking. Structural retrieval remains a separate benchmarked decision.
 
+## External graph facts
+
+Code Steward may consume facts produced by an external code-intelligence
+tool, but those facts are never authoritative and never enter the
+tables described above.
+
+**Externally derived facts live in a separate opt-in store.** They are
+not written to `hard_relationships` under a new `provenance`, and they
+are not written to `soft_relationships`. Provenance separates
+extractors that Code Steward controls and can reproduce. An external
+tool is a different category: its availability, version, and
+completeness are outside this project's control.
+
+The reason is reproducibility. `hard_relationships` backs the frozen
+retrieval benchmark and the real-repository validation harness, both
+of which exist to produce numbers that are comparable across machines
+and across CI runs. An index whose contents depend on whether an
+external tool happened to be installed at build time is not
+comparable, and nothing in the resulting artifact would say which
+variant was produced.
+
+Three rules follow:
+
+1. An enrichment pass is opt-in and explicit. It never runs as a side
+   effect of `build` or `update`.
+2. No frozen-benchmark path and no real-repository validation path may
+   invoke it. Benchmark results must be reproducible from this
+   repository and a Python interpreter alone.
+3. Any consumer of external facts must gate on completeness and
+   staleness before reading them. A partially built external graph
+   answers queries about the fraction of the repository it has seen,
+   usually without signalling that it is incomplete, so an ungated
+   consumer will silently record confident facts about a small sample.
+
+These rules constrain where external facts may be stored and when they
+may be read. They do not settle whether any particular integration is
+worth building; see `docs/retrieval.md` for the measured verdict on
+structural retrieval.
+
 ## Deliberate limits
 
 This storage and extraction layer does not yet:
