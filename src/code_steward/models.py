@@ -6,6 +6,8 @@ from typing import Any
 
 @dataclass(slots=True)
 class CodeUnit:
+    """One indexed declaration with its retrieval metadata."""
+
     unit_id: str
     path: str
     kind: str
@@ -32,6 +34,8 @@ class CodeUnit:
 
 @dataclass(slots=True)
 class Endpoint:
+    """One FastAPI route discovered on an indexed unit."""
+
     unit_id: str
     path: str
     method: str
@@ -45,6 +49,8 @@ class Endpoint:
 
 @dataclass(slots=True, frozen=True)
 class HardRelationship:
+    """Deterministic code fact linking a unit to a target."""
+
     source_unit_id: str
     relation: str
     target_kind: str
@@ -60,6 +66,8 @@ class HardRelationship:
 
 @dataclass(slots=True, frozen=True)
 class SoftRelationship:
+    """Scored similarity inference between two indexed units."""
+
     source_unit_id: str
     relation: str
     target_unit_id: str
@@ -75,6 +83,8 @@ class SoftRelationship:
 
 @dataclass(slots=True)
 class SearchResult:
+    """One scored retrieval candidate with its evidence."""
+
     unit: CodeUnit
     score: float
     evidence: dict[str, float] = field(default_factory=dict)

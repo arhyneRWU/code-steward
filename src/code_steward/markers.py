@@ -74,6 +74,7 @@ def _comment_lines(text: str) -> list[tuple[int, str]]:
 
 
 def parse_markers_text(text: str) -> ParsedMarkers:
+    """Parse Code Steward unit tags and regions from source."""
     aliases: list[UnitAlias] = []
     regions: list[TaggedRegion] = []
     stack: list[tuple[str, int, str]] = []
@@ -133,6 +134,7 @@ def parse_markers_text(text: str) -> ParsedMarkers:
 
 
 def parse_markers(path: Path) -> ParsedMarkers:
+    """Parse Code Steward tags from a Python file on disk."""
     return parse_markers_text(path.read_text(encoding="utf-8"))
 
 
@@ -142,4 +144,5 @@ def parse_regions_text(text: str) -> list[TaggedRegion]:
 
 
 def parse_regions(path: Path) -> list[TaggedRegion]:
+    """Read only the conceptual regions tagged in a file."""
     return list(parse_markers(path).regions)

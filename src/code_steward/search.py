@@ -31,6 +31,7 @@ def search_units(
     input_types: list[str] | None = None,
     return_type: str | None = None,
 ) -> list[SearchResult]:
+    """Score code units by lexical and typed metadata similarity."""
     input_types = [value for value in (input_types or []) if value]
     results: list[SearchResult] = []
 

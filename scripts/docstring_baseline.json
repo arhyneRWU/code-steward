@@ -1,0 +1,56 @@
+{
+  "_comment": "Docstring coverage ratchet. Raise it when coverage improves; never lower it by hand. Refresh with: make docs-check-update",
+  "overall_percent": 36.22,
+  "documented": 46,
+  "total": 127,
+  "modules": {
+    "code_steward.cli": {
+      "documented": 0,
+      "total": 14
+    },
+    "code_steward.config": {
+      "documented": 3,
+      "total": 3
+    },
+    "code_steward.db": {
+      "documented": 5,
+      "total": 25
+    },
+    "code_steward.gitmeta": {
+      "documented": 1,
+      "total": 1
+    },
+    "code_steward.indexer": {
+      "documented": 7,
+      "total": 27
+    },
+    "code_steward.maintenance": {
+      "documented": 3,
+      "total": 6
+    },
+    "code_steward.markers": {
+      "documented": 5,
+      "total": 9
+    },
+    "code_steward.models": {
+      "documented": 5,
+      "total": 10
+    },
+    "code_steward.packet": {
+      "documented": 1,
+      "total": 1
+    },
+    "code_steward.relationships": {
+      "documented": 7,
+      "total": 18
+    },
+    "code_steward.retrieval": {
+      "documented": 8,
+      "total": 10
+    },
+    "code_steward.search": {
+      "documented": 1,
+      "total": 3
+    }
+  }
+}
