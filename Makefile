@@ -246,3 +246,12 @@ bench-draft-score: guard-venv ## Score realistic drafts (CHECKOUTS=, PROMPTS=, D
 bench-alarm: guard-venv ## Measure how often check fires on ordinary code (CHECKOUTS= required)
 	@$(PY) -m benchmarks.similarity.alarm \
 	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/alarm.json
+
+.PHONY: bench-check-history
+bench-check-history: guard-venv ## Replay commits through check (REPO=, OUT= required)
+	@test -n "$(REPO)" && test -n "$(OUT)" || \
+	  { echo 'usage: make bench-check-history REPO=<clone> OUT=<file>'; exit 2; }
+	@echo 'NOTE: this checks out commits in REPO. Use a throwaway clone.'
+	@$(PY) -m benchmarks.check_history \
+	  --repo $(REPO) --commits $(or $(COMMITS),40) \
+	  --label $(or $(LABEL),replay) --output $(OUT)

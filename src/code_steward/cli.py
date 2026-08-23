@@ -181,7 +181,14 @@ def cmd_check(args: argparse.Namespace) -> int:
         print("no changed Python files")
         return 0
 
-    findings, checked = check_files(root, paths, units, floor=args.floor, limit=args.limit)
+    findings, checked = check_files(
+        root,
+        paths,
+        units,
+        floor=args.floor,
+        limit=args.limit,
+        base="" if args.all_overlaps else args.base,
+    )
 
     if args.json:
         print(
@@ -196,10 +203,11 @@ def cmd_check(args: argparse.Namespace) -> int:
         )
         return 1 if findings and args.fail_on_overlap else 0
 
+    scope = "overlap existing code" if args.all_overlaps else "introduce new overlap"
     if not findings:
         # An assertion, not a failed search. The floor is what makes
         # it one: spurious matches were measured at roughly 0.6%.
-        print(f"{checked} changed function(s) checked, none overlap existing code")
+        print(f"{checked} changed function(s) checked, none {scope}")
         return 0
 
     for finding in findings:
@@ -208,7 +216,9 @@ def cmd_check(args: argparse.Namespace) -> int:
             print(
                 f"    {row.score:.2f}  {row.unit.unit_id}  ({row.unit.path}:{row.unit.start_line})"
             )
-    print(f"\n{len(findings)} of {checked} changed function(s) overlap existing code")
+    print(f"\n{len(findings)} of {checked} changed function(s) {scope}")
+    if not args.all_overlaps:
+        print("Overlaps that predate the change are hidden; --all-overlaps shows them.")
     return 1 if args.fail_on_overlap else 0
 
 
@@ -407,6 +417,11 @@ def build_parser() -> argparse.ArgumentParser:
         "paths", nargs="*", help="files to check; defaults to what this tree changes"
     )
     check.add_argument("--base", default="main", help="branch to diff against (default main)")
+    check.add_argument(
+        "--all-overlaps",
+        action="store_true",
+        help="report every overlap, not only the ones this change introduced",
+    )
     check.add_argument("--limit", type=int, default=3)
     check.add_argument(
         "--floor",

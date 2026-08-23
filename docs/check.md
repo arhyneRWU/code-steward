@@ -30,9 +30,15 @@ real body exists, early enough that deleting it is still cheap.
 code-steward check                      # everything this branch changes
 code-steward check path/to/file.py      # specific files
 code-steward check --base develop       # diff against another branch
+code-steward check --all-overlaps       # include duplication that predates the change
+code-steward check --rate               # this repo's baseline duplication
 code-steward check --fail-on-overlap    # exit 1, for a hook or CI
 code-steward check --json               # structured output
 ```
+
+By default only overlaps **your change introduced** are reported --
+see [below](#only-overlaps-your-change-introduced), it is a 3.1x
+difference in how much the command says.
 
 It reports the changed function, what it overlaps, and where:
 
@@ -132,13 +138,36 @@ you block.
 The default is deliberately report-and-exit-0 for this reason.
 `--fail-on-overlap` exists, and it is opt-in, and this section is why.
 
-### What would improve it
+### Only overlaps your change introduced
 
-Reporting only the overlaps a change *introduces*, rather than every
-overlap a changed function has. A function that already duplicated
-something before you touched it is not your finding, and on
-duplication-heavy repositories that distinction would remove most of
-the noise. Not built, and the obvious next thing.
+This is the default, and it is why the table above is survivable.
+
+A function that already duplicated something before you touched it is
+not your finding. `check` therefore compares each changed function
+against **its own previous version at `--base`** and reports only the
+overlaps that are new. A function with no previous version -- newly
+written, or renamed -- has introduced all of them.
+
+Measured by replaying 32 real commits of this repository, indexing
+each commit's parent and checking the commit against it:
+
+| | Findings | Per commit | Share of changed functions |
+| --- | --- | --- | --- |
+| Every overlap | 223 | 7.0 | 20.2% |
+| **Only introduced** | **72** | **2.2** | **6.5%** |
+
+**3.1x fewer findings.** Two per commit is a report someone reads;
+seven is one they skim. The share of changed functions that trigger
+anything drops from a fifth to a fifteenth.
+
+What moves less: 27 of 32 commits had at least one finding before,
+22 of 32 after. The filter mostly thins each report rather than
+removing it, which is the honest way to describe it.
+
+`--all-overlaps` restores the unfiltered behaviour. It is the right
+flag when you are auditing an existing codebase rather than reviewing
+a change, and `check --rate` is the whole-repository version of the
+same question.
 
 ## Honest limits
 
@@ -150,6 +179,13 @@ the noise. Not built, and the obvious next thing.
   editing an already-indexed function does not match its previous
   revision. Rename the function *and* the file and that protection
   stops applying; you will see your own old code as a duplicate.
+- **Renaming a function makes all its overlaps look introduced.** The
+  baseline is matched on the function's name, so a rename reads as a
+  new function. That is usually the behaviour you want and
+  occasionally noisy.
+- **No baseline means no filtering.** A new file, a missing `--base`
+  ref, or a previous version that does not parse all fall back to
+  reporting every overlap for that file.
 - **Functions under five lines are skipped** entirely, along with
   anything under twenty normalised tokens. Two identical three-line
   properties are not a finding worth making.

@@ -133,6 +133,48 @@ def alarm_rate(
     return fired, len(functions)
 
 
+def _baseline_units(project_root: Path, path: Path, base: str) -> dict[str, frozenset[int]] | None:
+    """Shingle every function in ``path`` as it exists at ``base``.
+
+    Returns None when there is no baseline -- a new file, an
+    unreadable ref, or a version that does not parse. None and an
+    empty dict mean different things to the caller: None is "this
+    function had no previous version, so every overlap it has is
+    new", and an empty dict is "it had one and it contained nothing".
+    """
+    try:
+        rel = path.resolve().relative_to(project_root.resolve()).as_posix()
+    except ValueError:
+        return None
+    result = subprocess.run(
+        ["git", "show", f"{base}:{rel}"],
+        cwd=project_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+
+    # The scratch file must survive until the shingles are built:
+    # unit_shingles re-reads each unit's path from disk rather than
+    # holding the source it was parsed from.
+    scratch = project_root / ".code-steward" / "_baseline.py"
+    try:
+        scratch.parent.mkdir(parents=True, exist_ok=True)
+        scratch.write_text(result.stdout, encoding="utf-8")
+        units, _ = index_python_file(project_root, scratch)
+        prepared = unit_shingles(project_root, units, cache=False)
+    except (SyntaxError, UnicodeDecodeError, ValueError, OSError):
+        return None
+    finally:
+        scratch.unlink(missing_ok=True)
+    # Key on the bare function name. The unit ID embeds the module
+    # path, which the scratch file changes, and a rename is meant to
+    # read as a new function anyway.
+    return {unit.name: prepared[unit.unit_id] for unit in units if unit.unit_id in prepared}
+
+
 def check_files(
     project_root: Path,
     paths: list[Path],
@@ -140,6 +182,7 @@ def check_files(
     *,
     floor: float = REUSE_FLOOR,
     limit: int = 3,
+    base: str = "",
 ) -> tuple[list[Finding], int]:
     """Compare every function in ``paths`` against the index.
 
@@ -148,6 +191,17 @@ def check_files(
     unit ID**: a file already indexed at an older revision would
     otherwise match its own previous version at close to 1.0 and
     report every edit as a duplicate.
+
+    When ``base`` is set, only overlaps the change *introduced* are
+    reported. A function that already duplicated something before it
+    was touched is not the author's finding, and on a repository
+    whose baseline duplication runs to 30-60% -- measured, see
+    `docs/check.md` -- that distinction is most of the difference
+    between a report worth reading and noise.
+
+    An overlap counts as introduced when the previous version of the
+    same function did not have it. A function with no previous
+    version has introduced all of them.
     """
     prepared = unit_shingles(project_root, indexed, cache=True)
     findings: list[Finding] = []
@@ -161,6 +215,8 @@ def check_files(
             # not this command's. Skip it rather than failing the run.
             continue
         local = unit_shingles(project_root, units, cache=False)
+        before = _baseline_units(project_root, path, base) if base else None
+
         for unit in units:
             if unit.kind not in FUNCTION_KINDS:
                 continue
@@ -173,8 +229,25 @@ def check_files(
             ranking: Ranking = rank_with_floor(
                 needle, indexed, prepared, limit, unit.unit_id, floor=floor
             )
-            if ranking.matches:
-                findings.append(Finding(unit, ranking.matches, ranking.below_floor))
+            matches = ranking.matches
+            if base and before is not None and unit.name in before:
+                already = {
+                    row.unit.unit_id
+                    for row in rank_with_floor(
+                        before[unit.name],
+                        indexed,
+                        prepared,
+                        # Unlimited, so a pre-existing overlap pushed
+                        # off the end of the old top-N does not come
+                        # back looking newly introduced.
+                        len(indexed),
+                        unit.unit_id,
+                        floor=floor,
+                    ).matches
+                }
+                matches = [row for row in matches if row.unit.unit_id not in already]
+            if matches:
+                findings.append(Finding(unit, matches, ranking.below_floor))
 
     findings.sort(key=lambda row: -row.matches[0].score)
     return findings, checked
