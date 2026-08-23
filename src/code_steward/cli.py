@@ -21,7 +21,14 @@ from .similarity import (
     rank_with_floor,
     unit_shingles,
 )
-from .trace import build_slice, render_markdown, slice_to_dict, undocumented_units
+from .trace import (
+    build_slice,
+    path_duplication,
+    render_duplication,
+    render_markdown,
+    slice_to_dict,
+    undocumented_units,
+)
 
 
 def root_from(value: str | None) -> Path:
@@ -328,12 +335,13 @@ def cmd_trace(args: argparse.Namespace) -> int:
             return 0
         # A separator, because the reader is a model being handed
         # several bundles at once and needs to know where one ends.
-        print(
-            "\n---\n\n".join(
-                render_markdown(root, one, source=not args.signatures) for one in bundles
-            ),
-            end="",
-        )
+        rendered = []
+        for one in bundles:
+            body = render_markdown(root, one, source=not args.signatures)
+            if args.dry:
+                body += "\n" + render_duplication(path_duplication(root, one, units))
+            rendered.append(body)
+        print("\n---\n\n".join(rendered), end="")
         return 0
 
     if not args.unit:
@@ -345,10 +353,26 @@ def cmd_trace(args: argparse.Namespace) -> int:
         print(f"unknown unit: {args.unit}", file=sys.stderr)
         return 2
 
+    overlaps = path_duplication(root, sliced, units) if args.dry else []
     if args.json:
-        print(json.dumps(slice_to_dict(sliced), indent=2))
+        payload = slice_to_dict(sliced)
+        if args.dry:
+            payload["duplication"] = [
+                {
+                    "unit": overlap.unit.unit_id,
+                    "overlaps": [
+                        {"unit": match.unit.unit_id, "score": round(match.score, 2)}
+                        for match in overlap.matches
+                    ],
+                }
+                for overlap in overlaps
+            ]
+        print(json.dumps(payload, indent=2))
         return 0
     print(render_markdown(root, sliced, source=not args.signatures), end="")
+    if args.dry:
+        print()
+        print(render_duplication(overlaps), end="")
     return 0
 
 
@@ -532,6 +556,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--base",
         default="",
         help="with --undocumented, only functions in files changed since this ref",
+    )
+    trace.add_argument(
+        "--dry",
+        action="store_true",
+        help="also report duplication across every unit on the path",
     )
     trace.add_argument("--callers", type=int, default=1, help="how far to walk up (default 1)")
     trace.add_argument("--callees", type=int, default=1, help="how far to walk down (default 1)")
