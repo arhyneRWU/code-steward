@@ -1,0 +1,50 @@
+{
+  "arms": [
+    {
+      "arm": "packet",
+      "cases_scored": 250,
+      "false_positive_rate": 0.198,
+      "mean_bytes": 2663.4,
+      "negatives": 91,
+      "negatives_false_positive": 18,
+      "negatives_unlabelled_evidence": 73,
+      "positives": 159,
+      "positives_surfaced": 72,
+      "surfaced_rate": 0.453
+    },
+    {
+      "arm": "packet-reuse",
+      "cases_scored": 250,
+      "false_positive_rate": 0.275,
+      "mean_bytes": 4259.5,
+      "negatives": 91,
+      "negatives_false_positive": 25,
+      "negatives_unlabelled_evidence": 66,
+      "positives": 159,
+      "positives_surfaced": 98,
+      "surfaced_rate": 0.616
+    },
+    {
+      "arm": "draft-similar",
+      "cases_scored": 250,
+      "false_positive_rate": 0.264,
+      "mean_bytes": 2636.3,
+      "negatives": 91,
+      "negatives_false_positive": 24,
+      "negatives_unlabelled_evidence": 65,
+      "positives": 159,
+      "positives_surfaced": 158,
+      "surfaced_rate": 0.994
+    }
+  ],
+  "cases_built": 496,
+  "duplicate_limit": 3,
+  "excluded": {
+    "by_reason": {
+      "undocumented": 246
+    },
+    "total": 246
+  },
+  "packet_limit": 8,
+  "schema_version": 1
+}
