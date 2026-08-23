@@ -175,3 +175,21 @@ bench-precision: guard-venv ## Score packet precision and noise (OUT= required)
 	  --arm code-steward=$(OUT)/retrieval-baseline.json \
 	  --arm text-search=$(OUT)/grep-baseline.json \
 	  --output-dir $(OUT)
+
+.PHONY: bench-similarity-corpora
+bench-similarity-corpora: ## Fetch the pinned similarity corpora (CHECKOUTS= required)
+	@test -n "$(CHECKOUTS)" || { echo 'usage: make bench-similarity-corpora CHECKOUTS=<dir>'; exit 2; }
+	@scripts/fetch_similarity_corpora.sh "$(CHECKOUTS)"
+
+.PHONY: bench-similarity-pairs
+bench-similarity-pairs: guard-venv ## Build the blind similarity sheet (CHECKOUTS=, WORK= required)
+	@$(PY) -m benchmarks.similarity.make_pairs \
+	  --checkouts $(CHECKOUTS) --work $(WORK) \
+	  --sheet $(WORK)/sheet.json --key $(WORK)/key.json
+
+.PHONY: bench-similarity
+bench-similarity: guard-venv ## Score every reuse-similarity arm (CHECKOUTS=, WORK= required)
+	@$(PY) -m benchmarks.similarity.score \
+	  --checkouts $(CHECKOUTS) --work $(WORK) \
+	  --labels benchmarks/similarity/reuse_pair_labels.json \
+	  --output $(WORK)/similarity-scores.json
