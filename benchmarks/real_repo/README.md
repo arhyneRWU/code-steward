@@ -20,6 +20,8 @@ The GitHub Actions workflow checks out that exact upstream commit, builds a Code
 
 The workflow then evaluates the unchanged production `retrieve_units()` pipeline against the manually verified cases in `requests_retrieval.json`. The retrieval report records Hit@1/3/5/K, macro recall, MRR, known traps and redundancy, returned candidate count, packet bytes, and retrieval latency. `CALLS` relationships are not consumed by this baseline.
 
+`calls_reachability.py` is a separate structural opportunity probe. It starts from the unchanged production candidate packet and asks whether missed gold units are one resolved `CALLS` hop away in the outgoing, incoming, or union graph. It does not alter retrieval ranking or relationship extraction.
+
 The generated JSON, Markdown summaries, and SQLite database are uploaded as a workflow artifact. The upstream source itself is not vendored into Code Steward.
 
 ## Manual run
@@ -34,6 +36,11 @@ python benchmarks/real_repo/validate.py \
   --commit 8f8b212de8c2129d7954c6cd373762880375620a
 
 python benchmarks/real_repo/retrieval_baseline.py \
+  --database validation-results/requests/index.sqlite3 \
+  --cases benchmarks/real_repo/requests_retrieval.json \
+  --output-dir validation-results/requests
+
+python benchmarks/real_repo/calls_reachability.py \
   --database validation-results/requests/index.sqlite3 \
   --cases benchmarks/real_repo/requests_retrieval.json \
   --output-dir validation-results/requests
