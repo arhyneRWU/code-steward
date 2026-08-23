@@ -131,3 +131,45 @@ def test_arm_score_serialises_every_reported_figure():
     payload = ArmScore(arm="a", corpus="c", returned=1, labelled=1, positives=1).to_dict()
     for field in ("precision", "recall_in_pool", "f1", "unlabelled", "bytes_returned"):
         assert field in payload
+
+
+def test_the_depth_analysis_marks_uninterpretable_rows():
+    """Past the pool depth, most returned pairs are unlabelled.
+
+    Reading the committed ranking deeper produces a flattering
+    precision over a shrinking labelled subset. The report has to say
+    which rows mean something, or the table invites the same mistake
+    that made `body-rapidfuzz` unreportable.
+    """
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    payload = json.loads(
+        (root / "benchmarks" / "similarity" / "depth.json").read_text(encoding="utf-8")
+    )
+    rows = {row["depth"]: row for row in payload["depth_curve"]}
+    pool_depth = payload["pool_depth"]
+
+    for depth, row in rows.items():
+        assert row["interpretable"] is (depth <= pool_depth)
+        if row["interpretable"]:
+            assert row["unlabelled_share"] == 0.0
+            assert row["precision_over_labelled"] == row["precision_pessimistic"]
+        else:
+            # The gap between the two is the whole warning.
+            assert row["precision_over_labelled"] > row["precision_pessimistic"]
+
+
+def test_the_detection_floor_is_reported_with_its_sample_size():
+    """A count of zero is only readable next to what was checked."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    payload = json.loads(
+        (root / "benchmarks" / "similarity" / "depth.json").read_text(encoding="utf-8")
+    )
+    floor = payload["detection_floor"]
+    assert floor["positives_checked"] > 0
+    assert 0 <= floor["invisible_at_any_depth"] <= floor["positives_checked"]

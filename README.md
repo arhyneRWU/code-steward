@@ -121,7 +121,9 @@ Two results that bear on how much to trust the rest:
 - A generator-free random sample of 45 pairs contained **0 positives**, in all three corpora. That is the base rate the pooled 86.6% sits above.
 - Django was chosen as the hard-negative corpus and did not behave like one: 83.7% pooled positive rate against Airflow's 81.7%. It has real intra-file duplication. The selection rule was published beforehand and was not changed afterwards.
 
-Full numbers, method, and five validity threats are in [`docs/similarity.md`](docs/similarity.md). Reproduce with `make bench-similarity-corpora` then `make bench-similarity`.
+Depth 30 is both the pool depth and the measurement ceiling. Reading the same ranking deeper looks better and is not interpretable: at depth 480 the arm returns 1,440 pairs of which 88% are unlabelled, so its apparent precision of 0.970 covers a ninth of its own output. Recall past depth 30 is unknown rather than probably-higher.
+
+Full numbers, method, and the validity threats are in [`docs/similarity.md`](docs/similarity.md). Reproduce with `make bench-similarity-corpora` then `make bench-similarity`.
 
 ### Finding reuse before the code exists
 
@@ -324,7 +326,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 2. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
 3. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
 4. **Measure whether reuse evidence changes the verdict.** The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
-5. **A structural comparator for reimplementations.** Shingles miss a function rewritten in different words. Whether that population is large enough to matter is itself unmeasured.
+5. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and this gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator. Building a structural comparator before that measurement would repeat the mistake this project already made once.
 6. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing

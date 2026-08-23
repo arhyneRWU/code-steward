@@ -198,3 +198,8 @@ bench-similarity: guard-venv ## Score every reuse-similarity arm (CHECKOUTS=, WO
 bench-tokens: guard-venv ## Recalibrate byte figures against tiktoken (CHECKOUTS= required)
 	@$(PY) -m benchmarks.tokens \
 	  --checkouts $(CHECKOUTS) --output benchmarks/token_calibration.json
+
+.PHONY: bench-similarity-depth
+bench-similarity-depth: guard-venv ## Measure the gold set's usable depth (CHECKOUTS= required)
+	@$(PY) -m benchmarks.similarity.depth \
+	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/depth.json
