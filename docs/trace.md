@@ -161,6 +161,29 @@ therefore rendered the summary "resolve target" in the position a
 docstring goes, telling the reader the function was documented when
 it was not. Purpose is now printed only when a docstring exists.
 
+## Starting from the entry points
+
+    code-steward trace --endpoints --dry
+
+An endpoint is a **selector**: it names the root of a path. This
+emits one bundle per FastAPI route -- the handler, everything it
+calls, and the duplication across all of it.
+
+That is the shape a reader actually wants. You do not usually ask
+"what does `normalize_taxon_name` do", you ask "what happens when
+someone POSTs to `/organisms`", and the answer is a path with a route
+at the top of it.
+
+**Depth defaults change in this mode: `--callers 0`, `--callees 2`.**
+Nothing in the repository calls a route handler -- the framework does
+-- so walking up finds nothing. Walking down one hop is not enough
+either: a handler that delegates twice would hand over a call with no
+body behind it. Both remain overridable.
+
+Each bundle is labelled with its route, because a reader handed
+twenty of them needs to know which entry point each sits under before
+reading any.
+
 ## DRY across the whole path
 
     code-steward trace "pkg.mod::fn" --dry

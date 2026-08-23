@@ -322,12 +322,27 @@ def unit_source(project_root: Path, unit: CodeUnit) -> str:
     return "\n".join(lines[unit.start_line - 1 : unit.end_line])
 
 
-def render_markdown(project_root: Path, sliced: Slice, *, source: bool = True) -> str:
-    """Render a slice as a bundle a model can be handed directly."""
+def render_markdown(
+    project_root: Path,
+    sliced: Slice,
+    *,
+    source: bool = True,
+    note: str = "",
+) -> str:
+    """Render a slice as a bundle a model can be handed directly.
+
+    ``note`` labels the bundle with why it was selected -- the
+    route, for an endpoint. A reader handed twenty bundles needs
+    to know which entry point each one sits under before reading
+    any of them.
+    """
     out: list[str] = []
     target = sliced.target
     out.append(f"# {target.unit_id}")
     out.append("")
+    if note:
+        out.append(f"**{note}**")
+        out.append("")
     out.append(f"`{target.path}:{target.start_line}-{target.end_line}`")
     target_summary = _summary(target)
     if target_summary:

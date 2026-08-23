@@ -287,20 +287,66 @@ def cmd_similar(args: argparse.Namespace) -> int:
 def cmd_trace(args: argparse.Namespace) -> int:
     """Emit one function plus the path around it as a bundle."""
     root = root_from(args.root)
-    conn, units, _ = _load(root)
+    conn, units, endpoints = _load(root)
     relationships = all_hard_relationships(conn)
     conn.close()
+
+    # Nothing in the repository calls a route handler -- the framework
+    # does -- so walking up from an endpoint finds nothing while
+    # walking down finds the implementation.
+    callers_depth = args.callers if args.callers is not None else (0 if args.endpoints else 1)
+    callees_depth = args.callees if args.callees is not None else (2 if args.endpoints else 1)
 
     def slice_for(unit_id: str):
         return build_slice(
             unit_id,
             units,
             relationships,
-            callers_depth=args.callers,
-            callees_depth=args.callees,
+            callers_depth=callers_depth,
+            callees_depth=callees_depth,
             include_tests=not args.no_tests,
             limit=args.limit,
         )
+
+    def dry_rows(one):
+        return [
+            {
+                "unit": overlap.unit.unit_id,
+                "overlaps": [
+                    {"unit": match.unit.unit_id, "score": round(match.score, 2)}
+                    for match in overlap.matches
+                ],
+            }
+            for overlap in path_duplication(root, one, units)
+        ]
+
+    if args.endpoints:
+        if not endpoints:
+            print("no FastAPI endpoints in the index")
+            return 0
+        routed = [
+            (f"{endpoint.method} {endpoint.route}", sliced)
+            for endpoint in endpoints
+            if (sliced := slice_for(endpoint.unit_id))
+        ]
+        if args.json:
+            routed_rows = []
+            for note, one in routed:
+                row = slice_to_dict(one)
+                row["endpoint"] = note
+                if args.dry:
+                    row["duplication"] = dry_rows(one)
+                routed_rows.append(row)
+            print(json.dumps(routed_rows, indent=2))
+            return 0
+        rendered = []
+        for note, one in routed:
+            body = render_markdown(root, one, source=not args.signatures, note=note)
+            if args.dry:
+                body += "\n" + render_duplication(path_duplication(root, one, units))
+            rendered.append(body)
+        print("\n---\n\n".join(rendered), end="")
+        return 0
 
     if args.undocumented:
         if args.base:
@@ -357,16 +403,7 @@ def cmd_trace(args: argparse.Namespace) -> int:
     if args.json:
         payload = slice_to_dict(sliced)
         if args.dry:
-            payload["duplication"] = [
-                {
-                    "unit": overlap.unit.unit_id,
-                    "overlaps": [
-                        {"unit": match.unit.unit_id, "score": round(match.score, 2)}
-                        for match in overlap.matches
-                    ],
-                }
-                for overlap in overlaps
-            ]
+            payload["duplication"] = dry_rows(sliced)
         print(json.dumps(payload, indent=2))
         return 0
     print(render_markdown(root, sliced, source=not args.signatures), end="")
@@ -558,12 +595,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="with --undocumented, only functions in files changed since this ref",
     )
     trace.add_argument(
+        "--endpoints",
+        action="store_true",
+        help="bundle the path under every FastAPI route, instead of one unit",
+    )
+    trace.add_argument(
         "--dry",
         action="store_true",
         help="also report duplication across every unit on the path",
     )
-    trace.add_argument("--callers", type=int, default=1, help="how far to walk up (default 1)")
-    trace.add_argument("--callees", type=int, default=1, help="how far to walk down (default 1)")
+    # Depth defaults resolve per mode: an endpoint has no callers
+    # worth walking, and a handler that delegates twice needs two
+    # hops down before the bundle contains any implementation.
+    trace.add_argument("--callers", type=int, default=None, help="how far to walk up (default 1)")
+    trace.add_argument(
+        "--callees",
+        type=int,
+        default=None,
+        help="how far to walk down (default 1, or 2 with --endpoints)",
+    )
     trace.add_argument("--limit", type=int, default=40, help="maximum units in the slice")
     trace.add_argument("--no-tests", action="store_true", help="leave TESTED_BY units out")
     trace.add_argument(
