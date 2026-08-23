@@ -10,4 +10,7 @@ build/
 .code-steward/
 .code-review-graph/
 .DS_Store
-.claude/
+# Repo-local Claude assets are tracked; only agent worktrees and the
+# machine-local plugin toggle are ignored.
+.claude/worktrees/
+.claude/settings.local.json

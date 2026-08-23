@@ -76,8 +76,16 @@ fmt: guard-venv ## Apply ruff formatting and import sorting
 fmt-check: guard-venv ## Verify formatting without writing
 	@$(RUFF) format --check .
 
+.PHONY: docs-check
+docs-check: guard-venv ## Check docstring coverage and documented commands
+	@$(PY) scripts/docs_check.py
+
+.PHONY: docs-check-update
+docs-check-update: guard-venv ## Raise the committed docstring coverage ratchet
+	@$(PY) scripts/docs_check.py --update-baseline
+
 .PHONY: check
-check: lint fmt-check test ## Everything CI enforces
+check: lint fmt-check docs-check test ## Everything CI enforces
 
 # --- code steward itself ----------------------------------------------
 

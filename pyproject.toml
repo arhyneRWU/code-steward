@@ -55,6 +55,27 @@ select = [
     "SIM",  # flake8-simplify
     "PLE",  # Pylint errors implemented by Ruff
     "RUF",  # Ruff-specific correctness rules
+    # pydocstyle: docstring formatting and consistency only. The
+    # missing-docstring rules (D1xx) are deliberately deferred; see
+    # docs/code-quality.md.
+    "D200", # one-line docstring fits on one line
+    "D201", # no blank line after the function docstring
+    "D202", # no blank line before the function body
+    "D204", # one blank line after a class docstring
+    "D205", # blank line between summary and description
+    "D207", # docstring is under-indented
+    "D208", # docstring is over-indented
+    "D209", # closing quotes on their own line
+    "D210", # no surrounding whitespace in the docstring
+    "D211", # no blank line before a class docstring
+    "D212", # multi-line summary starts on the first line
+    "D400", # first line ends with a period
+    "D401", # first line is in the imperative mood
+    "D402", # first line is not the signature
+    "D403", # first word is capitalized
+    "D404", # first word is not "This"
+    "D418", # no docstring on an @overload stub
+    "D419", # docstring is not empty
 ]
 
 [tool.ruff.lint.pycodestyle]

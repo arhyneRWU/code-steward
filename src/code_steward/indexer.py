@@ -59,6 +59,7 @@ def _module_key(rel_path: str) -> str:
 
 
 def _purpose(node: ast.AST, fallback: str) -> str:
+    """Summarize a declaration from its docstring first line."""
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
         doc = ast.get_docstring(node, clean=True)
         if doc:
@@ -162,6 +163,8 @@ def _line_indent(lines: list[str], lineno: int) -> str:
 
 
 class UnitVisitor(ast.NodeVisitor):
+    """Collect code units and endpoints from one module AST."""
+
     def __init__(
         self,
         rel_path: str,
@@ -302,6 +305,7 @@ class UnitVisitor(ast.NodeVisitor):
         self.stack.pop()
 
     def add_region(self, unit_id: str, start_line: int, end_line: int) -> None:
+        """Record a tagged region spanning several declarations."""
         self._append_unit(
             CodeUnit(
                 unit_id=unit_id,
@@ -325,6 +329,7 @@ class UnitVisitor(ast.NodeVisitor):
         )
 
     def validate_aliases(self) -> None:
+        """Reject unit tags that precede no declaration."""
         unused = [
             alias
             for alias in self._aliases_by_line.values()
@@ -340,6 +345,7 @@ class UnitVisitor(ast.NodeVisitor):
 
 
 def index_python_file(project_root: Path, path: Path) -> tuple[list[CodeUnit], list[Endpoint]]:
+    """Extract code units and FastAPI endpoints from one file."""
     text = path.read_text(encoding="utf-8")
     lines = text.splitlines()
     rel = path.resolve().relative_to(project_root.resolve()).as_posix()
@@ -384,6 +390,7 @@ def is_excluded(project_root: Path, path: Path, excludes: Iterable[str] = ()) ->
 
 
 def iter_python_files(project_root: Path, excludes: Iterable[str] = ()) -> Iterable[Path]:
+    """Walk a project tree for indexable Python source files."""
     excluded = tuple(excludes)
     for path in project_root.rglob("*.py"):
         if is_excluded(project_root, path, excluded):

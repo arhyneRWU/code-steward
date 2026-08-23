@@ -41,11 +41,48 @@ The initial contract includes:
 - `PLE`: Pylint error-class checks implemented by Ruff
 - `RUF`: Ruff-specific correctness checks
 
+It also includes a subset of pydocstyle (`D`) rules covering docstring
+formatting and consistency:
+
+- `D200`, `D201`, `D202`, `D204`, `D205`, `D207`, `D208`, `D209`, `D210`,
+  `D211`, `D212`: docstring layout, indentation, and blank lines
+- `D400`, `D401`, `D402`, `D403`, `D404`: imperative one-line summary that
+  ends with a period, is capitalized, is not the signature, and does not
+  begin with "This"
+- `D418`, `D419`: no docstring on an `@overload` stub, and no empty
+  docstring
+
+Every one of those rules passes with zero violations today, so they cost
+no cleanup and prevent style drift from here on.
+
+The following `D` rules are deliberately deferred:
+
+- `D1xx` (missing docstrings). Package docstring coverage is currently
+  31%. Enabling `D100`-`D107` today would fail on most of the codebase.
+  Coverage is instead governed by the ratchet in `make docs-check`, which
+  lets coverage rise without a flag-day rewrite.
+- `D203` and `D213`. Both are mutually exclusive with rules we prefer
+  (`D211` and `D212`).
+- `D206` and `D300`. The Ruff formatter already owns indentation style
+  and quote style; selecting them duplicates the formatter.
+- `D405`-`D417`, `D214`, `D215`. These govern `Args:`/`Returns:` section
+  grammar. Code Steward docstrings are plain imperative prose with no
+  section headers, so these rules are inert here.
+- `D415`. Redundant with the stricter `D400`.
+
 We are intentionally not enabling every Ruff rule family yet. New rule families should be introduced deliberately, with existing violations reviewed rather than hidden by broad ignores.
 
 ## Docstrings and machine-readable tags
 
 Human-facing function and class documentation belongs in normal Python docstrings and should follow PEP 257 conventions. Code Steward tags are machine-readable boundary or identity metadata, not a replacement for docstrings.
+
+Docstrings in this project are also a **retrieval input**, not only
+human documentation. `indexer._purpose()` stores the docstring summary
+line in the `purpose` field of an indexed unit, and `purpose` carries the
+largest single weight in `search.search_units`. A unit with no docstring
+falls back to its own name, so it can only be found by someone who
+already knows what it is called. Contributor guidance for writing
+docstrings that retrieve well lives in `.claude/skills/docstring/SKILL.md`.
 
 The tag syntax is currently experimental. Tests on the `test/tag-conventions` branch characterize how candidate tag forms interact with Python's AST and tokenizer before the syntax is declared stable.
 
@@ -61,9 +98,10 @@ On Python 3.14:
 
 1. `ruff check`
 2. `ruff format --check`
-3. `python -m compileall -q src tests`
-4. `python -m code_steward --help`
-5. `python -m pip check`
+3. `python scripts/docs_check.py`
+4. `python -m compileall -q src tests`
+5. `python -m code_steward --help`
+6. `python -m pip check`
 
 ### Compatibility tests
 
@@ -72,6 +110,40 @@ On every supported Python version from 3.10 through 3.14:
 1. install the package with test dependencies
 2. run `python -m pytest -q`
 3. run `python -m pip check`
+
+## Documentation checks
+
+`make docs-check` runs `scripts/docs_check.py`, which enforces three
+things and is wired into CI as its own `Docs` job.
+
+**Docstring coverage with a ratchet.** Coverage is measured for
+`src/code_steward` overall and per module and compared against
+`scripts/docstring_baseline.json`. The check fails if coverage falls
+below the committed number. It does not require any particular target.
+Raise the ratchet with `make docs-check-update` in the same change that
+raises coverage; never lower it by hand.
+
+**Documented commands exist.** Every shell command quoted in `README.md`,
+`CONTRIBUTING.md`, `docs/*.md`, `benchmarks/*/README.md`, and the Claude
+asset directories is parsed. Each `code-steward <subcommand>` must be a
+real subcommand of the argparse parser, each `make <target>` must be a
+real Makefile target, every module run with `python -m` must import,
+and every script path must exist.
+
+Only two commands are actually executed: `python -m code_steward --help`
+and `make -n help`. Those are read-only, take under a second, and prove
+that the console script and the Makefile really load. Everything else
+documented here builds an index, writes into the repository, clones an
+upstream project, or takes minutes, so it is verified statically. The
+line is drawn at side effects and runtime, not at importance.
+
+**Documented symbols resolve.** Backtick-quoted dotted identifiers rooted
+at a package module (for example `retrieval.rank_units`) are imported and
+resolved. Bare names are only checked when written as a call such as
+`retrieve_units()` or when listed in the script's explicit allowlist of
+promised API names. Prose contains far too many ordinary words to check
+every backtick span, so the check deliberately under-reports rather than
+producing noise.
 
 ## Checks not yet enforced
 

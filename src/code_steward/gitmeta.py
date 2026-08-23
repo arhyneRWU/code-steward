@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 def file_last_commit(project_root: Path, path: Path) -> str:
+    """Return the short Git commit that last touched a file."""
     try:
         rel = path.resolve().relative_to(project_root.resolve())
         proc = subprocess.run(

@@ -12,6 +12,7 @@ def build_packet(
     input_types: list[str] | None = None,
     return_type: str | None = None,
 ) -> dict[str, Any]:
+    """Assemble a compact reviewer packet from ranked candidates."""
     endpoint_by_unit: dict[str, list[str]] = {}
     for endpoint in endpoints:
         endpoint_by_unit.setdefault(endpoint.unit_id, []).append(

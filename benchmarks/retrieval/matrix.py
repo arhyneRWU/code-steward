@@ -284,7 +284,7 @@ def run_matrix(pipeline_name: str = "retrieve") -> dict[str, Any]:
 
 
 def _is_documented(unit: CodeUnit) -> bool:
-    """True when ``purpose`` came from a docstring.
+    """Report whether ``purpose`` came from a docstring.
 
     False when the indexer fell back to the identifier.
     """
