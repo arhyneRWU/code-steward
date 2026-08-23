@@ -35,12 +35,24 @@ from code_steward.search import search_units
 
 # Frozen benchmark v1, as reported by `make bench` today. v2 is
 # additive: if this pin ever moves, v1 stopped being a regression guard.
+# Frozen Benchmark v1, rebaselined when body term coverage became a
+# scored field. The previous values are kept here rather than deleted,
+# because a baseline that only ever shows its current numbers cannot
+# tell a reader whether a change helped:
+#
+#     mrr             0.6513888888888889 -> 0.7986111111111112
+#     known_trap_rate 0.09375            -> 0.046875
+#
+# Hit@K, macro recall, redundancy, and duplicates were unmoved. This
+# fixture is a regression guard against itself, not a quality
+# measure; the real-repository numbers for the same change are in
+# docs/retrieval.md and they are a mixed result, not this clean one.
 FROZEN_V1 = {
     "case_count": 12,
     "hit_rate_at_k": 11 / 12,
     "macro_recall_at_k": 11 / 12,
-    "mrr": 0.6513888888888889,
-    "known_trap_rate": 0.09375,
+    "mrr": 0.7986111111111112,
+    "known_trap_rate": 0.046875,
     "known_redundancy_rate": 0.0625,
     "duplicate_candidate_rate": 0.0,
 }
