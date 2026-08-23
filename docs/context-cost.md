@@ -53,6 +53,31 @@ one tool knows about are excluded from the paired comparison and
 counted in a line of their own, because an exclusion that favours one
 arm is a result about coverage wearing the costume of a sample.
 
+## Two accounting rules fixed after the probe, before the run
+
+Both were discovered while wiring the harness, and both are written
+down here rather than in the results.
+
+**Targets are addressed unambiguously in every arm.** Their CLI
+resolves a bare name to 20 candidates for a name like `get_template`
+and returns a disambiguation list instead of an answer. Every arm is
+therefore given the fully qualified form of the target -- our unit ID
+for ours, `path::Class.method` for theirs. Both tools support exact
+addressing, so this is symmetric, and it keeps the measurement about
+delivered context rather than about name collisions.
+
+**No disambiguation round trips are counted**, for the same reason.
+This suppresses a real cost that falls on their arm in ordinary use
+and does not fall on ours; the suppression favours them, and it is
+recorded here so the result is not read as if the question never
+arose.
+
+**Arm D inherits no call sites.** Their nodes carry line spans but
+not the line inside a caller where the call happens, so the hybrid
+bundle cannot include the call-site pointers arm A has. That is a
+property of their selection, not a handicap imposed by this harness,
+and the results will say which side of the comparison it lands on.
+
 ## The task, identical for every arm
 
 > You are about to change function `F`. Deliver what is needed to
