@@ -272,3 +272,47 @@ def test_similar_unit_serialises_the_fields_a_packet_needs(tmp_path):
     payload = rank_similar_units("a", units, prepared)[0].to_dict()
     for field in ("unit_id", "path", "lines", "score", "shared_shingles"):
         assert field in payload
+
+
+def test_shingle_values_are_stable_across_processes():
+    """The cache persists these, so a per-process seed corrupts it.
+
+    Python's built-in ``hash`` is seeded per process. Shingles built
+    with it were meaningless the moment they were written to disk,
+    and `similar` silently compared drafts against noise. This pins a
+    literal digest so the property cannot regress quietly.
+    """
+    from code_steward.similarity import _window_hash
+
+    assert _window_hash(("a", "b", "c", "d", "e")) == _window_hash(("a", "b", "c", "d", "e"))
+    # Computed once and hardcoded. A change here means the hash
+    # function changed, which invalidates every cache on disk.
+    assert _window_hash(("def", "foo", "(", ")", ":")) == 7161596319784895027
+
+
+def test_shingle_values_survive_a_subprocess_boundary():
+    """The property the literal above is standing in for."""
+    import subprocess
+    import sys
+
+    code = (
+        "from code_steward.similarity import _window_hash;"
+        "print(_window_hash(('a','b','c','d','e')))"
+    )
+    runs = {
+        subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        for _ in range(3)
+    }
+    assert len(runs) == 1
+    assert runs == {str(_window_hash_reference())}
+
+
+def _window_hash_reference() -> int:
+    from code_steward.similarity import _window_hash
+
+    return _window_hash(("a", "b", "c", "d", "e"))

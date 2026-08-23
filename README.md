@@ -28,7 +28,9 @@ Code Steward is being designed around two forms of stewardship:
 
 A third has been added by measurement rather than design:
 
-3. **Be willing to say no.** On a third of cases where the right answer was to write the function, a reviewer handed the packet was talked into reusing something instead. The reviewer agent does have a declining verdict, but the packet cannot produce an empty result — `similar` has a result limit and no score floor — so the reviewer is always shown eight candidates however weak they are. A score floor and an honest empty-result path are the main line of work, not a tuning detail. See [Does the verdict change](#does-the-verdict-change).
+3. **Be willing to say no.** On a third of cases where the right answer was to write the function, a reviewer handed the packet was talked into reusing something instead — because retrieval returned its eight best candidates whether or not any fitted. `similar` now applies a **relevance floor of 0.27**, chosen on a held-out cross-corpus null distribution as the smallest value holding the false-positive rate at or under 1%. It keeps 167 of the 170 labelled duplicates. An empty result is now something the tool can assert rather than a search that failed. See [`docs/floor.md`](docs/floor.md).
+
+   The packet ranker is still unfloored: its score is on a different scale and no null distribution has been measured for it. Inventing a threshold for an uncharacterised scale would be the same mistake in a new place.
 
 The first two reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently not true — the packets are proportionally noisier than plain keyword search, but much cheaper per unit of noise. See [Measured position](#measured-position).
 
@@ -362,6 +364,8 @@ The architecture is intentionally broader than FastAPI so that support for other
 - Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
 - docstring-body indexing as a scoring input
 - body term coverage as a scored field, sharing one implementation with the control arm
+- a relevance floor on `similar`, chosen on a held-out null distribution, so an empty result is an assertion
+- stable cross-process shingle hashing, which made the shingle cache work for the first time
 - blind candidate labeling and packet precision/noise measurement
 - a reuse-similarity gold set over three pinned public repositories, with four scored arms
 - reuse detection (`similar`, `packet --reuse`), including comparison against unwritten drafts
@@ -378,7 +382,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 Reordered after the reviewer measurement. See [`docs/direction.md`](docs/direction.md) for why the old order was wrong: it was built on the assumption that recall was the binding constraint, and it isn't.
 
-1. **Let the packet return nothing.** A score floor on `similar`, a packet that can legitimately return zero candidates, and a decision contract where writing new code is a normal outcome rather than a hedged report of not having found something. This is the tool's most expensive failure — a reviewer talked into reuse wires a caller to code that does not do the job — and it is currently unaddressed. The floor must be chosen on a held-out set, never the frozen one.
+1. ~~**Let the packet return nothing.**~~ Done for the `similar` path: a 0.27 floor chosen on held-out data, an empty result that reports how many candidates it suppressed, and a decision contract where writing new code is a normal outcome. Still open for the packet ranker, which needs its own null distribution first. This is the tool's most expensive failure — a reviewer talked into reuse wires a caller to code that does not do the job — and it is currently unaddressed. The floor must be chosen on a held-out set, never the frozen one.
 2. **Make the draft the primary path end to end.** Drafting and comparing wins by 99.4% to 45.9% and the CLI, skill and reviewer agent still treat the sentence packet as the default entry point. This is mostly plumbing and documentation, not new measurement.
 3. **Measure draft-and-compare on a realistic draft.** The 0.994 is an upper bound: it compares the *real* removed body, not an approximation an agent would write. Rename tolerance bounds how fast that degrades (0.535 for a renamed signature, 0.015 for a wholly renamed body), so the true figure is somewhere below. This is the single number the reframed project most depends on.
 4. **Test whether the draft path escapes the docstring problem.** The verdict benchmark excludes 246 of 496 cases for having no docstring, and undocumented code is where the ranker is worst. Draft-and-compare never reads a docstring, so it may simply not have this failure — testable, untested.

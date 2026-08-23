@@ -13,7 +13,12 @@ from pathlib import Path
 
 import pytest
 
-from benchmarks.similarity.corpus import CORPORA, CORPORA_BY_NAME, hash_order
+from benchmarks.similarity.corpus import (
+    CORPORA,
+    CORPORA_BY_NAME,
+    corpus_roots,
+    hash_order,
+)
 from benchmarks.similarity.pool import LABELS
 
 LABEL_FILE = Path(__file__).resolve().parents[1] / "benchmarks" / "similarity"
@@ -86,3 +91,37 @@ def test_both_strata_are_present():
 def test_every_corpus_contributes_labelled_pairs(corpus):
     payload = json.loads(LABEL_PATH.read_text(encoding="utf-8"))
     assert any(row["corpus"] == corpus for row in payload["pairs"])
+
+
+def test_the_held_out_slice_cannot_overlap_the_gold_sample(tmp_path):
+    """Disjointness is the whole basis for choosing a floor there.
+
+    ``_sample_dirs`` sorts alphabetically before returning, so
+    slicing its output would hand back alphabetically-late members
+    of a larger hash-order prefix -- an overlap, not a held-out set.
+    This pins the hash-order slicing that avoids it.
+    """
+    from benchmarks.similarity.corpus import Corpus, held_out_roots
+
+    parent = tmp_path / "homeassistant" / "components"
+    parent.mkdir(parents=True)
+    for index in range(40):
+        integration = parent / f"thing{index:02d}"
+        integration.mkdir()
+        for module in range(3):
+            (integration / f"m{module}.py").write_text("x = 1\n", encoding="utf-8")
+
+    corpus = Corpus(name="home-assistant", url="", commit="", role="", scope="", sample_size=10)
+    gold = {path.name for path in corpus_roots(corpus, tmp_path)}
+    held = {path.name for path in held_out_roots(corpus, tmp_path, 10)}
+
+    assert len(gold) == 10
+    assert len(held) == 10
+    assert not gold & held
+
+
+def test_a_corpus_with_no_disjoint_slice_yields_nothing(tmp_path):
+    """Django takes the whole subtree, so it has no held-out slice."""
+    from benchmarks.similarity.corpus import CORPORA_BY_NAME, held_out_roots
+
+    assert held_out_roots(CORPORA_BY_NAME["django"], tmp_path, 10) == []

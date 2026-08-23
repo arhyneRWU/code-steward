@@ -1,0 +1,184 @@
+{
+  "chosen_floor": 0.27,
+  "curve": [
+    {
+      "false_positive_rate": 1.0,
+      "floor": 0.0
+    },
+    {
+      "false_positive_rate": 0.726,
+      "floor": 0.01
+    },
+    {
+      "false_positive_rate": 0.6335,
+      "floor": 0.02
+    },
+    {
+      "false_positive_rate": 0.5001,
+      "floor": 0.03
+    },
+    {
+      "false_positive_rate": 0.4169,
+      "floor": 0.04
+    },
+    {
+      "false_positive_rate": 0.3484,
+      "floor": 0.05
+    },
+    {
+      "false_positive_rate": 0.2822,
+      "floor": 0.06
+    },
+    {
+      "false_positive_rate": 0.2267,
+      "floor": 0.07
+    },
+    {
+      "false_positive_rate": 0.1771,
+      "floor": 0.08
+    },
+    {
+      "false_positive_rate": 0.1457,
+      "floor": 0.09
+    },
+    {
+      "false_positive_rate": 0.1236,
+      "floor": 0.1
+    },
+    {
+      "false_positive_rate": 0.1033,
+      "floor": 0.11
+    },
+    {
+      "false_positive_rate": 0.0806,
+      "floor": 0.12
+    },
+    {
+      "false_positive_rate": 0.069,
+      "floor": 0.13
+    },
+    {
+      "false_positive_rate": 0.058,
+      "floor": 0.14
+    },
+    {
+      "false_positive_rate": 0.0515,
+      "floor": 0.15
+    },
+    {
+      "false_positive_rate": 0.0459,
+      "floor": 0.16
+    },
+    {
+      "false_positive_rate": 0.0415,
+      "floor": 0.17
+    },
+    {
+      "false_positive_rate": 0.036,
+      "floor": 0.18
+    },
+    {
+      "false_positive_rate": 0.032,
+      "floor": 0.19
+    },
+    {
+      "false_positive_rate": 0.0277,
+      "floor": 0.2
+    },
+    {
+      "false_positive_rate": 0.0249,
+      "floor": 0.21
+    },
+    {
+      "false_positive_rate": 0.023,
+      "floor": 0.22
+    },
+    {
+      "false_positive_rate": 0.0166,
+      "floor": 0.23
+    },
+    {
+      "false_positive_rate": 0.0134,
+      "floor": 0.24
+    },
+    {
+      "false_positive_rate": 0.0132,
+      "floor": 0.25
+    },
+    {
+      "false_positive_rate": 0.0129,
+      "floor": 0.26
+    },
+    {
+      "false_positive_rate": 0.0057,
+      "floor": 0.27
+    },
+    {
+      "false_positive_rate": 0.0053,
+      "floor": 0.28
+    },
+    {
+      "false_positive_rate": 0.0053,
+      "floor": 0.29
+    },
+    {
+      "false_positive_rate": 0.0051,
+      "floor": 0.3
+    },
+    {
+      "false_positive_rate": 0.0048,
+      "floor": 0.31
+    },
+    {
+      "false_positive_rate": 0.0047,
+      "floor": 0.32
+    },
+    {
+      "false_positive_rate": 0.0045,
+      "floor": 0.33
+    },
+    {
+      "false_positive_rate": 0.0004,
+      "floor": 0.34
+    },
+    {
+      "false_positive_rate": 0.0004,
+      "floor": 0.35
+    },
+    {
+      "false_positive_rate": 0.0004,
+      "floor": 0.36
+    },
+    {
+      "false_positive_rate": 0.0004,
+      "floor": 0.37
+    },
+    {
+      "false_positive_rate": 0.0004,
+      "floor": 0.38
+    },
+    {
+      "false_positive_rate": 0.0004,
+      "floor": 0.39
+    },
+    {
+      "false_positive_rate": 0.0003,
+      "floor": 0.4
+    }
+  ],
+  "gold_recall_at_floor": {
+    "kept": 167,
+    "not_rescored": 0,
+    "positives": 170,
+    "recall": 0.982,
+    "scorable": 170
+  },
+  "held_out_size": {
+    "airflow": 20,
+    "home-assistant": 60
+  },
+  "null_nonzero": 5128,
+  "null_queries": 6814,
+  "schema_version": 1,
+  "target_false_positive_rate": 0.01
+}

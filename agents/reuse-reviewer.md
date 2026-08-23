@@ -34,13 +34,18 @@ only tool that works before the code exists.
 Its blind spot is text-shaped: it finds a function that was copied and tidied, not one
 reimplemented in different words. Measured against copies of one fixture function, overlap
 was 0.941 with the function renamed, 0.535 with the whole signature renamed, and 0.015 once
-every local was renamed too. A silent `similar` is therefore weak evidence of absence.
+every local was renamed too. A silent `similar` rules out coincidence but not a
+reimplementation written in different words.
 
 **`code-steward packet` — matching an intent to code. Weak, and you are the last line of
-defense against its errors.** Measured on `psf/requests`: **Hit@1 46.67%, Hit@K 73.33%,
-MRR 0.550**. The top-ranked candidate is wrong more often than not, and **roughly one query
-in four returns a packet that does not contain the right unit at all**. A plain keyword scan
-beats it on all three. What it buys is compression, not recall.
+defense against its errors.** Measured on `psf/requests`: **Hit@1 33.33%, Hit@K 93.33%,
+MRR 0.534**. The right unit is usually somewhere in the packet and rarely first, so read down
+the list rather than trusting the top row. A plain keyword scan still beats it on Hit@1
+(53.33%) and MRR. What it buys is recall and compression, not precision.
+
+**The packet has no relevance floor.** It returns its best eight candidates however weak they
+are, so an unconvincing packet looks exactly like a strong one. `similar` does have a floor
+and can assert absence; the packet cannot.
 
 It ranks by lexical and fuzzy similarity over names, signatures, docstrings, and derived
 concepts. No embeddings. No call graph. **Python only.** Units without docstrings fall back to
@@ -103,10 +108,20 @@ Return exactly one verdict:
 - **REFACTOR** — two or more existing units already do overlapping work and this change should
   consolidate them. You read all of them. Do not recommend this merely because code looks
   similar; there must be a concrete correctness or maintenance reason.
-- **NO_CANDIDATE** — retrieval and your cross-check found nothing suitable. This is a report
-  that *you did not find* something, not a finding that nothing exists. The caller should
-  verify before writing new code. (This replaces the packet's `CREATE`; use `CREATE` wording
-  only if you have independently confirmed absence, which is rarely possible.)
+- **NO_CANDIDATE** — nothing suitable exists. How strong this is depends on how you got here,
+  and you must say which:
+  - *From a floored `similar --draft` comparison* — the tool scored what it found and asserts
+    that nothing cleared the 0.27 relevance floor. That is a finding. Report it as one, and
+    include the suppressed count if there was one. Writing the function is the correct next
+    step and does not need further justification.
+  - *From a packet* — the packet has no floor and cannot distinguish "absent" from "not
+    retrieved", so this is a report that *you did not find* something. The caller should
+    verify before writing new code.
+
+  **NO_CANDIDATE is a normal outcome, not a failure to finish the job.** Most functions in
+  most repositories have no reuse candidate. Reaching for a weak REUSE rather than declining
+  is the more expensive mistake: on a third of measured cases where writing the function was
+  correct, a reviewer shown eight plausible candidates picked one of them anyway.
 - **UNCERTAIN** — you found plausible candidates but cannot settle the decision, or the packet
   was unusable. Say exactly what would resolve it.
 - **NOT_APPLICABLE** — Code Steward cannot help here (non-Python target, no index and building

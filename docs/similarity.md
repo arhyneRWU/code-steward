@@ -258,3 +258,37 @@ arm provably misses a function whose every local has been renamed. How
 often that happens in real code is not measured here, and this gold
 set cannot measure it: two of its three generators are lexical, so the
 population is largely absent from the pool by construction.
+
+## The cache was returning noise
+
+Worth recording, because it invalidates an earlier conclusion on this
+page's sibling docs rather than adding to them.
+
+Shingle values came from Python's built-in `hash`, which is seeded
+per process. In memory that is fine and every benchmark on this page
+is unaffected -- each run computed and compared its shingles inside
+one process. On disk it is not: the shingle cache persisted those
+values, so on the *second* and every later invocation of
+`code-steward similar`, the cache returned integers from a dead
+process's hash seed. Nothing matched them. The tool reported no
+overlap and gave no indication anything was wrong.
+
+A verbatim copy of an indexed function scored 0.00. That is how it
+was found -- as a smoke test of the new relevance floor, not by any
+test in the suite, because the tests either disable the cache or
+populate and read it inside a single process.
+
+The fix is a keyed digest (`similarity._window_hash`, BLAKE2b
+truncated to signed 64 bits) and a versioned cache table so rows
+written under the old scheme are dropped rather than read.
+
+**No measured figure changes.** Jaccard over hashed windows equals
+Jaccard over the windows themselves unless the hash collides;
+compared across 40,000 Airflow pairs, the largest difference between
+the two was 0.0. The first build of a large tree costs a few seconds
+more, which is the trade for a cache that works at all.
+
+It also explains an earlier failed optimisation: cache decoding was
+profiled and tuned for a latency win that never arrived. The decode
+path was never the problem, because the decoded values were never
+usable.

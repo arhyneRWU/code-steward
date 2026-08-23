@@ -196,6 +196,7 @@ def test_every_benchmark_module_imports():
         "benchmarks.real_repo.label_sheet",
         "benchmarks.similarity.make_pairs",
         "benchmarks.similarity.score",
+        "benchmarks.similarity.floor",
         "benchmarks.verdict.run",
         "benchmarks.verdict.agent_prompts",
         "benchmarks.verdict.agent_score",

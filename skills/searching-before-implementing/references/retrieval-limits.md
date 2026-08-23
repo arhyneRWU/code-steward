@@ -10,22 +10,26 @@ Benchmark repository: `psf/requests`. Production retriever (`retrieve_units`, th
 
 | Metric | Ranker | Plain text search |
 | --- | --- | --- |
-| Hit@1 | 46.67% | **53.33%** |
-| Hit@3 | 60.00% | **80.00%** |
-| Hit@K | 73.33% | **86.67%** |
-| MRR | 0.550 | **0.667** |
+| Hit@1 | 33.33% | **53.33%** |
+| Hit@3 | 66.67% | **80.00%** |
+| Hit@K | **93.33%** | 86.67% |
+| MRR | 0.534 | **0.667** |
 
 Restated without the jargon:
 
-- The top candidate is correct **slightly under half the time**.
-- The correct unit is somewhere in the packet **about 3 times in 4**.
-- **About 1 query in 4 produces a packet with no correct answer in it anywhere.**
-- A stopword-stripped keyword scan beats the ranker on **every one of those**.
+- The top candidate is correct **about a third of the time**.
+- The correct unit is somewhere in the packet **more than 9 times in 10**.
+- A stopword-stripped keyword scan still beats the ranker on **Hit@1 and MRR**, but no longer
+  on Hit@K.
+
+So the packet is good at containing the answer and bad at putting it first. **Read down the
+list. Do not trust the top row.**
 
 There is no signal in the packet that tells you which case you are in. Score magnitude does
-not separate the good packets from the bad ones.
+not separate the good packets from the bad ones, and **the packet has no relevance floor** —
+it returns eight candidates whether or not any of them fit.
 
-What the packet does buy is size: 4,039 bytes against 21,107 to inspect the same candidates.
+What the packet does buy is size: 4,104 bytes against 21,107 to inspect the same candidates.
 Use it for compression, not for confidence.
 
 ## The other tool is much better, and works earlier
