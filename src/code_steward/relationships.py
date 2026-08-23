@@ -21,11 +21,37 @@ _TEST_FUNCTION_KINDS = {"function", "async_function"}
 _FIXTURE_DECORATORS = ("fixture", "yield_fixture")
 
 
+# Directory names that hold packages without being part of the
+# importable name. A file at `src/pkg/mod.py` is imported as
+# `pkg.mod`, never `src.pkg.mod`.
+SOURCE_ROOTS = ("src",)
+
+
 def _module_key(path: str) -> str:
+    """Key a file by the module name an importer would actually write.
+
+    The `src/` root is stripped. Keeping it produced `src.pkg.mod`
+    while every importer writes `from pkg.mod import ...`, keying
+    `pkg.mod` -- so on a src-layout repository no absolute import
+    ever matched and the whole TESTED_BY relation was empty. The
+    failure was silent, which is how it survived: an unresolved
+    import produces no edge rather than an error.
+
+    Stripping is safe for relative imports because both sides use
+    this function, so `current_module` loses the same prefix and
+    `from .models import x` still resolves to `pkg.models`.
+
+    A repository with a genuine top-level package named `src` would
+    be keyed wrongly by this. That layout is vanishingly rare and
+    conflicts with the packaging convention the name comes from.
+    """
     value = path[:-3] if path.endswith(".py") else path
     if value.endswith("/__init__"):
         value = value[: -len("/__init__")]
-    return value.replace("/", ".").replace("\\", ".")
+    parts = value.replace("\\", "/").split("/")
+    if len(parts) > 1 and parts[0] in SOURCE_ROOTS:
+        parts = parts[1:]
+    return ".".join(parts)
 
 
 def _attribute_parts(node: ast.AST) -> list[str]:

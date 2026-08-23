@@ -215,9 +215,9 @@ def render_markdown(project_root: Path, sliced: Slice, *, source: bool = True) -
         out.append("")
         out.append(
             "> No resolved neighbours. Calls made through dynamic dispatch, "
-            "callables passed as arguments, or absolute imports into a "
-            "`src/` layout do not resolve, so this may be incomplete "
-            "rather than isolated."
+            "callables passed as arguments, registry lookups, or metaclass "
+            "machinery do not resolve, so this may be incomplete rather "
+            "than isolated."
         )
     if sliced.truncated:
         out.append("")

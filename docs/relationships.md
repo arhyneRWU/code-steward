@@ -88,20 +88,35 @@ Because the extractor consumes stored edges rather than source, it
 performs no file I/O and no parsing. Its cost is proportional to the
 number of stored edges and units, not to repository size.
 
-### Known limitation: src layout
+### Fixed 2026-08-23: src layout
 
-Coverage is currently far lower than it should be on `src/` layout
-projects. `_module_key` derives a module key from the repository
-relative path, so `src/code_steward/db.py` becomes
-`src.code_steward.db`, while a test importing `code_steward.db`
-resolves to `code_steward.db`. The two never match, so every
-test to production call remains an unresolved symbol and mints no
-`TESTED_BY` edge.
+`_module_key` used to key a module by its repository-relative path,
+so `src/code_steward/db.py` became `src.code_steward.db` while a test
+importing `code_steward.db` resolved to `code_steward.db`. The two
+could never match, so on a src-layout project every test-to-source
+call stayed an unresolved symbol and minted no `TESTED_BY` edge.
 
-Relative intra-package imports are unaffected and still resolve. This
-is a limitation of call resolution rather than of test detection, and
-fixing it would raise `TESTED_BY` coverage across any `src/` layout
-package.
+The defect was silent, which is how it survived: an unresolved import
+produces no edge rather than an error, and `trace` reported "no
+resolved neighbours", which reads as a caveat about dynamic dispatch.
+
+Measured on this repository, before and after stripping the root:
+
+| | before | after |
+| --- | --- | --- |
+| `CALLS` edges resolving to a unit | 23.5% | **32.1%** |
+| `TESTED_BY` edges | 131 | **338** |
+| Functions with a test edge | 51 (6.7%) | **96 (12.5%)** |
+| — of those, in `src/` | **0** | **45** |
+
+Unit IDs are deliberately unchanged: only the resolution key is
+stripped. Unit IDs are the stable name that committed benchmark
+labels are recorded against, and renaming them would silently
+invalidate every frozen set in `benchmarks/`.
+
+The fix is a no-op on a repository without a top-level `src/`
+directory, which includes Django, so the corpus numbers measured
+before it remain valid.
 
 ## External graph facts
 
