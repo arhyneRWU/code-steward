@@ -31,6 +31,7 @@ from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 
+from .indexer import ACCESSOR_SUFFIXES
 from .models import CodeUnit, HardRelationship
 
 # Roles a unit can hold in a slice, in the order they are rendered.
@@ -178,6 +179,75 @@ def build_slice(
     return Slice(target=target, members=members, edges_walked=edges_walked, truncated=truncated)
 
 
+# Kinds that can carry a docstring worth writing. Classes and
+# regions are excluded: this exists to document call paths, and a
+# class is not a step on one.
+DOCUMENTABLE_KINDS = frozenset({"function", "async_function", "method"})
+
+# Decorators that make a function read as an attribute at the call
+# site. `property` itself plus the accessor forms the indexer already
+# knows about.
+ACCESSOR_DECORATORS = frozenset({"property", *ACCESSOR_SUFFIXES})
+
+
+def _is_trivial(unit: CodeUnit) -> bool:
+    """Say whether a unit has too little in it to be worth a docstring.
+
+    Undocumented-and-trivial is a legitimate state. This repository
+    defers the missing-docstring rules deliberately (see
+    ``docs/code-quality.md``) because blanket coverage that emits
+    "Return the name." buries the docstrings that carry something.
+
+    Three clauses, all reusing thresholds that already exist rather
+    than inventing a notion of triviality:
+
+    - a dunder, whose contract is the language's, not the author's;
+    - a property accessor, which reads at the call site as an
+      attribute;
+    - a one-line body, which has nothing a docstring could add.
+
+    The one-line cut is deliberately *not* ``similarity.MIN_LINES``.
+    That threshold answers "too small to compare for duplication",
+    which is a different question: at five lines it would skip
+    four-line functions whose contract is entirely non-obvious. Nor
+    is it a token count, because tokenising means parsing every file
+    in the repository just to decide what to *offer*.
+    """
+    if unit.name.startswith("__") and unit.name.endswith("__"):
+        return True
+    if any(part.split(".")[-1] in ACCESSOR_DECORATORS for part in unit.decorators):
+        return True
+    return unit.end_line - unit.start_line + 1 <= 2
+
+
+def undocumented_units(units: list[CodeUnit]) -> list[CodeUnit]:
+    """Select the functions that have no docstring and want one.
+
+    Every heuristic for finding a *drifted* docstring failed
+    measurement; see the 2026-08-23 design record. This one cannot:
+    ``doc_text`` is empty exactly when ``ast.get_docstring`` returned
+    nothing, so the selector is exact rather than predictive.
+    """
+    return [
+        unit
+        for unit in units
+        if unit.kind in DOCUMENTABLE_KINDS and not unit.doc_text and not _is_trivial(unit)
+    ]
+
+
+def _summary(unit: CodeUnit) -> str:
+    """Return a unit's summary, but only if it actually has one.
+
+    ``indexer._purpose`` falls back to the declaration name with its
+    underscores taken out, so an undocumented ``resolve_target``
+    carries the purpose "resolve target". Rendered under the heading
+    where a docstring goes, that reads as documentation and tells a
+    model the function is described when it is not. ``doc_text`` is
+    the honest test: it is empty exactly when there is no docstring.
+    """
+    return unit.purpose if unit.doc_text else ""
+
+
 def unit_source(project_root: Path, unit: CodeUnit) -> str:
     """Read exactly one unit's lines from the working tree."""
     try:
@@ -194,9 +264,10 @@ def render_markdown(project_root: Path, sliced: Slice, *, source: bool = True) -
     out.append(f"# {target.unit_id}")
     out.append("")
     out.append(f"`{target.path}:{target.start_line}-{target.end_line}`")
-    if target.purpose:
+    target_summary = _summary(target)
+    if target_summary:
         out.append("")
-        out.append(target.purpose)
+        out.append(target_summary)
 
     grouped = sliced.by_role
     counts = ", ".join(
@@ -253,9 +324,10 @@ def render_markdown(project_root: Path, sliced: Slice, *, source: bool = True) -
                 verb = "calls the target at" if role == "caller" else "called from"
                 location += f" · {verb} line {where}"
             out.append(location)
-            if unit.purpose:
+            member_summary = _summary(unit)
+            if member_summary:
                 out.append("")
-                out.append(unit.purpose)
+                out.append(member_summary)
             out.append("")
             if source:
                 out.append("```python")
@@ -281,7 +353,7 @@ def slice_to_dict(sliced: Slice) -> dict[str, object]:
                 "path": member.unit.path,
                 "lines": f"{member.unit.start_line}:{member.unit.end_line}",
                 "signature": member.unit.signature,
-                "purpose": member.unit.purpose,
+                "purpose": _summary(member.unit),
                 "call_lines": list(member.call_lines),
             }
             for member in sliced.members

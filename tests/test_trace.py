@@ -187,3 +187,40 @@ def test_call_sites_reach_the_rendered_bundle_and_the_json(project, capsys):
     assert main(["--root", str(project), "trace", "chain::leaf", "--json"]) == 0
     payload = json.loads(capsys.readouterr().out)
     assert all("call_lines" in row for row in payload["members"])
+
+
+UNDOCUMENTED_SOURCE = '''\
+def resolve_target(value):
+    total = value * 2
+    return total + 1
+
+
+def caller(value):
+    """Calls an undocumented helper."""
+    return resolve_target(value)
+'''
+
+
+@pytest.fixture
+def undocumented(tmp_path):
+    (tmp_path / "plain.py").write_text(UNDOCUMENTED_SOURCE, encoding="utf-8")
+    rebuild_index(tmp_path, tmp_path / ".code-steward" / "index.sqlite3")
+    conn = connect(tmp_path / ".code-steward" / "index.sqlite3")
+    units = all_units(conn)
+    relationships = all_hard_relationships(conn)
+    conn.close()
+    return tmp_path, units, relationships
+
+
+def test_an_undocumented_unit_renders_no_summary(undocumented):
+    """A name echo must not be rendered as though it were a docstring.
+
+    `indexer._purpose` falls back to the function name with the
+    underscores taken out, so an undocumented `resolve_target`
+    carries the purpose "resolve target". Rendering that under the
+    heading tells a model the function is documented when it is not.
+    """
+    project, units, relationships = undocumented
+    sliced = build_slice("plain::caller", units, relationships)
+    body = render_markdown(project, sliced, source=False)
+    assert "resolve target" not in body
