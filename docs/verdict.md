@@ -216,3 +216,112 @@ functions belong to the same concern. These figures are a floor.
 reviewer, or a prompt that argued harder for NEW, would score the
 same. The negative-case failure in particular looks like something a
 prompt change might move, and that is untested.
+
+## What a realistic draft is actually worth
+
+The 0.994 above compares the **real removed body**. `docs/direction.md`
+reframed the whole project around drafting, and that reframe rested on
+a number no agent could actually produce. This measures what one can.
+
+Fifty held-out positive cases. An agent was given each function's
+name, signature, and docstring -- what a developer has before writing
+it -- and asked for a plausible body, with no access to the source.
+That body was then compared against the repository in place of the
+real one.
+
+| Arm | Usable drafts | All 50 cases |
+| --- | --- | --- |
+| `real-body` (the published upper bound) | **1.000** | 1.000 |
+| `agent-draft`, no floor | 0.814 | **0.700** |
+| `agent-draft`, shipped 0.27 floor | 0.535 | **0.460** |
+
+Seven of fifty drafts came out below the minimum token count and
+could not be compared at all. They are excluded from the first column
+and counted as failures in the second. **The second column is what a
+user experiences**, and it is the honest headline.
+
+Committed at
+[`realistic_draft.json`](../benchmarks/verdict/realistic_draft.json).
+
+### The reframe's headline number does not survive
+
+The case for drafting was 0.994 against 0.459 for the sentence packet.
+The comparable figure is **0.460**. That is not a wide margin over the
+packet path -- it is the same number.
+
+This is the risk `docs/direction.md` flagged when it put this
+measurement third in the order of work, and it landed. Anyone reading
+that page should read this section with it.
+
+Two things stop it being a straight refutation, and neither is a
+rescue:
+
+**The samples are not directly comparable.** The packet's 0.459 is
+over 250 cases pooled across three corpora; this is 50 cases sampled
+20/20/10. The two numbers being equal to three decimal places is
+coincidence, not a matched comparison. A matched one has not been run.
+
+**Recall is not the only axis, and it is the one where they tie.** The
+draft path reaches 0.460 while returning nothing at all on most
+non-matches -- the floor holds spurious results to roughly 0.6%. The
+packet path reaches 0.459 by returning eight candidates every single
+time, whether or not any of them fit. Equal recall, very different
+precision, and the reviewer measurement showed precision is what was
+actually costing verdicts.
+
+So the defensible claim shrinks from *"drafting finds twice as much"*
+to *"drafting finds about as much and knows when it hasn't."* That is
+a smaller claim and it is the one the evidence supports. It has not
+itself been put to a reviewer, so it is a hypothesis about verdicts,
+not a measurement of them.
+
+### The floor is expensive here
+
+Of 43 usable drafts, the labelled duplicate scored:
+
+| Band | Cases |
+| --- | --- |
+| not found at all | 8 |
+| below 0.20 | 5 |
+| 0.20 to 0.27 (lost to the floor) | 7 |
+| 0.27 to 0.50 | 14 |
+| above 0.50 | 9 |
+
+The floor costs 12 of the 35 duplicates that were found, and 7 of
+those sit in the narrow band just underneath it. Median score when the
+duplicate was found at all: 0.415.
+
+**The floor is not being changed in response to this.** It was chosen
+against a pre-registered false-positive budget on a held-out null
+distribution, before any of this existed. Moving it now, having seen
+which value would score best here, is tuning against a measurement --
+the precise thing [`floor.md`](floor.md) was constructed to avoid.
+
+What this does justify is *revisiting the criterion*, once, in the
+open. The 1% budget was chosen when only one side of the trade could
+be measured. Both sides can be measured now, so a criterion that
+weighs them against each other is defensible where it was not before.
+That decision has to be written down before the number is picked.
+
+### Caveats
+
+**One drafting model, one prompt.** A different model, or a prompt
+that pushed for closer-to-idiomatic code, would move this. The
+instruction asked for a realistic first draft rather than a polished
+one, which is the intent, but it is still one point in a space.
+
+**The instruction not to search is load-bearing.** The reviewer runs
+could blind the candidates; a drafting prompt cannot hide the function
+name, and a name is searchable. The corpora sit well outside the
+working directory and the agents were told not to look, but this rests
+on compliance in a way the reviewer measurement did not.
+
+**Home Assistant does much worse than Airflow** -- 9 of 20 against 19
+of 20 unfloored. Its integrations are template-duplicated, so its
+functions are short and its duplicates are near-identical
+boilerplate; a from-scratch draft of a short accessor has little
+surface to overlap on. That is a real population, not an artefact.
+
+**Positive cases only.** This measures whether a draft still finds a
+duplicate that exists. What a draft does on functions with no
+duplicate is the floor's job and is measured in [`floor.md`](floor.md).

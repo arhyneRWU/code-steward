@@ -1,0 +1,357 @@
+{
+  "answer_key": [
+    {
+      "case_id": "pos:0127",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.alarm_control_panel.condition::supports_feature",
+      "target": "home-assistant:homeassistant.components.alarm_control_panel.trigger::supports_feature",
+      "task_id": "pos-0127"
+    },
+    {
+      "case_id": "pos:0252",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.esphome.switch::EsphomeSwitch.is_on",
+      "target": "home-assistant:homeassistant.components.esphome.fan::EsphomeFan.is_on",
+      "task_id": "pos-0252"
+    },
+    {
+      "case_id": "pos:0296",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.thermopro.sensor::ThermoProBluetoothSensorEntity.native_value",
+      "target": "home-assistant:homeassistant.components.aranet.sensor::Aranet4BluetoothSensorEntity.native_value",
+      "task_id": "pos-0296"
+    },
+    {
+      "case_id": "pos:0084",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.esphome.switch::EsphomeSwitch.is_on",
+      "target": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.is_on",
+      "task_id": "pos-0084"
+    },
+    {
+      "case_id": "pos:0264",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.climate.trigger::_ClimateTargetTemperatureTriggerMixin._should_include",
+      "target": "home-assistant:homeassistant.components.climate.condition::ClimateTargetTemperatureCondition._should_include",
+      "task_id": "pos-0264"
+    },
+    {
+      "case_id": "pos:0182",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.openuv.binary_sensor::OpenUvBinarySensor._handle_coordinator_update",
+      "target": "home-assistant:homeassistant.components.esphome.update::ESPHomeDashboardUpdateEntity._handle_coordinator_update",
+      "task_id": "pos-0182"
+    },
+    {
+      "case_id": "pos:0196",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.fitbit.sensor::FitbitBatterySensor.__init__",
+      "target": "home-assistant:homeassistant.components.fitbit.sensor::FitbitBatteryLevelSensor.__init__",
+      "task_id": "pos-0196"
+    },
+    {
+      "case_id": "pos:0026",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.kitchen_sink.lock::DemoLock.is_locked",
+      "target": "home-assistant:homeassistant.components.demo.lock::DemoLock.is_locked",
+      "task_id": "pos-0026"
+    },
+    {
+      "case_id": "pos:0297",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.aranet.sensor::Aranet4BluetoothSensorEntity.native_value",
+      "target": "home-assistant:homeassistant.components.thermopro.sensor::ThermoProBluetoothSensorEntity.native_value",
+      "task_id": "pos-0297"
+    },
+    {
+      "case_id": "pos:0071",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedBase.open_position",
+      "target": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedRear.open_position",
+      "task_id": "pos-0071"
+    },
+    {
+      "case_id": "pos:0062",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.nexia.sensor::NexiaThermostatZoneSensor.__init__",
+      "target": "home-assistant:homeassistant.components.nexia.sensor::NexiaThermostatSensor.__init__",
+      "task_id": "pos-0062"
+    },
+    {
+      "case_id": "pos:0188",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.nrgkick.binary_sensor::NRGkickBinarySensor.is_on",
+      "target": "home-assistant:homeassistant.components.elgato.switch::ElgatoSwitchEntity.is_on",
+      "task_id": "pos-0188"
+    },
+    {
+      "case_id": "pos:0249",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.demo.climate::DemoClimate.preset_modes",
+      "target": "home-assistant:homeassistant.components.demo.fan::AsyncDemoPercentageFan.preset_modes",
+      "task_id": "pos-0249"
+    },
+    {
+      "case_id": "pos:0310",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.openevse.sensor::OpenEVSESensor.__init__",
+      "target": "home-assistant:homeassistant.components.openevse.binary_sensor::OpenEVSEBinarySensor.__init__",
+      "task_id": "pos-0310"
+    },
+    {
+      "case_id": "pos:0263",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgb_received",
+      "target": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgbw_received",
+      "task_id": "pos-0263"
+    },
+    {
+      "case_id": "pos:0286",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.starlink.sensor::StarlinkSensorEntity.native_value",
+      "target": "home-assistant:homeassistant.components.cookidoo.sensor::CookidooSensorEntity.native_value",
+      "task_id": "pos-0286"
+    },
+    {
+      "case_id": "pos:0280",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.smartthings.number::SmartThingsWasherRinseCyclesNumberEntity.native_value",
+      "target": "home-assistant:homeassistant.components.smartthings.number::SmartThingsHoodNumberEntity.native_value",
+      "task_id": "pos-0280"
+    },
+    {
+      "case_id": "pos:0180",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.mqtt.time::MqttTimeEntity._handle_state_message_received",
+      "target": "home-assistant:homeassistant.components.mqtt.date::MqttDateEntity._handle_state_message_received",
+      "task_id": "pos-0180"
+    },
+    {
+      "case_id": "pos:0204",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.thermopro.sensor::sensor_update_to_bluetooth_data_update",
+      "target": "home-assistant:homeassistant.components.sensirion_ble.sensor::sensor_update_to_bluetooth_data_update",
+      "task_id": "pos-0204"
+    },
+    {
+      "case_id": "pos:0005",
+      "corpus": "home-assistant",
+      "expected": "home-assistant:homeassistant.components.smhi.coordinator::SMHIDataUpdateCoordinator.__init__",
+      "target": "home-assistant:homeassistant.components.smhi.coordinator::SMHIFireDataUpdateCoordinator.__init__",
+      "task_id": "pos-0005"
+    },
+    {
+      "case_id": "pos:0091",
+      "corpus": "airflow",
+      "expected": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_response::ElasticSearchResponse.hits",
+      "target": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::OpensearchResponse.hits",
+      "task_id": "pos-0091"
+    },
+    {
+      "case_id": "pos:0299",
+      "corpus": "airflow",
+      "expected": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.adapter::OpenLineageAdapter.complete_task",
+      "target": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.adapter::OpenLineageAdapter.fail_task",
+      "task_id": "pos-0299"
+    },
+    {
+      "case_id": "pos:0256",
+      "corpus": "airflow",
+      "expected": "airflow:providers.trino.src.airflow.providers.trino.hooks.trino::TrinoHook.get_isolation_level",
+      "target": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::PrestoHook.get_isolation_level",
+      "task_id": "pos-0256"
+    },
+    {
+      "case_id": "pos:0199",
+      "corpus": "airflow",
+      "expected": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb3::InfluxDB3Hook.get_connection_form_widgets",
+      "target": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb::InfluxDBHook.get_connection_form_widgets",
+      "task_id": "pos-0199"
+    },
+    {
+      "case_id": "pos:0279",
+      "corpus": "airflow",
+      "expected": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_task_handler::ElasticsearchRemoteLogIO._get_result",
+      "target": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_task_handler::ElasticsearchTaskHandler._get_result",
+      "task_id": "pos-0279"
+    },
+    {
+      "case_id": "pos:0232",
+      "corpus": "airflow",
+      "expected": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.oss::OSSHook.get_default_region",
+      "target": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.analyticdb_spark::AnalyticDBSparkHook.get_default_region",
+      "task_id": "pos-0232"
+    },
+    {
+      "case_id": "pos:0254",
+      "corpus": "airflow",
+      "expected": "airflow:providers.trino.src.airflow.providers.trino.hooks.trino::generate_trino_client_info",
+      "target": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::generate_presto_client_info",
+      "task_id": "pos-0254"
+    },
+    {
+      "case_id": "pos:0290",
+      "corpus": "airflow",
+      "expected": "airflow:providers.sftp.src.airflow.providers.sftp.assets.sftp::convert_asset_to_openlineage",
+      "target": "airflow:providers.ftp.src.airflow.providers.ftp.assets.ftp::convert_asset_to_openlineage",
+      "task_id": "pos-0290"
+    },
+    {
+      "case_id": "pos:0291",
+      "corpus": "airflow",
+      "expected": "airflow:providers.ftp.src.airflow.providers.ftp.assets.ftp::convert_asset_to_openlineage",
+      "target": "airflow:providers.sftp.src.airflow.providers.sftp.assets.sftp::convert_asset_to_openlineage",
+      "task_id": "pos-0291"
+    },
+    {
+      "case_id": "pos:0150",
+      "corpus": "airflow",
+      "expected": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.start_cluster",
+      "target": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.restart_cluster",
+      "task_id": "pos-0150"
+    },
+    {
+      "case_id": "pos:0336",
+      "corpus": "airflow",
+      "expected": "airflow:providers.teradata.src.airflow.providers.teradata.utils.tpt_util::read_file",
+      "target": "airflow:providers.teradata.src.airflow.providers.teradata.utils.bteq_util::read_file",
+      "task_id": "pos-0336"
+    },
+    {
+      "case_id": "pos:0278",
+      "corpus": "airflow",
+      "expected": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_task_handler::ElasticsearchTaskHandler._get_result",
+      "target": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_task_handler::ElasticsearchRemoteLogIO._get_result",
+      "task_id": "pos-0278"
+    },
+    {
+      "case_id": "pos:0337",
+      "corpus": "airflow",
+      "expected": "airflow:providers.teradata.src.airflow.providers.teradata.utils.bteq_util::read_file",
+      "target": "airflow:providers.teradata.src.airflow.providers.teradata.utils.tpt_util::read_file",
+      "task_id": "pos-0337"
+    },
+    {
+      "case_id": "pos:0040",
+      "corpus": "airflow",
+      "expected": "airflow:providers.yandex.src.airflow.providers.yandex.hooks.yandex::YandexCloudBaseHook.get_ui_field_behaviour",
+      "target": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.maxcompute::MaxComputeHook.get_ui_field_behaviour",
+      "task_id": "pos-0040"
+    },
+    {
+      "case_id": "pos:0198",
+      "corpus": "airflow",
+      "expected": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb::InfluxDBHook.get_connection_form_widgets",
+      "target": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb3::InfluxDB3Hook.get_connection_form_widgets",
+      "task_id": "pos-0198"
+    },
+    {
+      "case_id": "pos:0255",
+      "corpus": "airflow",
+      "expected": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::generate_presto_client_info",
+      "target": "airflow:providers.trino.src.airflow.providers.trino.hooks.trino::generate_trino_client_info",
+      "task_id": "pos-0255"
+    },
+    {
+      "case_id": "pos:0151",
+      "corpus": "airflow",
+      "expected": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.restart_cluster",
+      "target": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.start_cluster",
+      "task_id": "pos-0151"
+    },
+    {
+      "case_id": "pos:0257",
+      "corpus": "airflow",
+      "expected": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::PrestoHook.get_isolation_level",
+      "target": "airflow:providers.trino.src.airflow.providers.trino.hooks.trino::TrinoHook.get_isolation_level",
+      "task_id": "pos-0257"
+    },
+    {
+      "case_id": "pos:0090",
+      "corpus": "airflow",
+      "expected": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::OpensearchResponse.hits",
+      "target": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_response::ElasticSearchResponse.hits",
+      "task_id": "pos-0090"
+    },
+    {
+      "case_id": "pos:0298",
+      "corpus": "airflow",
+      "expected": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.adapter::OpenLineageAdapter.fail_task",
+      "target": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.adapter::OpenLineageAdapter.complete_task",
+      "task_id": "pos-0298"
+    },
+    {
+      "case_id": "pos:0144",
+      "corpus": "django",
+      "expected": "django:django.contrib.gis.gdal.geometries::Polygon.point_count",
+      "target": "django:django.contrib.gis.gdal.geometries::GeometryCollection.point_count",
+      "task_id": "pos-0144"
+    },
+    {
+      "case_id": "pos:0273",
+      "corpus": "django",
+      "expected": "django:django.contrib.admin.tests::AdminSeleniumTestCase.wait_until_invisible",
+      "target": "django:django.contrib.admin.tests::AdminSeleniumTestCase.wait_until_visible",
+      "task_id": "pos-0273"
+    },
+    {
+      "case_id": "pos:0239",
+      "corpus": "django",
+      "expected": "django:django.db.backends.oracle.base::DatabaseWrapper.check_constraints",
+      "target": "django:django.db.backends.postgresql.base::DatabaseWrapper.check_constraints",
+      "task_id": "pos-0239"
+    },
+    {
+      "case_id": "pos:0316",
+      "corpus": "django",
+      "expected": "django:django.contrib.gis.db.backends.spatialite.operations::SpatiaLiteOperations.spatial_aggregate_name",
+      "target": "django:django.contrib.gis.db.backends.oracle.operations::OracleOperations.spatial_aggregate_name",
+      "task_id": "pos-0316"
+    },
+    {
+      "case_id": "pos:0145",
+      "corpus": "django",
+      "expected": "django:django.contrib.gis.gdal.geometries::GeometryCollection.point_count",
+      "target": "django:django.contrib.gis.gdal.geometries::Polygon.point_count",
+      "task_id": "pos-0145"
+    },
+    {
+      "case_id": "pos:0206",
+      "corpus": "django",
+      "expected": "django:django.contrib.admin.tests::AdminSeleniumTestCase.assertSelectedOptions",
+      "target": "django:django.contrib.admin.tests::AdminSeleniumTestCase.assertSelectOptions",
+      "task_id": "pos-0206"
+    },
+    {
+      "case_id": "pos:0317",
+      "corpus": "django",
+      "expected": "django:django.contrib.gis.db.backends.oracle.operations::OracleOperations.spatial_aggregate_name",
+      "target": "django:django.contrib.gis.db.backends.spatialite.operations::SpatiaLiteOperations.spatial_aggregate_name",
+      "task_id": "pos-0317"
+    },
+    {
+      "case_id": "pos:0238",
+      "corpus": "django",
+      "expected": "django:django.db.backends.postgresql.base::DatabaseWrapper.check_constraints",
+      "target": "django:django.db.backends.oracle.base::DatabaseWrapper.check_constraints",
+      "task_id": "pos-0238"
+    },
+    {
+      "case_id": "pos:0272",
+      "corpus": "django",
+      "expected": "django:django.contrib.admin.tests::AdminSeleniumTestCase.wait_until_visible",
+      "target": "django:django.contrib.admin.tests::AdminSeleniumTestCase.wait_until_invisible",
+      "task_id": "pos-0272"
+    },
+    {
+      "case_id": "pos:0207",
+      "corpus": "django",
+      "expected": "django:django.contrib.admin.tests::AdminSeleniumTestCase.assertSelectOptions",
+      "target": "django:django.contrib.admin.tests::AdminSeleniumTestCase.assertSelectedOptions",
+      "task_id": "pos-0207"
+    }
+  ],
+  "instructions": "Write a plausible Python implementation for each function below.\n\nYou are given exactly what a developer has before writing it: the function's name, its signature, and its docstring. Write the body you would write from that.\n\nCRITICAL:\n- Do NOT search the filesystem, grep, or try to find an existing implementation of any of these functions. They are drawn from open source projects and finding the original would invalidate the measurement entirely.\n- Write what a competent developer would write from the description. Do not try to guess the original author's exact wording.\n- A realistic first draft is what is wanted, not a polished one. Do not add error handling, logging, or validation the docstring does not mention.\n- Keep the given signature exactly. Include the docstring.\n- If a docstring is too vague to implement, write your best guess anyway and set \"confident\" to false.\n\nReturn JSON only, no prose:\n\n{\"drafts\": [{\"id\": \"<task id>\", \"code\": \"<the complete function, including its def line>\", \"confident\": true}]}\n",
+  "sample_per_corpus": 20,
+  "schema_version": 1
+}
