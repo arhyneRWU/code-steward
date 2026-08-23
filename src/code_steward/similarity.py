@@ -53,7 +53,13 @@ MIN_LINES = 5
 # every pair scores near 1.0 by accident.
 MIN_TOKENS = 20
 
-FUNCTION_KINDS = frozenset({"function", "method"})
+# Kinds that carry a comparable body. `async_function` is emitted by
+# the indexer and belongs here: leaving it out silently excluded
+# every `async def` from comparison, which cost 2.8% of Django, 5.4%
+# of Airflow and **43.4% of Home Assistant**. `method` is retained
+# though the indexer does not currently emit it, so a future kind
+# does not reintroduce the same gap by omission.
+FUNCTION_KINDS = frozenset({"function", "async_function", "method"})
 
 # Below this overlap a match is treated as coincidence and is not
 # returned at all. Chosen on a held-out cross-corpus null distribution

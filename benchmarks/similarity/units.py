@@ -23,14 +23,13 @@ from benchmarks.guards import Exclusions
 from code_steward.indexer import index_python_file
 from code_steward.models import CodeUnit
 from code_steward.similarity import (
+    FUNCTION_KINDS,
     MIN_LINES,
     MIN_TOKENS,
     _declarations_by_start_line,
     normalise,
     tokenise,
 )
-
-FUNCTION_KINDS = frozenset({"function", "method"})
 
 
 @dataclass(slots=True, frozen=True)
