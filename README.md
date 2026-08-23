@@ -30,7 +30,7 @@ Same held-out cases. The comparison is not the variable — how much of the func
 
 The main coding session should receive **decisions and selected code units, not the full history of repository exploration**. Instead of repeatedly searching large files, rediscovering callers and tests, or writing something that already exists, Code Steward builds a compact map of a codebase, retrieves the relevant existing units, and delegates deeper investigation to isolated review agents.
 
-> **Project status:** early development, Python and FastAPI first. The public API, plugin behavior, and storage format may change. Current direction and work order: [issue #55](https://github.com/arhyneRWU/code-steward/issues/55).
+> **Project status:** early development, Python and FastAPI first. The public API, plugin behavior, and storage format may change. Direction: [`docs/roadmap.md`](docs/roadmap.md). Work order: [issue #55](https://github.com/arhyneRWU/code-steward/issues/55).
 
 > **What is measured today.** Every claim below is against a control or a blind label set, on real repositories.
 >
@@ -437,7 +437,9 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 ### Next, in priority order
 
-Tracked in [issue #55](https://github.com/arhyneRWU/code-steward/issues/55), which is the authoritative version. Reordered after the small-model result: the far end of the pipeline is now measured to work, so building the assembler pays off in a way it did not before.
+Where this is going, and why, is in [`docs/roadmap.md`](docs/roadmap.md) — the product is a **skill**, the CLI is the substrate it drives, and the architecture is *select targets → assemble a slice → run passes → emit one bundle*.
+
+The near-term work order is tracked in [issue #55](https://github.com/arhyneRWU/code-steward/issues/55), which is the authoritative version. Reordered after the small-model result: the far end of the pipeline is now measured to work, so building the assembler pays off in a way it did not before.
 
 1. **Compose `trace` and `check` into one path-level pass.** The intended pipeline is *search → check the whole path → DRY*, and those two commands do not compose today: `check` works on changed files, `trace` emits a slice. Wanted is one command that traces the path, runs DRY across the whole slice, and emits a single bundle. This is the missing middle and it is what a small model would actually be handed.
 2. **Budget-aware assembly.** Every command emits a fixed shape. The target takes a token budget — "the best 8 KB for this task" — and fills it. Selection is by hop count today, so `--callers 2` on a hub explodes while depth 1 on a thin chain misses.
