@@ -24,6 +24,20 @@ code-steward trace "pkg.module::function" --signatures   # no bodies
 code-steward trace "pkg.module::function" --json         # for your own prompt
 ```
 
+## What you get
+
+Each neighbour carries **the line where the call actually happens** —
+in the caller for a caller, in the target for a callee:
+
+```text
+### pkg.mod::caller_function
+`pkg/mod.py:109-114` · depth 1 · calls the target at line 110
+```
+
+That is the difference between a follower and a pile of related
+functions. Handed a forty-line caller, neither a person nor a model
+should have to hunt for the one line that matters.
+
 ## What it saves
 
 Measured by tracing every function in a repository at the default
@@ -91,6 +105,10 @@ worse than no path.
   says it was truncated rather than trimming quietly. Breadth-first
   in both directions means a widely-used function does not lose its
   direct callers to its own transitive callees.
+- **Call sites come from the call graph, not from re-parsing.** If a
+  caller invokes the target several times, every line is listed. If
+  the edge resolved without line evidence, the site is simply absent
+  rather than guessed.
 - **Nothing here is ranked.** Every resolved neighbour at the
   requested depth is included. There is no relevance model deciding
   which caller matters, and at depth 2 or more on a hub function the
