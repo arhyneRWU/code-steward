@@ -1,0 +1,77 @@
+{
+  "hybrid": {
+    "bytes_D_minus_A": {
+      "mean_difference": 899.07,
+      "median_difference": -24.0,
+      "n": 200,
+      "permutation_p": 1.0,
+      "tie_rate": 0.135,
+      "ties": 27
+    },
+    "recall_D_minus_A": {
+      "mean_difference": 0.2068,
+      "median_difference": 0.0,
+      "n": 134,
+      "permutation_p": 0.0,
+      "tie_rate": 0.709,
+      "ties": 95
+    },
+    "recall_D_minus_C": {
+      "mean_difference": 0.0,
+      "median_difference": 0.0,
+      "n": 134,
+      "permutation_p": 1.0,
+      "tie_rate": 1.0,
+      "ties": 134
+    }
+  },
+  "per_arm": {
+    "A_code_steward": {
+      "mean_bytes": 4265.6,
+      "mean_recall": 0.7084,
+      "median_bytes": 2064.0,
+      "outside_key_total": 8,
+      "total_bytes": 853116
+    },
+    "B_gcr_delivered": {
+      "mean_bytes": 6302.6,
+      "median_bytes": 4960.5,
+      "total_bytes": 1260514
+    },
+    "C_gcr_sufficient": {
+      "mean_bytes": 10825.1,
+      "mean_recall": 0.9153,
+      "median_bytes": 6700.5,
+      "outside_key_total": 20,
+      "total_bytes": 2165011
+    },
+    "D_hybrid": {
+      "mean_bytes": 5164.6,
+      "mean_recall": 0.9153,
+      "median_bytes": 2295.5,
+      "outside_key_total": 0,
+      "total_bytes": 1032930
+    }
+  },
+  "primary": {
+    "bytes_A_minus_C": {
+      "mean_difference": -6559.475,
+      "median_difference": -4065.5,
+      "n": 200,
+      "permutation_p": 0.0,
+      "tie_rate": 0.0,
+      "ties": 0
+    },
+    "recall_A_minus_C": {
+      "mean_difference": -0.2068,
+      "median_difference": 0.0,
+      "n": 134,
+      "permutation_p": 1.0,
+      "tie_rate": 0.709,
+      "ties": 95
+    }
+  },
+  "schema_version": 1,
+  "scored_targets": 134,
+  "targets": 200
+}
