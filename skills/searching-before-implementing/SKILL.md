@@ -9,23 +9,59 @@ Code Steward turns "does this already exist?" into a cheap deterministic lookup 
 an open-ended repository crawl. It emits a small JSON packet of candidate code units so you
 can make a reuse decision without pulling whole files into context.
 
-**Read this first: there is one primary path and one fallback, and they are not close in
-accuracy. Draft the code and compare it. Only describe the task in words when you cannot.**
+**Read this first: the tool is much better at some moments than others, and the difference
+is not small.** Measured on the same held-out functions:
 
-On 250 held-out functions, comparing a drafted body found the existing duplicate **99.4%**
-of the time. Describing the task in a sentence found it **45.9%** of the time. That is the
-whole reason for the ordering below.
+| What you compare | Duplicate found |
+| --- | --- |
+| A task sentence, through `packet` | 0.459 |
+| A body you sketched from a description | 0.460 |
+| **Code that actually exists** | **1.000** |
 
-## Two tools, measured separately
+The comparison is not the variable. How much of the function exists when you run it is. So
+the ordering is: **check what you wrote when you have written it**, and treat everything you
+can do before that as a weak hint rather than an answer.
+
+That inverts the obvious workflow, and it is deliberate. Searching before implementing is
+worth one cheap attempt. Checking after implementing and before committing is where the
+tool is actually reliable.
+
+## Three commands, measured separately
+
+### `check` — comparing what you wrote to what exists. Reliable. This is the main one.
+
+Run it once you have written or edited functions, before you commit:
+
+```bash
+code-steward check                  # everything this branch changes
+code-steward check path/to/file.py  # specific files
+```
+
+It reports only overlaps **your change introduced** — a function that already duplicated
+something before you touched it is not your finding. On Django that removes 16x the noise;
+on a young, fast-moving repository nearer 3x. `--all-overlaps` shows everything.
+
+An empty result is an answer, and it names the denominator so you can tell it apart from a
+no-op:
+
+```text
+12 changed function(s) checked, none introduce new overlap
+```
+
+Two caveats before you trust a silent run. It catches **copy-and-tidy and misses
+reimplementation** — a copied helper with a new function name scores ~0.98, the same
+algorithm rewritten with every identifier changed scores ~0.015 and is invisible. And it
+compares against whatever `build` last saw, so a stale index is quietly incomplete.
 
 ### `similar` — comparing code to code. Reliable. Use this first.
 
 Measured across three pinned public repositories and 308 blind-labelled pairs: **precision
 1.000**. When it reports an overlap, there is almost always a real one.
 
-Use it whenever you can write down the code you are about to add, even roughly. It is the
-stronger of the two signals by a wide margin, and it is the only one that works before the
-code exists.
+Use it when the code does not exist yet. It is the only path that works before the code is
+written — but measured on drafts an agent actually wrote from a name and docstring, it finds
+the duplicate 0.460 of the time, not the 0.994 a real body gets. A silent `similar --draft`
+is worth much less than a silent `check`.
 
 It applies a **relevance floor of 0.27** and returns nothing below it. That floor was chosen
 on a held-out cross-corpus sample as the smallest value holding the false-positive rate at or
@@ -91,14 +127,18 @@ Skip it — go straight to normal exploration — when any of these hold:
   `index not found: .code-steward/index.sqlite3`). For a one-line change, just grep.
 - You **already know where the code lives**. Read the file. A packet is strictly worse than
   a known path.
-- The task is **not "does this exist?"** — debugging, editing a file you have open, renaming,
-  formatting, dependency work, config, docs, tests for code you just wrote.
+- The task is **not "does this exist?"** — debugging, renaming, formatting, dependency work,
+  config, docs. (Editing a file you have open still ends with `check`; only the *search*
+  half is skippable.)
 - The target is **defined by behavior with no shared vocabulary** with the codebase
   ("retry with jitter when the upstream is flaky"). This is the *ranker's* documented worst
   case — but if you can sketch the code, `similar --draft` does not depend on vocabulary at
   all and is worth trying before you grep.
 - The codebase is **largely undocumented**. Retrieval quality degrades sharply.
 - You are **inside a subagent that was already handed the relevant units**. Do not re-retrieve.
+
+None of these exempt you from step 6. They are reasons not to *search* before implementing;
+`check` runs on code that exists and costs one command.
 
 ## Workflow
 
@@ -112,10 +152,11 @@ code-steward update path/to/file.py # after editing one file
 `build` fails loudly on duplicate `# code-steward: unit <id>` tags across files. Use
 `--exclude <dir>` (repeatable) to keep fixture or vendored trees out of the index.
 
-### 2. Draft the code and compare it
+### 2. If the code does not exist yet, sketch it and compare
 
-This is the primary path. Do it whenever you can write down roughly what you are about to
-add, which is nearly always — you were going to write the code anyway.
+Worth one cheap attempt, and no more than that. A sketch finds the duplicate 0.460 of the
+time — better than nothing, no better than describing the task. Do not spend long here and
+do not treat a silent result as an answer; step 6 is where the reliable check happens.
 
 ```bash
 code-steward similar --draft new_function.py     # or '-' to read stdin
@@ -208,7 +249,24 @@ tool checked, scored what it found, and asserts that nothing cleared the bar.
 where writing the function was correct, a reviewer shown a packet of eight candidates picked
 one of them instead. Being handed plausible candidates is not evidence that one of them fits.
 
-### 6. Report the decision, not the search
+### 6. After you write it, run `check`
+
+**This is the step that is actually reliable, and the one most easily skipped.** Everything
+above is a hint at 0.46. This is the measurement at 1.000.
+
+```bash
+code-steward update path/to/file.py   # keep the index current
+code-steward check                    # what did this change duplicate?
+```
+
+If it reports an overlap, open the named unit and decide REUSE, EXTEND, REFACTOR, or leave
+both — an overlap is a fact about text, not a verdict. If it reports nothing, say so with
+the denominator it gave you.
+
+Do this even when steps 1–5 found nothing. Especially then: a sketch missing a duplicate is
+the common case, and the code you actually wrote is the input the tool handles well.
+
+### 7. Report the decision, not the search
 
 Carry forward the decision, the units it rests on (`unit-id` + `path:lines`), and one line of
 reasoning. Do not carry forward the packet JSON or the exploration transcript — keeping that
@@ -227,8 +285,13 @@ the tool made an assertion rather than failing to find something.
 
 ## Other commands
 
-- `code-steward similar --draft -` — compare a function you have not written yet; the most
-  reliable signal here.
+- `code-steward check --rate` — this repository's baseline duplication. Run it once. A high
+  share means `check` will fire often on new code and is a report rather than a gate.
+- `code-steward check --fail-on-overlap` — exit 1 on a finding, for a hook or CI. Check
+  `--rate` first: on a repository where a third of functions already overlap, this will be
+  noise.
+- `code-steward similar --draft -` — compare a function you have not written yet; weaker
+  than `check`, and the only option before the code exists.
 - `code-steward search "<intent>"` — exploratory ranking, wider and noisier than `packet`.
 - `code-steward endpoints` — FastAPI routes found by AST.
 - `code-steward map` — compact Markdown code map, written to `.code-steward/CODEMAP.md`.
