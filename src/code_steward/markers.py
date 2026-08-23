@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import io
 import re
+import tokenize
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -41,12 +43,42 @@ class ParsedMarkers:
         return frozenset(lines)
 
 
+def _comment_lines(text: str) -> list[tuple[int, str]]:
+    """Yield ``(lineno, line)`` for own-line comments only.
+
+    Tags are comments by specification, so the tokenizer is the
+    authority on what is a comment: text inside a string literal is
+    never a tag. Only comments that begin their own logical line can
+    be tags, matching the anchored regexes below.
+
+    If ``text`` cannot be tokenized it is not valid Python, and the
+    caller may not even have handed us Python. Rather than failing,
+    fall back to scanning every raw line, which is exactly the
+    behaviour this parser had before tokenization was introduced.
+    """
+    try:
+        tokens = list(tokenize.generate_tokens(io.StringIO(text).readline))
+    except (tokenize.TokenError, IndentationError, SyntaxError):
+        return list(enumerate(text.splitlines(), 1))
+
+    result: list[tuple[int, str]] = []
+    for token in tokens:
+        if token.type != tokenize.COMMENT:
+            continue
+        lineno, col = token.start
+        prefix = token.line[:col]
+        if prefix.strip():
+            continue
+        result.append((lineno, prefix + token.string))
+    return result
+
+
 def parse_markers_text(text: str) -> ParsedMarkers:
     aliases: list[UnitAlias] = []
     regions: list[TaggedRegion] = []
     stack: list[tuple[str, int, str]] = []
 
-    for lineno, line in enumerate(text.splitlines(), 1):
+    for lineno, line in _comment_lines(text):
         unit = UNIT_RE.match(line)
         if unit:
             aliases.append(UnitAlias(unit.group("id"), lineno, unit.group("indent")))
