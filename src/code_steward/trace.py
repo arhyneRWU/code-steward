@@ -46,6 +46,11 @@ class SliceMember:
     unit: CodeUnit
     role: str
     depth: int
+    # Lines where the call actually happens: in this unit for a
+    # caller, in the target for a callee. A reader handed a
+    # forty-line caller should not have to hunt for the one line
+    # that matters, which is the whole point of a follower.
+    call_lines: tuple[int, ...] = ()
 
 
 @dataclass(slots=True)
@@ -77,6 +82,21 @@ def _call_edges(
         callees.setdefault(edge.source_unit_id, []).append(edge.target_ref)
         callers.setdefault(edge.target_ref, []).append(edge.source_unit_id)
     return callees, callers
+
+
+def _call_sites(relationships: list[HardRelationship]) -> dict[tuple[str, str], tuple[int, ...]]:
+    """Map each (caller, callee) pair to the lines where it calls."""
+    sites: dict[tuple[str, str], tuple[int, ...]] = {}
+    for edge in relationships:
+        if edge.relation != "CALLS" or edge.target_kind != "unit":
+            continue
+        lines = edge.evidence.get("lines") if isinstance(edge.evidence, dict) else None
+        if not lines:
+            continue
+        key = (edge.source_unit_id, edge.target_ref)
+        merged = sorted({*sites.get(key, ()), *(int(value) for value in lines)})
+        sites[key] = tuple(merged)
+    return sites
 
 
 def _tests_for(relationships: list[HardRelationship], unit_id: str) -> list[str]:
@@ -111,6 +131,7 @@ def build_slice(
         return None
 
     callees, callers = _call_edges(relationships)
+    sites = _call_sites(relationships)
     seen = {unit_id}
     members: list[SliceMember] = []
     edges_walked = 0
@@ -133,7 +154,10 @@ def build_slice(
                     truncated = True
                     break
                 seen.add(neighbour)
-                members.append(SliceMember(by_id[neighbour], role, depth + 1))
+                # For a caller the site is in the neighbour; for a
+                # callee it is in the unit doing the calling.
+                pair = (neighbour, current) if role == "caller" else (current, neighbour)
+                members.append(SliceMember(by_id[neighbour], role, depth + 1, sites.get(pair, ())))
                 queue.append((neighbour, depth + 1))
             if truncated:
                 break
@@ -223,7 +247,12 @@ def render_markdown(project_root: Path, sliced: Slice, *, source: bool = True) -
             out.append("")
             out.append(f"### {unit.unit_id}")
             out.append("")
-            out.append(f"`{unit.path}:{unit.start_line}-{unit.end_line}` · depth {member.depth}")
+            location = f"`{unit.path}:{unit.start_line}-{unit.end_line}` · depth {member.depth}"
+            if member.call_lines:
+                where = ", ".join(str(line) for line in member.call_lines)
+                verb = "calls the target at" if role == "caller" else "called from"
+                location += f" · {verb} line {where}"
+            out.append(location)
             if unit.purpose:
                 out.append("")
                 out.append(unit.purpose)
@@ -253,6 +282,7 @@ def slice_to_dict(sliced: Slice) -> dict[str, object]:
                 "lines": f"{member.unit.start_line}:{member.unit.end_line}",
                 "signature": member.unit.signature,
                 "purpose": member.unit.purpose,
+                "call_lines": list(member.call_lines),
             }
             for member in sliced.members
         ],

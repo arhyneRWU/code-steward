@@ -154,3 +154,36 @@ def test_cli_trace_emits_the_body_and_json_carries_roles(project, capsys):
 def test_cli_trace_rejects_an_unknown_unit(project, capsys):
     assert main(["--root", str(project), "trace", "chain::nope"]) == 2
     assert "unknown unit" in capsys.readouterr().err
+
+
+def test_a_caller_reports_the_line_where_it_calls(graph):
+    """A follower that makes you hunt for the call is half a tool."""
+    units, relationships = graph
+    sliced = build_slice("chain::leaf", units, relationships)
+    caller = next(m for m in sliced.members if m.unit.unit_id == "chain::middle")
+    assert caller.role == "caller"
+    assert caller.call_lines
+    # `middle` calls `leaf` on its own line, not the target's.
+    assert all(
+        caller.unit.start_line <= line <= caller.unit.end_line for line in caller.call_lines
+    )
+
+
+def test_a_callee_reports_the_line_in_the_target_that_calls_it(graph):
+    """The site belongs to whichever unit does the calling."""
+    units, relationships = graph
+    sliced = build_slice("chain::middle", units, relationships)
+    callee = next(m for m in sliced.members if m.unit.unit_id == "chain::leaf")
+    target = sliced.target
+    assert callee.role == "callee"
+    assert callee.call_lines
+    assert all(target.start_line <= line <= target.end_line for line in callee.call_lines)
+
+
+def test_call_sites_reach_the_rendered_bundle_and_the_json(project, capsys):
+    assert main(["--root", str(project), "trace", "chain::leaf", "--signatures"]) == 0
+    assert "calls the target at line" in capsys.readouterr().out
+
+    assert main(["--root", str(project), "trace", "chain::leaf", "--json"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert all("call_lines" in row for row in payload["members"])
