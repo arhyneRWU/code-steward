@@ -78,11 +78,20 @@ jobs:
             --cases benchmarks/real_repo/requests_retrieval.json \
             --output-dir validation-results/requests
 
+      - name: Measure trusted CALLS reachability
+        run: |
+          python benchmarks/real_repo/calls_reachability.py \
+            --database validation-results/requests/index.sqlite3 \
+            --cases benchmarks/real_repo/requests_retrieval.json \
+            --output-dir validation-results/requests
+
       - name: Publish job summary
         run: |
           cat validation-results/requests/summary.md >> "$GITHUB_STEP_SUMMARY"
           printf '\n' >> "$GITHUB_STEP_SUMMARY"
           cat validation-results/requests/retrieval-baseline.md >> "$GITHUB_STEP_SUMMARY"
+          printf '\n' >> "$GITHUB_STEP_SUMMARY"
+          cat validation-results/requests/calls-reachability.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validation results
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
