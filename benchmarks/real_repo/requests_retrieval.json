@@ -1,0 +1,144 @@
+[
+  {
+    "id": "requests-001-proxy-selection",
+    "query": "Find the helper that chooses which configured proxy URL applies to a specific request URL.",
+    "relevant": ["utils::select_proxy"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "proxy-selection"
+  },
+  {
+    "id": "requests-002-strip-url-auth-fragment",
+    "query": "Find the code that removes embedded authentication and the fragment from a URL while keeping the rest of the URL.",
+    "relevant": ["utils::urldefragauth"],
+    "traps": ["utils::get_auth_from_url"],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "url-normalization"
+  },
+  {
+    "id": "requests-003-dict-to-cookiejar",
+    "query": "Find the reusable helper that converts a name/value cookie dictionary into a CookieJar.",
+    "relevant": ["cookies::cookiejar_from_dict"],
+    "traps": ["utils::dict_from_cookiejar"],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "cookie-conversion"
+  },
+  {
+    "id": "requests-004-create-cookie",
+    "query": "Find the helper that constructs a Cookie from a name, value, and optional cookie attributes.",
+    "relevant": ["cookies::create_cookie"],
+    "traps": ["cookies::morsel_to_cookie"],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "cookie-construction"
+  },
+  {
+    "id": "requests-005-netrc-auth",
+    "query": "Find where Requests looks up username and password credentials for a URL from the user's netrc file.",
+    "relevant": ["utils::get_netrc_auth"],
+    "traps": ["utils::get_auth_from_url"],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "authentication"
+  },
+  {
+    "id": "requests-006-header-validation",
+    "query": "Find the reusable validator for an HTTP header name/value pair that rejects illegal leading whitespace, reserved characters, or return characters.",
+    "relevant": ["utils::check_header_validity"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "wrapper-to-helper"
+  },
+  {
+    "id": "requests-007-prepare-url",
+    "query": "Find where an outgoing HTTP URL is parsed, validated, normalized, combined with query parameters, and requoted before sending.",
+    "relevant": ["models::PreparedRequest.prepare_url"],
+    "traps": ["models::RequestEncodingMixin.path_url"],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "request-preparation"
+  },
+  {
+    "id": "requests-008-session-prepare-request",
+    "query": "Find where a Session merges its settings with a Request and constructs the PreparedRequest that will be transmitted.",
+    "relevant": ["sessions::Session.prepare_request"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "session-orchestration"
+  },
+  {
+    "id": "requests-009-select-adapter",
+    "query": "Find where a Session chooses the connection adapter for a URL by matching the registered URL prefixes.",
+    "relevant": ["sessions::Session.get_adapter"],
+    "traps": ["sessions::Session.mount"],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "adapter-selection"
+  },
+  {
+    "id": "requests-010-follow-redirect-chain",
+    "query": "Find the code that follows a redirect chain and rebuilds the request method, cookies, proxy settings, authentication, and body as needed.",
+    "relevant": ["sessions::SessionRedirectMixin.resolve_redirects"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "redirect-orchestration"
+  },
+  {
+    "id": "requests-011-raise-http-status-error",
+    "query": "Find where a Response turns a 4xx or 5xx status into an HTTPError with the response attached.",
+    "relevant": ["models::Response.raise_for_status"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "response-error"
+  },
+  {
+    "id": "requests-012-stream-response-chunks",
+    "query": "Find where streaming response data is yielded in chunks without loading the whole body into memory.",
+    "relevant": ["models::Response.iter_content"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "response-streaming"
+  },
+  {
+    "id": "requests-013-build-digest-auth-header",
+    "query": "Find where the HTTP Digest Authorization header is calculated from the challenge, method, URL, nonce, and selected digest algorithm.",
+    "relevant": ["auth::HTTPDigestAuth.build_digest_header"],
+    "traps": [],
+    "redundancy_groups": [
+      [
+        "auth::HTTPDigestAuth.build_digest_header.md5_utf8",
+        "auth::HTTPDigestAuth.build_digest_header.sha_utf8",
+        "auth::HTTPDigestAuth.build_digest_header.sha256_utf8",
+        "auth::HTTPDigestAuth.build_digest_header.sha512_utf8"
+      ]
+    ],
+    "limit": 8,
+    "category": "authentication"
+  },
+  {
+    "id": "requests-014-build-tls-pool-key",
+    "query": "Find where urllib3 connection-pool key attributes are derived from the PreparedRequest, TLS verification setting, and client certificate.",
+    "relevant": ["adapters::HTTPAdapter.build_connection_pool_key_attributes"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "tls-connection-pool"
+  },
+  {
+    "id": "requests-015-rewind-request-body",
+    "query": "Find the helper that rewinds a prepared request's file-like body to its recorded starting position so it can be resent after a redirect.",
+    "relevant": ["utils::rewind_body"],
+    "traps": [],
+    "redundancy_groups": [],
+    "limit": 8,
+    "category": "request-body-reuse"
+  }
+]
