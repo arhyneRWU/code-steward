@@ -116,3 +116,128 @@ CI verifies that:
 CI does **not** require a minimum recall or MRR yet. Establishing a quality threshold
 before we have compared plausible retrieval strategies would turn the current baseline
 into an accidental architectural commitment.
+
+---
+
+# Benchmark v2: the retrieval validity matrix
+
+Benchmark v1 above is **frozen** and stays exactly as it is. It is the regression
+guard: `benchmarks/retrieval/run.py`, `cases.json`, and `fixture_repo/` must keep
+reproducing their existing numbers. Everything in this section is additive and
+separately reported.
+
+## Why v1's single number is not enough
+
+v1 reports one metric set from one corpus with one query style. The same
+unchanged pipeline scores far worse on a real repository
+(`benchmarks/real_repo/retrieval_baseline.py`, `psf/requests` @ `8f8b212d`:
+Hit@K 73.33%, MRR 0.500). Three properties of the v1 fixture hide that gap, and
+none of them is a retrieval property:
+
+| Gap | v1 fixture | Real repository |
+| --- | --- | --- |
+| Documentation | 18 of 20 units carry a docstring (90%) | roughly 17% of `src/` |
+| Query length | mean 3.7 words | task intents run 15-25 words |
+| Candidate window (`limit / units`) | 25-30% | roughly 4% |
+
+Query length matters more than it looks. RapidFuzz `token_set_ratio` normalizes
+by the **target** length, so a long query paired with a short `purpose` string
+is scored asymmetrically. At 3.7 words that asymmetry is invisible.
+
+The window matters because on a 20-unit corpus a rank-7 result cannot exist, so
+`limit=6` makes Hit@K nearly a recall floor rather than a ranking measurement.
+
+## The matrix
+
+`benchmarks/retrieval/matrix.py` evaluates the same gold labels across three
+axes and reports the full v1 metric surface plus `Hit@1/3/5`, mean candidates
+returned, candidate fill rate, mean query words, and `candidate_window`:
+
+- **documentation**: `documented` (the v1 sources) vs `undocumented`
+- **query style**: `short` (v1 `cases.json`) vs `verbose` (`cases_verbose.json`)
+- **scale**: `core` (20 units) vs `scaled` (108 units)
+
+```bash
+make bench-matrix                  # production retrieve_units (default)
+make bench-matrix PIPELINE=search  # bare search_units, what v1 calls
+python -m benchmarks.retrieval.matrix --json
+python -m benchmarks.retrieval.matrix --output-dir build/bench
+```
+
+### Pipeline note
+
+Frozen v1 calls `search_units`. The real-repository baseline calls production
+`retrieve_units` (query expansion plus the near-duplicate filter). The matrix
+therefore defaults to `retrieve` so its cells are comparable to the real
+baseline, and `--pipeline search` reproduces v1's cell exactly. The
+`documented/core/short` cell equals the corresponding frozen v1 numbers under
+each pipeline; a test asserts this.
+
+## Corpus variants are generated, not vendored
+
+`benchmarks/retrieval/corpus.py` materializes each variant into a temporary
+tree at run time from the single v1 fixture.
+
+A second checked-in tree was rejected. Two copies of the same 20 units drift:
+edit v1 and the undocumented twin silently becomes a different corpus, at which
+point the ablation is no longer an ablation, because the two corpora differ in
+more than the axis under test. Generation makes "docstrings removed" the *only*
+difference, provable by construction. `strip_docstrings` removes module, class,
+and function docstrings with `ast`, inserts `pass` where a body was nothing but
+a docstring, and leaves `# code-steward:` tags anchored above their
+declarations.
+
+## The verbose query set
+
+`cases_verbose.json` carries the **same case IDs, `relevant`, `traps`,
+`redundancy_groups`, `input_types`, `return_type`, and `limit`** as
+`cases.json`. Only `query` differs; `assert_label_parity()` enforces that, and
+a test fails if a label moves or a query was not rephrased.
+
+The paraphrases are written as behaviour, by someone who does not know the
+function names — mean 22.2 words against v1's 3.7. This is the part that is
+easy to get wrong: an identifier-shaped paraphrase ("normalize the taxon name
+and resolve its aliases") is exactly the query that already succeeds, so lazy
+rewording would measure nothing. A test asserts no verbose query contains the
+identifier, the spaced identifier, or the unit ID of any of its own gold units.
+
+## Corpus scale
+
+The `scaled` variant grows the corpus from 20 to **108 units**, moving the
+window from 26.7% to 4.9% — real-repository territory. It adds two things on
+top of the untouched v1 sources:
+
+- **64 unrelated distractors**: eight business domains crossed with eight
+  operations. These occupy corpus slots and nothing else.
+- **24 saturating wrappers** (`saturating.py`): near-identical thin wrappers
+  that all delegate to the same shared normalization, mirroring the existing
+  `api`/`cli` wrapper pair. Distractors alone would raise the unit count without
+  making retrieval harder; the saturating namespace is what actually competes
+  for the top of the ranking and stresses the near-duplicate filter.
+
+Both are **generated from a small table**, not hand-written. That is the whole
+point of the choice: the maintenance cost of the scaled corpus is one
+`_DOMAINS` tuple, one `_OPERATIONS` tuple, and one channel list — roughly 40
+lines — instead of 88 hand-written functions that a future fixture change would
+have to be applied to one by one. Generated units are never gold and never
+traps, and a test asserts their IDs cannot collide with any labelled unit.
+
+The `core` rows are kept in the report alongside `scaled` so the contribution of
+corpus size alone stays visible rather than being folded into the other two
+axes.
+
+## What the matrix still cannot see
+
+- **Repository shape.** The fixture has no classes, no inheritance, no `__init__`
+  re-exports, no dead code, and no test files competing with source. Real
+  corpora do.
+- **Gold-label realism.** Labels are still author-declared on synthetic code. A
+  real repository's "what should a reviewer see here" is contested.
+- **Reviewer outcome.** Decision quality and reviewer token spend are still
+  unscored, exactly as v1 states.
+- **Docstring quality.** The axis is binary: present or absent. Real docstrings
+  are often stale or wrong, which is worse than absent, and nothing here
+  measures that.
+
+As with v1, CI checks structure and metric ranges. It does **not** enforce a
+quality threshold on any cell.
