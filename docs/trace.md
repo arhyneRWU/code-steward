@@ -161,6 +161,36 @@ therefore rendered the summary "resolve target" in the position a
 docstring goes, telling the reader the function was documented when
 it was not. Purpose is now printed only when a docstring exists.
 
+## Naming a target
+
+    code-steward trace "pkg.mod::fn"     # a unit ID
+    code-steward trace normalise         # a bare function name
+    code-steward trace app.py:42         # what grep gives you
+
+`path:line` accepts **any line inside the unit**, not only the `def`,
+because you rarely land on the `def`. A bare name matches the name or
+the qualname.
+
+**Resolution is deterministic and never picks.** An ambiguous name
+lists what it found and exits 2:
+
+```text
+'main' is ambiguous. Name one of:
+  benchmarks.check_history::main  (benchmarks/check_history.py:63)
+  ...
+```
+
+Choosing between plausible candidates is ranking a shortlist, which
+this project has measured itself into never doing -- an agent handed
+a ranked shortlist took a wrong candidate on a third of clean cases.
+A caller who wants a guess can ask `search` for one, on the
+understanding that it is a guess.
+
+This closes a real gap in the pipeline: grep gives you a file and a
+line, a traceback gives you a function name, and neither is a unit
+ID. Before this there was no way from "I know roughly where this is"
+to a slice without already knowing the index's naming scheme.
+
 ## Starting from the entry points
 
     code-steward trace --endpoints --dry

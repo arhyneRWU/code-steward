@@ -236,6 +236,42 @@ def undocumented_units(units: list[CodeUnit]) -> list[CodeUnit]:
     ]
 
 
+def resolve_target(query: str, units: list[CodeUnit]) -> list[CodeUnit]:
+    """Find the units a target string names, without ranking them.
+
+    Three forms, because these are what a caller actually has to
+    hand:
+
+    - a unit ID, which the index already uses;
+    - ``path:line``, which is what grep and a traceback give you --
+      any line inside the unit, not only the ``def``;
+    - a bare name or qualname, which is what a review comment gives
+      you.
+
+    Returns every match. An ambiguous name is reported as ambiguous
+    rather than resolved by picking a best one: choosing between
+    plausible candidates is exactly the behaviour this project has
+    measured itself into never doing, and a caller who wanted a guess
+    can ask `search` for one.
+    """
+    exact = [unit for unit in units if unit.unit_id == query]
+    if exact:
+        return exact
+
+    head, sep, tail = query.rpartition(":")
+    if sep and tail.isdigit() and not head.endswith(":"):
+        line = int(tail)
+        wanted = head.replace("\\", "/")
+        return [
+            unit
+            for unit in units
+            if (unit.path == wanted or unit.path.endswith("/" + wanted))
+            and unit.start_line <= line <= unit.end_line
+        ]
+
+    return [unit for unit in units if query in (unit.name, unit.qualname)]
+
+
 @dataclass(slots=True, frozen=True)
 class Overlap:
     """One unit on the path and what it duplicates."""
