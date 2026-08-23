@@ -58,6 +58,51 @@ Resolution is deliberately conservative. Same-module declarations and unambiguou
 
 Call extraction does not by itself change retrieval ranking. Structural retrieval remains a separate benchmarked decision.
 
+## Test relationships
+
+The second deterministic extractor produces `TESTED_BY` edges under
+`tests` provenance. It adds no parsing of its own: it reads the
+resolved `CALLS` edges the `python-ast` extractor already stored and
+inverts the ones whose source is a test.
+
+A source unit counts as a test only when its file is pytest
+discoverable, `test_*.py` or `*_test.py`, and the unit is a function
+whose name is `test` or begins with `test_`, and it carries no fixture
+decorator. Both the path and the name are required, because either
+alone is wrong: `tests/helpers.py::test_data` is not a test, and
+`test_db.py::_build_repo` is not a test. A candidate is also dropped
+when the target itself lives in a test file, so calls into test
+helpers never mint an edge.
+
+Only `target_kind="unit"` edges are inverted. Unresolved symbols are
+not reliable enough to attribute coverage.
+
+Edges record where the test is, not what it contains. A reviewer
+asking whether a unit is covered needs the edge; a reviewer wanting
+the contract can fetch the test body with `code-steward read`. Storing
+test bodies in the index would inflate every packet that mentions a
+covered unit, and packet size is the cost this project is trying to
+minimise.
+
+Because the extractor consumes stored edges rather than source, it
+performs no file I/O and no parsing. Its cost is proportional to the
+number of stored edges and units, not to repository size.
+
+### Known limitation: src layout
+
+Coverage is currently far lower than it should be on `src/` layout
+projects. `_module_key` derives a module key from the repository
+relative path, so `src/code_steward/db.py` becomes
+`src.code_steward.db`, while a test importing `code_steward.db`
+resolves to `code_steward.db`. The two never match, so every
+test to production call remains an unresolved symbol and mints no
+`TESTED_BY` edge.
+
+Relative intra-package imports are unaffected and still resolve. This
+is a limitation of call resolution rather than of test detection, and
+fixing it would raise `TESTED_BY` coverage across any `src/` layout
+package.
+
 ## External graph facts
 
 Code Steward may consume facts produced by an external code-intelligence
