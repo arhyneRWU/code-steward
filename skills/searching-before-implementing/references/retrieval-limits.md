@@ -8,20 +8,52 @@ abandon Code Steward for ordinary exploration.
 Benchmark repository: `psf/requests`. Production retriever (`retrieve_units`, the path used by
 `code-steward packet`).
 
-| Metric | Value |
-| --- | --- |
-| Hit@1 | 40% |
-| Hit@K | 73.33% |
-| MRR | 0.500 |
+| Metric | Ranker | Plain text search |
+| --- | --- | --- |
+| Hit@1 | 46.67% | **53.33%** |
+| Hit@3 | 60.00% | **80.00%** |
+| Hit@K | 73.33% | **86.67%** |
+| MRR | 0.550 | **0.667** |
 
 Restated without the jargon:
 
-- The top candidate is correct **2 times in 5**.
+- The top candidate is correct **slightly under half the time**.
 - The correct unit is somewhere in the packet **about 3 times in 4**.
 - **About 1 query in 4 produces a packet with no correct answer in it anywhere.**
+- A stopword-stripped keyword scan beats the ranker on **every one of those**.
 
 There is no signal in the packet that tells you which case you are in. Score magnitude does
 not separate the good packets from the bad ones.
+
+What the packet does buy is size: 4,039 bytes against 21,107 to inspect the same candidates.
+Use it for compression, not for confidence.
+
+## The other tool is much better, and works earlier
+
+`code-steward similar` compares code to code rather than an intent to code. Measured across
+three pinned public repositories and 308 blind-labelled pairs: **precision 1.000**.
+
+If you can sketch the function the task calls for, compare it before you reach for a packet:
+
+```bash
+code-steward similar --draft sketch.py --json
+```
+
+Docstrings, comments, and formatting are ignored, so a rough sketch is enough.
+
+Its failure mode is different from the ranker's and worth knowing exactly. Overlap of one
+fixture function against modified copies of itself:
+
+| Change to the copy | Overlap |
+| --- | --- |
+| docstring rewritten | 1.000 |
+| function renamed | 0.941 |
+| whole signature renamed | 0.535 |
+| every local variable also renamed | 0.015 |
+
+So it finds a function that was copied and tidied, and misses one that was reimplemented from
+scratch in different words. A silent `similar` narrows the possibilities; it does not close
+them.
 
 ## Why it fails the way it does
 

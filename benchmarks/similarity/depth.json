@@ -1,0 +1,72 @@
+{
+  "depth_curve": [
+    {
+      "depth": 10,
+      "interpretable": true,
+      "labelled": 30,
+      "precision_over_labelled": 1.0,
+      "precision_pessimistic": 1.0,
+      "returned": 30,
+      "unlabelled": 0,
+      "unlabelled_share": 0.0
+    },
+    {
+      "depth": 30,
+      "interpretable": true,
+      "labelled": 90,
+      "precision_over_labelled": 1.0,
+      "precision_pessimistic": 1.0,
+      "returned": 90,
+      "unlabelled": 0,
+      "unlabelled_share": 0.0
+    },
+    {
+      "depth": 60,
+      "interpretable": false,
+      "labelled": 92,
+      "precision_over_labelled": 1.0,
+      "precision_pessimistic": 0.511,
+      "returned": 180,
+      "unlabelled": 88,
+      "unlabelled_share": 0.489
+    },
+    {
+      "depth": 120,
+      "interpretable": false,
+      "labelled": 102,
+      "precision_over_labelled": 1.0,
+      "precision_pessimistic": 0.283,
+      "returned": 360,
+      "unlabelled": 258,
+      "unlabelled_share": 0.717
+    },
+    {
+      "depth": 240,
+      "interpretable": false,
+      "labelled": 120,
+      "precision_over_labelled": 0.992,
+      "precision_pessimistic": 0.165,
+      "returned": 720,
+      "unlabelled": 600,
+      "unlabelled_share": 0.833
+    },
+    {
+      "depth": 480,
+      "interpretable": false,
+      "labelled": 146,
+      "precision_over_labelled": 0.993,
+      "precision_pessimistic": 0.101,
+      "returned": 1440,
+      "unlabelled": 1294,
+      "unlabelled_share": 0.899
+    }
+  ],
+  "detection_floor": {
+    "invisible_at_any_depth": 0,
+    "median_overlap": 0.904,
+    "p10_overlap": 0.302,
+    "positives_checked": 222
+  },
+  "pool_depth": 30,
+  "schema_version": 1
+}

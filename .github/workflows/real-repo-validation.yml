@@ -64,7 +64,7 @@ jobs:
 
       - name: Run validation
         run: |
-          python benchmarks/real_repo/validate.py \
+          python -m benchmarks.real_repo.validate \
             --project-root "upstream/requests/${{ steps.target.outputs.source_subdir }}" \
             --output-dir validation-results/requests \
             --repository "${{ steps.target.outputs.repository }}" \
@@ -73,21 +73,21 @@ jobs:
 
       - name: Run production retrieval baseline
         run: |
-          python benchmarks/real_repo/retrieval_baseline.py \
+          python -m benchmarks.real_repo.retrieval_baseline \
             --database validation-results/requests/index.sqlite3 \
             --cases benchmarks/real_repo/requests_retrieval.json \
             --output-dir validation-results/requests
 
       - name: Measure trusted CALLS reachability
         run: |
-          python benchmarks/real_repo/calls_reachability.py \
+          python -m benchmarks.real_repo.calls_reachability \
             --database validation-results/requests/index.sqlite3 \
             --cases benchmarks/real_repo/requests_retrieval.json \
             --output-dir validation-results/requests
 
       - name: Compare one-hop CALLS reranking
         run: |
-          python benchmarks/real_repo/calls_rerank.py \
+          python -m benchmarks.real_repo.calls_rerank \
             --database validation-results/requests/index.sqlite3 \
             --cases benchmarks/real_repo/requests_retrieval.json \
             --output-dir validation-results/requests

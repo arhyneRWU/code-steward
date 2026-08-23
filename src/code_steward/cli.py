@@ -14,6 +14,12 @@ from .indexer import is_excluded
 from .maintenance import rebuild_index, update_index_file
 from .packet import build_packet
 from .retrieval import rank_units, retrieve_units
+from .similarity import (
+    draft_shingles,
+    rank_against,
+    rank_similar_units,
+    unit_shingles,
+)
 
 
 def root_from(value: str | None) -> Path:
@@ -39,6 +45,15 @@ def cmd_build(args: argparse.Namespace) -> int:
             f"indexed {stats.units} units, {stats.endpoints} endpoints "
             f"from {stats.files} Python files"
         )
+        if stats.skipped:
+            # Reported, never silent: an index that quietly covers
+            # less than the tree cannot be told from one that covers
+            # all of it, and "not found" would then mean two things.
+            print(f"skipped {len(stats.skipped)} file(s) that could not be indexed:")
+            for entry in stats.skipped[:10]:
+                print(f"  {entry.path}: {entry.reason}")
+            if len(stats.skipped) > 10:
+                print(f"  ... and {len(stats.skipped) - 10} more")
         print(destination)
     return 0
 
@@ -114,8 +129,61 @@ def cmd_search(args: argparse.Namespace) -> int:
 
 def cmd_packet(args: argparse.Namespace) -> int:
     endpoints, results = _search(args, compact=True)
-    packet = build_packet(args.query, results, endpoints, args.input, args.returns)
+    duplicates = None
+    if args.reuse:
+        root = root_from(args.root)
+        conn, units, _ = _load(root)
+        conn.close()
+        prepared = unit_shingles(root, units, cache=True)
+        duplicates = {}
+        for result in results:
+            near = rank_similar_units(result.unit.unit_id, units, prepared, limit=3)
+            if near:
+                duplicates[result.unit.unit_id] = near
+    packet = build_packet(args.query, results, endpoints, args.input, args.returns, duplicates)
     print(json.dumps(packet, indent=2))
+    return 0
+
+
+def cmd_similar(args: argparse.Namespace) -> int:
+    """Find indexed units whose body overlaps a unit or a draft."""
+    root = root_from(args.root)
+    conn, units, _ = _load(root)
+    conn.close()
+    prepared = unit_shingles(root, units, cache=True)
+
+    if args.draft is not None:
+        source = sys.stdin.read() if args.draft == "-" else Path(args.draft).read_text("utf-8")
+        try:
+            needle = draft_shingles(source)
+        except SyntaxError as error:
+            print(f"draft does not parse: {error}", file=sys.stderr)
+            return 2
+        if not needle:
+            print("draft is too small to compare", file=sys.stderr)
+            return 0
+        matches = rank_against(needle, units, prepared, args.limit)
+    else:
+        if args.unit not in {unit.unit_id for unit in units}:
+            print(f"unknown unit: {args.unit}", file=sys.stderr)
+            return 2
+        matches = rank_similar_units(args.unit, units, prepared, args.limit)
+
+    if args.json:
+        print(json.dumps([match.to_dict() for match in matches], indent=2))
+        return 0
+    if not matches:
+        # The common and correct answer. On the benchmark's random
+        # probe stratum it was right 45 times out of 45.
+        print("no existing unit overlaps this one")
+        return 0
+    for match in matches:
+        unit = match.unit
+        print(
+            f"{match.score:5.2f}  {unit.unit_id}\n"
+            f"       {unit.path}:{unit.start_line}-{unit.end_line}"
+            f"  ({match.shared_shingles} shared windows)"
+        )
     return 0
 
 
@@ -226,7 +294,25 @@ def build_parser() -> argparse.ArgumentParser:
 
     packet = sub.add_parser("packet", help="emit a compact reuse-review packet")
     add_search_args(packet)
+    packet.add_argument(
+        "--reuse",
+        action="store_true",
+        help="attach near-duplicate evidence to each candidate",
+    )
     packet.set_defaults(func=cmd_packet)
+
+    similar = sub.add_parser(
+        "similar", help="find existing units whose body a new one would duplicate"
+    )
+    similar.add_argument("unit", nargs="?", help="an indexed unit ID")
+    similar.add_argument(
+        "--draft",
+        metavar="FILE",
+        help="compare a function you have not written yet; '-' reads stdin",
+    )
+    similar.add_argument("--limit", type=int, default=8)
+    similar.add_argument("--json", action="store_true")
+    similar.set_defaults(func=cmd_similar)
 
     read = sub.add_parser("read", help="extract exactly one indexed code unit")
     read.add_argument("unit")
@@ -246,4 +332,6 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "similar" and not args.unit and args.draft is None:
+        parser.error("similar needs a unit ID or --draft")
     return int(args.func(args))

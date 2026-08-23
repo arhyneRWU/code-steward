@@ -1,0 +1,39 @@
+{
+  "encoding": "o200k_base",
+  "pooled_bytes_per_token": 4.335,
+  "populations": [
+    {
+      "bytes_per_token": 4.183,
+      "population": "home-assistant",
+      "relative_error_of_assumption": 0.0362,
+      "samples": 1695,
+      "total_bytes": 756555,
+      "total_tokens": 180847
+    },
+    {
+      "bytes_per_token": 4.193,
+      "population": "airflow",
+      "relative_error_of_assumption": 0.0339,
+      "samples": 1195,
+      "total_bytes": 833974,
+      "total_tokens": 198905
+    },
+    {
+      "bytes_per_token": 4.454,
+      "population": "django",
+      "relative_error_of_assumption": -0.0269,
+      "samples": 3957,
+      "total_bytes": 2097639,
+      "total_tokens": 470910
+    },
+    {
+      "bytes_per_token": 3.91,
+      "population": "frozen-benchmark-packets",
+      "relative_error_of_assumption": 0.1087,
+      "samples": 12,
+      "total_bytes": 6940,
+      "total_tokens": 1775
+    }
+  ],
+  "schema_version": 1
+}

@@ -38,6 +38,30 @@ def _is_overload(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     )
 
 
+# A property accessor shares its qualified name with the getter by
+# design -- `@property def x` and `@x.setter def x` are the same
+# attribute, not a redefinition. Without a suffix they collide, and
+# the collision is fatal: it stops the whole index build. Django,
+# Airflow, and Home Assistant each carry a few dozen of these, so the
+# effect was that Code Steward could not index them at all.
+ACCESSOR_SUFFIXES = ("setter", "deleter", "getter")
+
+
+def _accessor_role(node: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
+    """Name the property accessor a decorator marks this as, if any.
+
+    Matches `@<name>.setter` and its siblings, where `<name>` is the
+    function's own name. That last condition matters: an unrelated
+    decorator that happens to end in `.setter` is not an accessor for
+    this function and must not be renamed as though it were.
+    """
+    for decorator in node.decorator_list:
+        parts = _call_name(decorator).split(".")
+        if len(parts) == 2 and parts[0] == node.name and parts[1] in ACCESSOR_SUFFIXES:
+            return parts[1]
+    return ""
+
+
 def _hash_source(
     lines: list[str],
     start: int,
@@ -206,11 +230,12 @@ class UnitVisitor(ast.NodeVisitor):
     def _qualname(self, name: str) -> str:
         return ".".join([*self.stack, name]) if self.stack else name
 
-    def _unit_id(self, node: Declaration, qualname: str) -> str:
+    def _unit_id(self, node: Declaration, qualname: str) -> tuple[str, bool]:
+        """Return the unit ID and whether a tag supplied it."""
         start_line = _node_start_line(node)
         alias = self._aliases_by_line.get(start_line - 1)
         if alias is None:
-            return f"{self.module}::{qualname}"
+            return f"{self.module}::{qualname}", False
 
         expected_indent = _line_indent(self.lines, start_line)
         if alias.indent != expected_indent:
@@ -219,18 +244,45 @@ class UnitVisitor(ast.NodeVisitor):
                 f"must use the declaration indentation"
             )
         self._used_alias_lines.add(alias.line)
-        return alias.unit_id
+        return alias.unit_id, True
 
-    def _append_unit(self, unit: CodeUnit) -> None:
+    def _append_unit(self, unit: CodeUnit, *, tagged: bool = False) -> None:
+        """Store a unit, disambiguating a generated ID that collides.
+
+        Two collisions are not the same problem. A duplicated
+        `# code-steward: unit <id>` tag is a mistake someone made and
+        has to fix, so it still raises. A duplicated *generated* ID is
+        the language behaving normally: sync and async variants of the
+        same nested helper in exclusive branches, or two functions of
+        the same name defined under `if TYPE_CHECKING`. Refusing to
+        index a repository over that is the wrong trade -- Django hits
+        it, and the whole build used to fail.
+
+        The disambiguator is an ordinal rather than a line number.
+        Line numbers move whenever anything above them changes; the
+        ordinal only moves if the declarations themselves are
+        reordered.
+        """
         if unit.unit_id in self._unit_ids:
-            raise ValueError(f"Duplicate Code Steward unit ID: {unit.unit_id!r}")
+            if tagged:
+                raise ValueError(f"Duplicate Code Steward unit ID: {unit.unit_id!r}")
+            base = unit.unit_id
+            ordinal = 2
+            while f"{base}#{ordinal}" in self._unit_ids:
+                ordinal += 1
+            unit.unit_id = f"{base}#{ordinal}"
         self._unit_ids.add(unit.unit_id)
         self.units.append(unit)
 
     def _add_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         qualname = self._qualname(node.name)
         start_line = _node_start_line(node)
-        unit_id = self._unit_id(node, qualname)
+        unit_id, tagged = self._unit_id(node, qualname)
+        # The getter keeps the plain ID so existing indexes and any
+        # committed benchmark case that names one do not churn.
+        role = "" if tagged else _accessor_role(node)
+        if role:
+            unit_id = f"{unit_id}@{role}"
         unit = CodeUnit(
             unit_id=unit_id,
             path=self.rel_path,
@@ -260,8 +312,18 @@ class UnitVisitor(ast.NodeVisitor):
             ),
             git_file_commit=self.git_commit,
         )
-        self._append_unit(unit)
+        self._append_unit(unit, tagged=tagged)
+        unit_id = unit.unit_id
+        # A decorator stack can name the same route twice -- a test
+        # exercising two aliases of one handler, or a re-registration
+        # under a second prefix. The storage layer treats
+        # (unit, method, route) as unique, so a repeat used to abort
+        # the build. It is the same endpoint; record it once.
+        seen_routes: set[tuple[str, str]] = set()
         for method, route, response_model in _route_info(node):
+            if (method, route) in seen_routes:
+                continue
+            seen_routes.add((method, route))
             self.endpoints.append(
                 Endpoint(
                     unit_id=unit_id,
@@ -292,7 +354,7 @@ class UnitVisitor(ast.NodeVisitor):
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         qualname = self._qualname(node.name)
         start_line = _node_start_line(node)
-        unit_id = self._unit_id(node, qualname)
+        unit_id, tagged = self._unit_id(node, qualname)
         bases = [_expr(base) for base in node.bases]
         self._append_unit(
             CodeUnit(
@@ -317,7 +379,8 @@ class UnitVisitor(ast.NodeVisitor):
                     self._hash_ignored_lines,
                 ),
                 git_file_commit=self.git_commit,
-            )
+            ),
+            tagged=tagged,
         )
         self.stack.append(node.name)
         self.generic_visit(node)
@@ -344,7 +407,10 @@ class UnitVisitor(ast.NodeVisitor):
                 ),
                 git_file_commit=self.git_commit,
                 explicit_region=True,
-            )
+            ),
+            # A region is always declared by a tag, so a duplicate is
+            # always someone's mistake.
+            tagged=True,
         )
 
     def validate_aliases(self) -> None:

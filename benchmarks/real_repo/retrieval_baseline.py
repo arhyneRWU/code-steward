@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions, checked_rate
 from code_steward.db import all_endpoints, all_units, connect
 from code_steward.packet import build_packet
 from code_steward.retrieval import retrieve_units
@@ -166,6 +167,11 @@ def run_baseline(database: Path, cases_path: Path) -> dict[str, Any]:
 
     cases = load_cases(cases_path)
     validate_cases(cases, {unit.unit_id for unit in units})
+
+    # Nothing is dropped today -- validate_cases raises rather than
+    # skipping. The block is emitted anyway so that a future skip
+    # cannot be added without appearing in the report.
+    exclusions = Exclusions()
     results = [evaluate_case(case, units, endpoints) for case in cases]
 
     total_candidates = sum(result["candidates_returned"] for result in results)
@@ -190,22 +196,30 @@ def run_baseline(database: Path, cases_path: Path) -> dict[str, Any]:
             "hit_rate_at_k": _mean([float(result["hit_at_k"]) for result in results]),
             "macro_recall_at_k": _mean([result["recall_at_k"] for result in results]),
             "mrr": _mean([result["reciprocal_rank"] for result in results]),
-            "known_trap_rate": total_traps / total_candidates if total_candidates else 0.0,
-            "known_redundancy_rate": (
-                total_redundant / total_candidates if total_candidates else 0.0
+            # checked_rate, not a guarded division. Every one of these
+            # improves as it shrinks, so an arm that returned nothing
+            # would otherwise publish a perfect zero on all three.
+            "known_trap_rate": checked_rate(
+                total_traps, total_candidates, metric="known_trap_rate"
             ),
-            "duplicate_candidate_rate": (
-                total_duplicates / total_candidates if total_candidates else 0.0
+            "known_redundancy_rate": checked_rate(
+                total_redundant, total_candidates, metric="known_redundancy_rate"
+            ),
+            "duplicate_candidate_rate": checked_rate(
+                total_duplicates, total_candidates, metric="duplicate_candidate_rate"
             ),
             "mean_candidates_returned": _mean(
                 [float(result["candidates_returned"]) for result in results]
             ),
-            "candidate_fill_rate": total_candidates / total_requested if total_requested else 0.0,
+            "candidate_fill_rate": checked_rate(
+                total_candidates, total_requested, metric="candidate_fill_rate"
+            ),
             "mean_packet_chars": _mean([float(result["packet_chars"]) for result in results]),
             "mean_packet_bytes": _mean([float(result["packet_bytes"]) for result in results]),
             "mean_retrieval_ms": _mean([result["retrieval_ms"] for result in results]),
         },
         "cases": results,
+        "excluded": exclusions.to_dict(),
     }
 
 

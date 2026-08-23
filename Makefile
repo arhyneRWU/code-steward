@@ -155,13 +155,13 @@ clean: ## Remove build, cache, and index artifacts
 
 .PHONY: bench-grep
 bench-grep: guard-venv ## Run the text-search control arm (ROOT=, DB=, OUT= required)
-	@$(PY) benchmarks/real_repo/grep_baseline.py \
+	@$(PY) -m benchmarks.real_repo.grep_baseline \
 	  --project-root $(ROOT) --database $(DB) \
 	  --cases benchmarks/real_repo/requests_retrieval.json --output-dir $(OUT)
 
 .PHONY: bench-labels
 bench-labels: guard-venv ## Emit blind labeling sheets (ROOT=, DB=, OUT= required)
-	@$(PY) benchmarks/real_repo/label_sheet.py \
+	@$(PY) -m benchmarks.real_repo.label_sheet \
 	  --project-root $(ROOT) --database $(DB) \
 	  --cases benchmarks/real_repo/requests_retrieval.json \
 	  --arm code-steward=$(OUT)/retrieval-baseline.json \
@@ -170,8 +170,36 @@ bench-labels: guard-venv ## Emit blind labeling sheets (ROOT=, DB=, OUT= require
 
 .PHONY: bench-precision
 bench-precision: guard-venv ## Score packet precision and noise (OUT= required)
-	@$(PY) benchmarks/real_repo/precision.py \
+	@$(PY) -m benchmarks.real_repo.precision \
 	  --labels benchmarks/real_repo/requests_candidate_labels.json \
 	  --arm code-steward=$(OUT)/retrieval-baseline.json \
 	  --arm text-search=$(OUT)/grep-baseline.json \
 	  --output-dir $(OUT)
+
+.PHONY: bench-similarity-corpora
+bench-similarity-corpora: ## Fetch the pinned similarity corpora (CHECKOUTS= required)
+	@test -n "$(CHECKOUTS)" || { echo 'usage: make bench-similarity-corpora CHECKOUTS=<dir>'; exit 2; }
+	@scripts/fetch_similarity_corpora.sh "$(CHECKOUTS)"
+
+.PHONY: bench-similarity-pairs
+bench-similarity-pairs: guard-venv ## Build the blind similarity sheet (CHECKOUTS=, WORK= required)
+	@$(PY) -m benchmarks.similarity.make_pairs \
+	  --checkouts $(CHECKOUTS) --work $(WORK) \
+	  --sheet $(WORK)/sheet.json --key $(WORK)/key.json
+
+.PHONY: bench-similarity
+bench-similarity: guard-venv ## Score every reuse-similarity arm (CHECKOUTS=, WORK= required)
+	@$(PY) -m benchmarks.similarity.score \
+	  --checkouts $(CHECKOUTS) --work $(WORK) \
+	  --labels benchmarks/similarity/reuse_pair_labels.json \
+	  --output $(WORK)/similarity-scores.json
+
+.PHONY: bench-tokens
+bench-tokens: guard-venv ## Recalibrate byte figures against tiktoken (CHECKOUTS= required)
+	@$(PY) -m benchmarks.tokens \
+	  --checkouts $(CHECKOUTS) --output benchmarks/token_calibration.json
+
+.PHONY: bench-similarity-depth
+bench-similarity-depth: guard-venv ## Measure the gold set's usable depth (CHECKOUTS= required)
+	@$(PY) -m benchmarks.similarity.depth \
+	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/depth.json
