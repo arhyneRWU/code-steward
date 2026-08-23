@@ -44,9 +44,23 @@ Code Steward: 11,612 units. Graph Code Review: 931 files, 12,611
 nodes, 59,513 edges.
 
 **200 target functions**, drawn in blake2b hash order from the Code
-Steward index, restricted to functions **both** tools resolve to the
-same declaration -- matched on relative path, name, and overlapping
-line span. Hash order so the sample cannot follow the answers.
+Steward index, restricted to functions that satisfy two conditions:
+**both** tools resolve them to the same declaration, matched on
+relative path and name; and the function's **name is unique across
+the corpus** -- 3,513 of Django's 4,580 distinct function names are.
+
+Hash order so the sample cannot follow the answers.
+
+The uniqueness restriction exists because the answer key below is
+name-based and is only exact when the name is. It also removes the
+cases where name-based resolution is hardest, which is the mechanism
+their graph appears to use, **so this restriction favours their
+arm.** Stated here rather than discovered in the discussion.
+
+The corpus checkout contains `django/` and no test suite, so
+`tests_for` would return an empty result for every target in both
+arms. It is dropped from the cost accounting rather than charged to
+either side, and the test dimension is simply not measured here.
 
 The match rate is **published, not silently applied**. Targets only
 one tool knows about are excluded from the paired comparison and
@@ -89,7 +103,7 @@ and the results will say which side of the comparison it lands on.
 | Arm | What is counted |
 | --- | --- |
 | **A -- Code Steward** | Bytes of one `code-steward trace F` bundle. Bodies included; nothing further to read. |
-| **B -- GCR, as delivered** | Bytes of `callers_of` + `callees_of` + `tests_for`. Names, paths and line spans. No bodies. |
+| **B -- GCR, as delivered** | Bytes of `callers_of` + `callees_of`. Names, paths and line spans. No bodies. |
 | **C -- GCR to sufficiency** | Arm B plus the source of every span it names, deduplicated. This is the fair comparison to A, because A already contains its bodies. |
 | **D -- Hybrid** | Their node set, rendered through our bundle renderer. Their selection, our packaging. |
 
@@ -102,22 +116,36 @@ Bytes are primary; tokens are reported beside them using
 `benchmarks/tokens.py`, since the bytes-to-tokens ratio moves with
 how much of the text is identifiers rather than prose.
 
-## Coverage, and why it is scored against neither graph
+## Coverage, and the key that had to be thrown away
 
 Cheap and empty wins on bytes. Every cost figure is therefore paired
 with what it bought.
 
-The answer key is the **union of both tools' claimed neighbours,
-AST-confirmed** -- each claimed caller is parsed and kept only if its
-source really contains a call to the target's name. Confirmation is
-conservative: it confirms a claim rather than refuting one, and it
-can be fooled by a name collision, so unconfirmable claims are
-reported as unverified rather than counted as wrong.
+**The first version of this section specified a union key** -- every
+claim either tool made, kept where the source confirmed it -- and a
+three-target smoke test of the harness killed it. Where our slice
+comes back empty, the union collapses to their claims alone and
+their recall is **1.0 by construction**. That is the third criterion
+in this project that could not fail, and the first one caught before
+the run rather than after.
 
-Scoring against either project's own graph would decide the result
-before the run. The union is symmetric and neither tool authored it.
+The key is therefore **independent of both tools**: a single AST pass
+over the corpus that records, for every function, the names it calls.
+The callers of a target are then every function whose body calls that
+target's name. Neither graph contributes to it and both are scored
+against it.
 
-Coverage is **recall of the confirmed union**.
+That key is only exact if the name is unambiguous, which is why the
+sample is restricted to unique names -- see above.
+
+Coverage is **recall of that independent caller set**. Claims a tool
+makes that are absent from it are reported separately as apparent
+over-claiming, not folded into a single score.
+
+**The caller direction only.** A name-based key cannot be built for
+callees without collapsing on common method names, so callees are
+paid for in the cost arms and not scored. Both arms are treated
+identically.
 
 ## The decision rule, fixed now
 
@@ -152,6 +180,18 @@ reported as one.
 - **Their tool is being driven by this project.** If a better way to
   use their surface exists, this design will miss it, and the miss
   will look like their result.
+
+## What was seen before the run
+
+Two smoke tests during harness development, three targets and then
+five, both taken from the front of the hash order -- so **five of the
+200 targets were visible before the run began**. The first smoke test
+is what killed the union key.
+
+No arm was changed in response to a number. The definitions of the
+four arms have not moved since they were first written. But five
+paired observations were seen, and a page that hides that while
+claiming pre-registration is worth nothing.
 
 ## Stopping rule
 
