@@ -152,3 +152,9 @@ clean: ## Remove build, cache, and index artifacts
 		"$(MAIN_ROOT)"/.code-steward "$(MAIN_ROOT)"/dist "$(MAIN_ROOT)"/build
 	@find "$(MAIN_ROOT)" -name __pycache__ -type d -prune -not -path '*/.venv/*' -exec rm -rf {} +
 	@echo "cleaned"
+
+.PHONY: bench-grep
+bench-grep: guard-venv ## Run the ripgrep control arm (ROOT=, DB=, OUT= required)
+	@$(PY) benchmarks/real_repo/grep_baseline.py \
+	  --project-root $(ROOT) --database $(DB) \
+	  --cases benchmarks/real_repo/requests_retrieval.json --output-dir $(OUT)
