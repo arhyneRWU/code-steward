@@ -1,16 +1,19 @@
 {
   "comparison": {
-    "arms": "control - skill",
-    "detectable_effect": 0.2,
-    "mean_difference": -0.0552,
+    "arms": "skill - control",
+    "mean_difference": 0.0545,
+    "measure": "recall",
     "n": 20,
-    "note": "Pre-registered: detects a 0.20 F1 gap at n=20 with ~91% power and cannot reliably detect 0.10. A null is evidence against a large effect, not evidence of no effect.",
-    "one_sided_95_lower": -0.0988,
-    "skill_helps": false
+    "note": "Primary measure is RECALL, not F1. The key is built from resolved CALLS edges and was validated as a strict subset of the callers that exist, so it is a lower bound: recall against it is interpretable and precision is not, because a correct caller the graph missed would count against precision. Power depends on the tie rate, which cannot be known in advance -- roughly 0.69 at a 0.50 tie rate and 0.93 at 0.35, for n=30. A null with a high tie rate is inconclusive, not a kill.",
+    "one_sided_95_lower": 0.0045,
+    "permutation_p": 0.1261,
+    "tie_rate": 0.85,
+    "ties": 17
   },
   "per_arm": {
     "control": {
       "answered": 20,
+      "mean_answer_size": 4.5,
       "mean_f1": 0.9287,
       "mean_precision": 0.9533,
       "mean_recall": 0.9293,
@@ -171,6 +174,7 @@
     },
     "skill": {
       "answered": 20,
+      "mean_answer_size": 4.4,
       "mean_f1": 0.984,
       "mean_precision": 0.9875,
       "mean_recall": 0.9839,

@@ -50,6 +50,7 @@ from pathlib import Path
 from typing import Any
 
 BOOTSTRAP = 5000
+PERMUTATIONS = 20000
 SEED = 11
 
 
@@ -74,6 +75,29 @@ def _bootstrap_lower(diffs: list[float]) -> float:
         means.append(statistics.fmean(sample))
     means.sort()
     return means[int(0.05 * len(means))]
+
+
+def permutation_p(diffs: list[float]) -> float:
+    """One-sided paired sign-flip permutation test.
+
+    Chosen over the sign test by simulation rather than by argument:
+    at n=30 the two are within a point or two of each other at every
+    tie rate tried, and this one keeps the magnitude of a difference
+    instead of discarding it. Exact, and it makes no distributional
+    assumption -- which matters because most questions tie and the
+    differences are nothing like normal.
+    """
+    observed = sum(diffs)
+    if observed <= 0:
+        return 1.0
+    rng = random.Random(SEED)
+    hits = 0
+    for _ in range(PERMUTATIONS):
+        total = sum(value if rng.random() < 0.5 else -value for value in diffs)
+        if total >= observed:
+            hits += 1
+    # Add-one, so a p of exactly zero is never claimed.
+    return (hits + 1) / (PERMUTATIONS + 1)
 
 
 def score(
@@ -101,12 +125,15 @@ def score(
                     "outside_key": sorted(predicted - truth),
                 }
             )
-            per_question.setdefault(question["id"], {})[arm] = value
+            per_question.setdefault(question["id"], {})[arm] = recall
         per_arm[arm] = {
             "mean_f1": round(statistics.fmean(row["f1"] for row in rows), 4),
             "mean_recall": round(statistics.fmean(row["recall"] for row in rows), 4),
             "mean_precision": round(statistics.fmean(row["precision"] for row in rows), 4),
             "answered": sum(1 for row in rows if row["f1"] > 0),
+            "mean_answer_size": round(
+                statistics.fmean(len(answers.get(q["id"], [])) for q in questions), 2
+            ),
             "outside_key_total": sum(len(row["outside_key"]) for row in rows),
             "questions": rows,
         }
@@ -114,7 +141,12 @@ def score(
     comparison: dict[str, Any] = {}
     names = sorted(arms)
     if len(names) == 2:
-        left, right = names
+        # Report treatment minus control, not alphabetical order. The
+        # first run printed "control - skill" and every difference
+        # came out negative while the skill was ahead.
+        treatment = next((name for name in names if name != "control"), names[0])
+        left = treatment
+        right = next(name for name in names if name != treatment)
         diffs = [
             per_question[question["id"]][left] - per_question[question["id"]][right]
             for question in questions
@@ -122,18 +154,26 @@ def score(
             and right in per_question.get(question["id"], {})
         ]
         if diffs:
-            lower = _bootstrap_lower(diffs)
+            ties = sum(1 for value in diffs if abs(value) < 1e-9)
             comparison = {
                 "arms": f"{left} - {right}",
+                "measure": "recall",
                 "n": len(diffs),
+                "ties": ties,
+                "tie_rate": round(ties / len(diffs), 3),
                 "mean_difference": round(statistics.fmean(diffs), 4),
-                "one_sided_95_lower": round(lower, 4),
-                "skill_helps": bool(lower > 0),
-                "detectable_effect": 0.20,
+                "permutation_p": round(permutation_p(diffs), 4),
+                "one_sided_95_lower": round(_bootstrap_lower(diffs), 4),
                 "note": (
-                    "Pre-registered: detects a 0.20 F1 gap at n=20 with ~91% "
-                    "power and cannot reliably detect 0.10. A null is evidence "
-                    "against a large effect, not evidence of no effect."
+                    "Primary measure is RECALL, not F1. The key is built from "
+                    "resolved CALLS edges and was validated as a strict subset "
+                    "of the callers that exist, so it is a lower bound: recall "
+                    "against it is interpretable and precision is not, because "
+                    "a correct caller the graph missed would count against "
+                    "precision. Power depends on the tie rate, which cannot be "
+                    "known in advance -- roughly 0.69 at a 0.50 tie rate and "
+                    "0.93 at 0.35, for n=30. A null with a high tie rate is "
+                    "inconclusive, not a kill."
                 ),
             }
     return {"schema_version": 1, "per_arm": per_arm, "comparison": comparison}

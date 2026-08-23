@@ -42,16 +42,45 @@ So n = 20 detects a 0.20 gap and cannot reliably detect 0.10.
 
 ## Result
 
-| Arm | mean F1 | perfect answers | named outside the key |
-| --- | --- | --- | --- |
-| skill | **0.984** | 17 / 20 | 1 |
-| control | **0.929** | 12 / 20 | 7 |
+| Arm | mean F1 | mean recall | perfect | outside the key | tool calls | tokens |
+| --- | --- | --- | --- | --- | --- | --- |
+| skill | **0.984** | 0.984 | 17 / 20 | 1 | **28** | **93,599** |
+| control | **0.929** | 0.929 | 12 / 20 | 7 | 36 | 122,897 |
 
-Mean paired difference **+0.055** in the skill's favour. One-sided
-95% bootstrap lower bound **-0.099**, which does not exclude zero.
+Mean paired difference **+0.055** in the skill's favour. The skill
+arm also used **22% fewer tool calls and 24% fewer tokens**, measured
+by the harness rather than self-reported. Cost was not part of the
+original analysis and should have been: it is half the product's
+claim.
 
-**By the pre-registered criterion the skill is not shown to help.**
-The observed gap is roughly a quarter of the smallest detectable one.
+**The conclusion is inconclusive, and the first version of this page
+reached it by the wrong route.** Three corrections, all found after
+the fact:
+
+1. **The arms were compared in the wrong direction.** The scorer
+   ordered them alphabetically and computed `control - skill`, so the
+   published bound of `-0.099` was the negative of the intended
+   statistic. In the correct direction the F1 difference is
+   **+0.0552** with a one-sided 95% lower bound of **+0.0169** --
+   which by the criterion as literally written means the skill
+   *helps*.
+
+2. **That criterion cannot fail on this data, so it is not
+   evidence.** The 20 paired differences are 15 zeros and 5
+   positives, with **no negative values at all**. Every bootstrap
+   resample therefore has a mean at or above zero and the one-sided
+   lower bound is positive by construction. A paired sign-flip
+   permutation test, which models the actual null, gives **p =
+   0.126**. Not significant.
+
+3. **The tie rate was 0.85**, not the continuous spread the power
+   simulation assumed. Seventeen of twenty questions were answered
+   identically, so the effective sample was three, and the quoted
+   "91% power at a 0.20 gap" never applied to this data.
+
+So the honest reading is unchanged -- the skill is not shown to help
+-- but the earlier reasoning for it was wrong in both sign and
+instrument.
 
 ## Why the design could not answer the question
 
@@ -95,10 +124,21 @@ callers the 32.6%-resolved graph missed, or it may be guessing.
 3. **More questions, and one per agent.** Ten questions in one
    context makes them non-independent, which the bootstrap assumes
    away.
-4. **Pre-register the sign test as the primary measure**, not the
-   mean difference. Most questions tie, and a test built for
-   discordant pairs has far more power here than a mean. Deciding
-   that now, before the next run, is the only way it counts.
+4. **A paired permutation test as primary, on recall.** Simulation
+   put the sign test and the permutation test within a point or two
+   of each other at every tie rate tried, so the choice was made on
+   the fact that the permutation test keeps magnitude. The bootstrap
+   lower bound is dropped outright: it cannot fail on a sample with
+   no negative values.
+5. **Recall, not F1.** The key was validated against an independent
+   AST scan on six `impact` questions and was a **strict subset** of
+   the callers that genuinely exist, every time. It is a lower bound,
+   so recall against it is interpretable and precision is not -- a
+   correct caller the graph missed counts *against* precision, which
+   is the bias this page claimed to have guarded against and had not.
+   `benchmarks/skill/verify.py` now adjudicates claims outside the
+   key against the source rather than assuming they are wrong.
+6. **Cost as a co-primary outcome**, measured by the harness.
 
 ## Caveats that travel with these numbers
 
