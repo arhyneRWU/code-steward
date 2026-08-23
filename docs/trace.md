@@ -161,6 +161,40 @@ therefore rendered the summary "resolve target" in the position a
 docstring goes, telling the reader the function was documented when
 it was not. Purpose is now printed only when a docstring exists.
 
+## DRY across the whole path
+
+    code-steward trace "pkg.mod::fn" --dry
+
+Runs the duplication comparison over **every unit in the slice**, not
+just the one you asked about, and prints the result as a
+`## duplication` section of the same bundle. Composes with
+`--undocumented`.
+
+This is the step neither command could take alone, and it is issue
+#55 item 1. `check` only looks at functions the author changed, so a
+duplicate sitting on the path but untouched by this edit is invisible
+to it. `trace` lists the path without comparing it to anything. The
+finding this produces belongs to the *path* rather than to the diff.
+
+The first one it found on this repository: tracing
+`check::check_files` reports that `similarity::rank_with_floor`
+overlaps `similarity::rank_against` at 0.34. That is correct, and it
+is also **deliberate** -- they are the floored and unfloored variants
+of one ranking, and `similarity.md` says so. A true overlap is not
+automatically a defect, which is the same caveat `check` carries.
+
+**The alarm rate compounds with slice size, and that is arithmetic
+rather than a property of your code.** Measured over 60 paths in this
+repository's own `src/`, 32 carried at least one finding -- 53%,
+against a per-function rate of 14.3% for `check`. A five-member slice
+gives five independent chances to fire: `1 - (1 - 0.143)^5` is 0.53.
+
+So **raising `--callers` or `--callees` raises the alarm rate by
+construction**, and a deep slice will almost always report something.
+This is a report to read, not a gate to enforce. Run `check --rate`
+on your own repository first; the path-level rate will be
+substantially higher than whatever that prints.
+
 Reproduce with `make bench-trace ROOT=<indexed repo> LABEL=<name>`.
 Committed at
 [`trace_bundle_django.json`](../benchmarks/trace_bundle_django.json)

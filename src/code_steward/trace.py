@@ -33,6 +33,7 @@ from pathlib import Path
 
 from .indexer import ACCESSOR_SUFFIXES
 from .models import CodeUnit, HardRelationship
+from .similarity import REUSE_FLOOR, SimilarUnit, rank_with_floor, unit_shingles
 
 # Roles a unit can hold in a slice, in the order they are rendered.
 # The target first, then what it depends on, then what depends on it,
@@ -233,6 +234,70 @@ def undocumented_units(units: list[CodeUnit]) -> list[CodeUnit]:
         for unit in units
         if unit.kind in DOCUMENTABLE_KINDS and not unit.doc_text and not _is_trivial(unit)
     ]
+
+
+@dataclass(slots=True, frozen=True)
+class Overlap:
+    """One unit on the path and what it duplicates."""
+
+    unit: CodeUnit
+    matches: list[SimilarUnit]
+
+
+def path_duplication(
+    project_root: Path,
+    sliced: Slice,
+    units: list[CodeUnit],
+    *,
+    floor: float = REUSE_FLOOR,
+    limit: int = 3,
+) -> list[Overlap]:
+    """Compare every unit on the path against the whole index.
+
+    This is the step neither command could take alone. `check` only
+    looks at functions the author changed, so a duplicate sitting on
+    the path but untouched by this edit is invisible to it. `trace`
+    lists the path without comparing it to anything. Running the
+    comparison over the slice finds the duplicate that belongs to the
+    *path* rather than to the diff.
+
+    Every member is compared with itself excluded, and the floor is
+    the shipped one, so an empty result is an assertion rather than a
+    failed search.
+    """
+    on_path = [sliced.target] + [member.unit for member in sliced.members]
+    prepared = unit_shingles(project_root, units, cache=True)
+    found: list[Overlap] = []
+    for unit in on_path:
+        needle = prepared.get(unit.unit_id)
+        if not needle:
+            # Too short to compare, or unparseable. Not a finding.
+            continue
+        ranking = rank_with_floor(
+            needle, units, prepared, exclude=unit.unit_id, limit=limit, floor=floor
+        )
+        if ranking.matches:
+            found.append(Overlap(unit, ranking.matches))
+    found.sort(key=lambda row: -row.matches[0].score)
+    return found
+
+
+def render_duplication(overlaps: list[Overlap]) -> str:
+    """Render the DRY pass as a section of the bundle."""
+    if not overlaps:
+        return "## duplication\n\nNo unit on this path overlaps another above the floor.\n"
+    out = ["## duplication", ""]
+    for overlap in overlaps:
+        out.append(f"### {overlap.unit.unit_id}")
+        out.append("")
+        for match in overlap.matches:
+            out.append(
+                f"- `{match.unit.unit_id}` "
+                f"({match.unit.path}:{match.unit.start_line}) "
+                f"score {match.score:.2f}"
+            )
+        out.append("")
+    return "\n".join(out) + "\n"
 
 
 def _summary(unit: CodeUnit) -> str:

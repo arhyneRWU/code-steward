@@ -7,6 +7,7 @@ Code Steward assembles a small, complete slice of a repository so a cheap model 
 ```bash
 code-steward trace "pkg.mod::fn"   # the function, its callers, callees, tests, and where each call happens
 code-steward trace --undocumented --base HEAD   # a bundle per function that needs a docstring written
+code-steward trace "pkg.mod::fn" --dry          # the path, plus duplication across every unit on it
 code-steward check                 # what did this branch duplicate?
 code-steward check --rate          # is this repo quiet enough to gate on?
 ```
