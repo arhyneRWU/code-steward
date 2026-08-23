@@ -255,3 +255,11 @@ bench-check-history: guard-venv ## Replay commits through check (REPO=, OUT= req
 	@$(PY) -m benchmarks.check_history \
 	  --repo $(REPO) --commits $(or $(COMMITS),40) \
 	  --label $(or $(LABEL),replay) --output $(OUT)
+
+.PHONY: bench-trace
+bench-trace: guard-venv ## Measure trace bundle compression (ROOT=, LABEL= required)
+	@test -n "$(ROOT)" && test -n "$(LABEL)" || \
+	  { echo 'usage: make bench-trace ROOT=<indexed repo> LABEL=<name> [PREFIX=]'; exit 2; }
+	@$(PY) -m benchmarks.trace_bundle \
+	  --root $(ROOT) --label $(LABEL) --prefix "$(PREFIX)" \
+	  --output benchmarks/trace_bundle_$(LABEL).json

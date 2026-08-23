@@ -1,0 +1,19 @@
+{
+  "bundle_bytes": 24592426,
+  "compression": 13.62,
+  "functions": 9345,
+  "label": "django",
+  "linked_only": {
+    "bundle_bytes": 21303064,
+    "compression": 10.27,
+    "functions": 5108,
+    "mean_bundle_bytes": 4170,
+    "whole_file_bytes": 218855610
+  },
+  "mean_bundle_bytes": 2631,
+  "mean_slice_members": 1.23,
+  "resolved_share": 0.547,
+  "schema_version": 1,
+  "whole_file_bytes": 335064017,
+  "with_resolved_neighbours": 5108
+}

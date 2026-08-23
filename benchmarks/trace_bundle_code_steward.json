@@ -1,0 +1,19 @@
+{
+  "bundle_bytes": 641328,
+  "compression": 4.85,
+  "functions": 157,
+  "label": "code-steward",
+  "linked_only": {
+    "bundle_bytes": 630760,
+    "compression": 4.72,
+    "functions": 142,
+    "mean_bundle_bytes": 4441,
+    "whole_file_bytes": 2977795
+  },
+  "mean_bundle_bytes": 4084,
+  "mean_slice_members": 2.67,
+  "resolved_share": 0.904,
+  "schema_version": 1,
+  "whole_file_bytes": 3107475,
+  "with_resolved_neighbours": 142
+}
