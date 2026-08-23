@@ -1,0 +1,8 @@
+{
+  "name": "requests",
+  "repository": "psf/requests",
+  "commit": "8f8b212de8c2129d7954c6cd373762880375620a",
+  "source_subdir": "src/requests",
+  "license": "Apache-2.0",
+  "tracking_issue": 19
+}

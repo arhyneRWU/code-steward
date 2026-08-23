@@ -1,0 +1,1 @@
+"""Real-repository validation helpers."""

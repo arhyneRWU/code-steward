@@ -1,0 +1,92 @@
+name: Real repository validation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/real-repo-validation.yml"
+      - "benchmarks/real_repo/**"
+      - "src/code_steward/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: real-repo-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  requests:
+    name: Requests validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Code Steward
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Read pinned target
+        id: target
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          target = json.loads(
+              Path("benchmarks/real_repo/requests.json").read_text(encoding="utf-8")
+          )
+          print(f"repository={target['repository']}")
+          print(f"commit={target['commit']}")
+          print(f"source_subdir={target['source_subdir']}")
+          PY
+
+      - name: Check out pinned Requests source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: ${{ steps.target.outputs.repository }}
+          ref: ${{ steps.target.outputs.commit }}
+          path: upstream/requests
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install Code Steward
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Run validation
+        run: |
+          python benchmarks/real_repo/validate.py \
+            --project-root "upstream/requests/${{ steps.target.outputs.source_subdir }}" \
+            --output-dir validation-results/requests \
+            --repository "${{ steps.target.outputs.repository }}" \
+            --commit "${{ steps.target.outputs.commit }}" \
+            --source-scope "${{ steps.target.outputs.source_subdir }}"
+
+      - name: Run production retrieval baseline
+        run: |
+          python benchmarks/real_repo/retrieval_baseline.py \
+            --database validation-results/requests/index.sqlite3 \
+            --cases benchmarks/real_repo/requests_retrieval.json \
+            --output-dir validation-results/requests
+
+      - name: Publish job summary
+        run: |
+          cat validation-results/requests/summary.md >> "$GITHUB_STEP_SUMMARY"
+          printf '\n' >> "$GITHUB_STEP_SUMMARY"
+          cat validation-results/requests/retrieval-baseline.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload validation results
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: requests-real-repo-validation
+          path: validation-results/requests
+          if-no-files-found: error
