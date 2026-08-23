@@ -43,6 +43,36 @@ class Endpoint:
         return asdict(self)
 
 
+@dataclass(slots=True, frozen=True)
+class HardRelationship:
+    source_unit_id: str
+    relation: str
+    target_kind: str
+    target_ref: str
+    provenance: str
+    evidence: dict[str, Any] = field(default_factory=dict)
+    source_hash: str = ""
+    target_hash: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(slots=True, frozen=True)
+class SoftRelationship:
+    source_unit_id: str
+    relation: str
+    target_unit_id: str
+    score: float
+    provenance: str
+    evidence: dict[str, Any] = field(default_factory=dict)
+    source_hash: str = ""
+    target_hash: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 @dataclass(slots=True)
 class SearchResult:
     unit: CodeUnit
