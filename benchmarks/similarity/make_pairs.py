@@ -17,6 +17,7 @@ import argparse
 import json
 from pathlib import Path
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files, corpus_roots
 from benchmarks.similarity.generators import (
     ScoredPair,
@@ -43,7 +44,7 @@ def generate(
 ) -> tuple[list[CorpusUnit], dict[str, list[ScoredPair]]]:
     """Run all three generators over one pinned corpus sample."""
     corpus = next(entry for entry in CORPORA if entry.name == corpus_name)
-    units = load_units(corpus_name, checkout, corpus_files(corpus, checkout))
+    units = load_units(corpus_name, checkout, corpus_files(corpus, checkout), Exclusions())
     report = run_jscpd(
         checkout,
         [root.relative_to(checkout) for root in corpus_roots(corpus, checkout)],

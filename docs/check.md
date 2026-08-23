@@ -119,6 +119,18 @@ because templated `async def async_setup_entry` handlers are exactly
 the duplication this measures. Code Steward's own row is unchanged
 because this repository contains no async functions.
 
+**What the sample drops, now published.** `alarm.json` carries an
+exclusion block for the first time. Across the three corpora it
+records 4,643 units below `MIN_LINES`, 4,277 that are not functions,
+390 below `MIN_TOKENS`, and **19 files that failed to parse** --
+roughly 9,300 candidates against the 13,756 measured. None of that
+appeared anywhere before.
+
+The cause was not per-report oversight. `load_units` took
+`exclusions` as an optional argument defaulting to a fresh object,
+and all nine call sites passed nothing, so every drop was counted
+into something immediately discarded. The parameter is now required.
+
 
 Raising the floor moves it but does not remove it — Airflow is still
 40% at 0.50.

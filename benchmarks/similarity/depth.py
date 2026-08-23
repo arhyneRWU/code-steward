@@ -27,6 +27,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files
 from benchmarks.similarity.units import load_units
 from code_steward.similarity import MIN_SHARED_SHINGLES, jaccard, rank_all_pairs, shingles
@@ -130,9 +131,10 @@ def main() -> None:
     args = _parser().parse_args()
     labels = _labels(args.labels.resolve())
     prepared: dict[str, dict[str, frozenset[int]]] = {}
+    dropped = Exclusions()
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout), dropped)
         prepared[corpus.name] = {unit.unit_id: shingles(unit.tokens) for unit in units}
 
     payload = {

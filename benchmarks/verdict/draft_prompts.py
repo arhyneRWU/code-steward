@@ -34,6 +34,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files, hash_order
 from benchmarks.similarity.units import load_units
 from benchmarks.verdict.cases import build_cases, load_pairs
@@ -100,7 +101,9 @@ def main() -> None:
 
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        corpus_units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        corpus_units = load_units(
+            corpus.name, checkout, corpus_files(corpus, checkout), Exclusions()
+        )
         by_id = {unit.unit_id: unit for unit in corpus_units}
 
         eligible: dict[str, Any] = {}
