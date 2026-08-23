@@ -10,7 +10,7 @@ The main coding session should receive **decisions and selected code units, not 
 
 > **What is measured today.** Both halves of the project have been compared against a simple control on real repositories.
 >
-> - **Reuse detection** works and ships. Five-token shingle comparison reaches macro precision 0.978 and F1 0.571 across three pinned public repositories, ahead of jscpd (0.521) and of this project's own metadata comparison (0.431). See [Reuse similarity](#reuse-similarity).
+> - **Reuse detection** works and ships. Five-token shingle comparison measured macro precision 0.978 and F1 0.571 across three pinned public repositories, ahead of jscpd (0.521) and of this project's own metadata comparison (0.431). Those figures are **being remeasured**: the population they came from excluded decorated functions, which is now fixed. See [Reuse similarity](#reuse-similarity).
 > - **Retrieval ranking** does not beat plain text search on `psf/requests`, on any ranking metric. What it contributes is compression: 4,039 bytes of packet against 21,107 bytes of source for the same candidates. See [Measured position](#measured-position).
 >
 > Treat the roadmap as open questions rather than delivered features.
@@ -109,6 +109,8 @@ Answering *does this already exist* before an agent writes it again. Three publi
 | jscpd | 0.899 | 0.367 | 0.521 | 127,401 |
 | `metadata_similarity` | 0.744 | 0.304 | 0.431 | 102,457 |
 | body-rapidfuzz | unevaluated | 0.180 | 0.276 | 193,159 |
+
+**These numbers are superseded and are being remeasured.** The unit population they were drawn from silently excluded every decorated function — 53.3% of comparable units in Home Assistant. The defect is fixed and the comparison itself is unchanged, but the gold set was labelled against the smaller population and cannot be re-scored on the corrected one: 28 of 30 returned pairs now fall outside the labels. A v2 gold set is in progress. See [`docs/similarity.md`](docs/similarity.md).
 
 Macro means over the three corpora. Five-token shingle comparison came first and now ships as `code_steward.similarity`; see [Finding reuse before the code exists](#finding-reuse-before-the-code-exists). The benchmark imports that module rather than keeping its own copy, so the measured code and the shipped code are the same code.
 

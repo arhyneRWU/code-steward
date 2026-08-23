@@ -139,21 +139,75 @@ def jaccard(left: frozenset[int], right: frozenset[int]) -> float:
     return len(left & right) / union if union else 0.0
 
 
-def unit_shingles(project_root: Path, units: Iterable[CodeUnit]) -> dict[str, frozenset[int]]:
+def _declarations_by_start_line(tree: ast.AST) -> dict[int, ast.AST]:
+    """Index declarations by every line a unit might be recorded at.
+
+    The indexer records a decorated function's `start_line` as the
+    first decorator, not the `def`. Looking declarations up by
+    `node.lineno` alone therefore misses every decorated function --
+    measured at 53.3% of comparable units in Home Assistant, where
+    `@property`, `@callback`, and framework decorators are everywhere.
+    Those units were silently absent from every comparison.
+
+    Both lines are registered. The `def` line wins a collision, since
+    a decorator line can only belong to the function it decorates.
+    """
+    found: dict[int, ast.AST] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            continue
+        for decorator in node.decorator_list:
+            found.setdefault(decorator.lineno, node)
+        found[node.lineno] = node
+    return found
+
+
+def unit_shingles(
+    project_root: Path,
+    units: Iterable[CodeUnit],
+    *,
+    cache: bool = False,
+) -> dict[str, frozenset[int]]:
     """Build a shingle set for every unit large enough to compare.
 
     Units too small to be worth reusing, and files that will not parse,
     are simply absent from the result. Callers that need to account for
     what was skipped should compare against the input.
+
+    With ``cache`` set, sets already computed for a unit's
+    ``body_hash`` are read from disk and only the misses are parsed.
+    The cache is exact rather than approximate -- a changed body has a
+    different hash and misses -- so results do not depend on whether
+    it was used.
     """
+    # Filter before touching the cache. Most units in a large tree are
+    # classes, or functions too short to compare, and looking their
+    # hashes up costs more than skipping them.
+    units = [
+        unit
+        for unit in units
+        if unit.kind in FUNCTION_KINDS and unit.end_line - unit.start_line + 1 >= MIN_LINES
+    ]
+    cached: dict[str, frozenset[int]] = {}
+    conn = None
+    if cache:
+        from . import shingle_cache
+
+        conn = shingle_cache.connect(shingle_cache.cache_path(project_root))
+        cached = shingle_cache.read(conn, (unit.body_hash for unit in units))
+
     sources: dict[str, list[str]] = {}
     trees: dict[str, dict[int, ast.AST]] = {}
     built: dict[str, frozenset[int]] = {}
+    fresh: dict[str, frozenset[int]] = {}
 
     for unit in units:
-        if unit.kind not in FUNCTION_KINDS:
-            continue
-        if unit.end_line - unit.start_line + 1 < MIN_LINES:
+        hit = cached.get(unit.body_hash)
+        if hit is not None:
+            # An empty cached set means the unit was below the token
+            # floor last time. That is still true, so skip it.
+            if hit:
+                built[unit.unit_id] = hit
             continue
         if unit.path not in trees:
             try:
@@ -168,11 +222,7 @@ def unit_shingles(project_root: Path, units: Iterable[CodeUnit]) -> dict[str, fr
             except (SyntaxError, ValueError):
                 trees[unit.path] = {}
                 continue
-            trees[unit.path] = {
-                child.lineno: child
-                for child in ast.walk(parsed)
-                if isinstance(child, ast.FunctionDef | ast.AsyncFunctionDef)
-            }
+            trees[unit.path] = _declarations_by_start_line(parsed)
         node = trees[unit.path].get(unit.start_line)
         if node is None:
             continue
@@ -181,8 +231,20 @@ def unit_shingles(project_root: Path, units: Iterable[CodeUnit]) -> dict[str, fr
         except (SyntaxError, ValueError, RecursionError):
             continue
         if len(tokens) < MIN_TOKENS:
+            # Recorded as empty so the next call does not re-parse the
+            # file to rediscover that this unit is too small.
+            fresh[unit.body_hash] = frozenset()
             continue
-        built[unit.unit_id] = shingles(tokens)
+        values = shingles(tokens)
+        fresh[unit.body_hash] = values
+        built[unit.unit_id] = values
+
+    if conn is not None:
+        if fresh:
+            from . import shingle_cache
+
+            shingle_cache.write(conn, fresh)
+        conn.close()
     return built
 
 

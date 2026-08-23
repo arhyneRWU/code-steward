@@ -33,6 +33,19 @@ It was written before any pair was labelled.
 
 ## Result
 
+> **These numbers are superseded and are being remeasured.** They were
+> produced on a unit population that silently excluded every
+> *decorated* function — 53.3% of comparable units in Home Assistant,
+> and 27–133% more units per corpus once fixed. The cause was a
+> lookup keyed on a function's `def` line while the indexer records a
+> decorated function's start as its first decorator. The comparison
+> itself is unchanged and the defect is fixed; what is invalid is the
+> population the gold set was drawn from. Re-scoring on the corrected
+> corpus puts 28 of 30 returned pairs outside the labels for Home
+> Assistant, so the set cannot be re-scored — it has to be rebuilt.
+> A v2 gold set is in progress.
+
+
 Precision, recall, and F1 at depth 30 per corpus. Bytes are the
 normalised source of everything the arm returned — what a reviewer
 would have to read.
@@ -244,6 +257,10 @@ pairs are unlabelled; see [How deep the gold set can
 see](#how-deep-the-gold-set-can-see). The depth was chosen before
 scoring so one labeller could read every pair properly, and it was not
 revisited afterwards.
+
+**The measured population excluded decorated functions.** The single
+largest threat on this list, and the reason the numbers above are
+being remeasured. See the note under [Result](#result).
 
 **The reimplementation blind spot is demonstrated but unsized.** The
 arm provably misses a function whose every local has been renamed. How

@@ -59,21 +59,27 @@ def test_failed_duplicate_rebuild_preserves_last_valid_index(tmp_path: Path) -> 
     assert list(database.parent.glob(f".{database.name}.*.tmp")) == []
 
 
-def test_failed_parse_rebuild_preserves_last_valid_index(tmp_path: Path) -> None:
+def test_unparseable_file_is_skipped_rather_than_aborting_the_build(tmp_path: Path) -> None:
+    """One file the interpreter cannot parse must not cost the index.
+
+    Real trees contain Python this interpreter will not accept, and
+    aborting on the first of them means the tool cannot be used on the
+    repository at all. Three of the corpora this project benchmarks
+    against hit exactly that. The skip is reported, never silent.
+    """
     root = tmp_path / "repo"
     root.mkdir()
     database = root / ".code-steward" / "index.sqlite3"
 
     _write_unit(root / "a.py", "stable.unit", "stable")
-    rebuild_index(root, database)
-    before = database.read_bytes()
+    (root / "broken.py").write_text("except SystemExit, Exception:\n", encoding="utf-8")
 
-    (root / "broken.py").write_text("def broken(:\n", encoding="utf-8")
-    with pytest.raises(SyntaxError):
-        rebuild_index(root, database)
+    stats = rebuild_index(root, database)
 
-    assert database.read_bytes() == before
     assert _indexed_units(database) == [("stable.unit", "a.py")]
+    assert [entry.path for entry in stats.skipped] == ["broken.py"]
+    assert "SyntaxError" in stats.skipped[0].reason
+    assert stats.files == 1
 
 
 def test_incremental_move_succeeds_before_old_file_update_event(tmp_path: Path) -> None:
@@ -169,7 +175,8 @@ def test_rebuild_error_names_offending_file(tmp_path: Path) -> None:
     assert list(database.parent.glob(f".{database.name}.*.tmp")) == []
 
 
-def test_rebuild_syntax_error_names_offending_file(tmp_path: Path) -> None:
+def test_skipped_file_is_named_in_the_report(tmp_path: Path) -> None:
+    """A skip nobody can see is the same as a silent one."""
     root = tmp_path / "repo"
     (root / "pkg").mkdir(parents=True)
     database = root / ".code-steward" / "index.sqlite3"
@@ -177,8 +184,25 @@ def test_rebuild_syntax_error_names_offending_file(tmp_path: Path) -> None:
     _write_unit(root / "a.py", "stable.one", "one")
     (root / "pkg" / "broken.py").write_text("def broken(:\n", encoding="utf-8")
 
-    with pytest.raises(SyntaxError, match=r"pkg/broken\.py"):
+    stats = rebuild_index(root, database)
+    assert [entry.path for entry in stats.skipped] == ["pkg/broken.py"]
+
+
+def test_a_malformed_tag_still_aborts_the_build(tmp_path: Path) -> None:
+    """A tag error is a project mistake, not a property of a file."""
+    root = tmp_path / "repo"
+    (root / "pkg").mkdir(parents=True)
+    database = root / ".code-steward" / "index.sqlite3"
+
+    _write_unit(root / "a.py", "stable.one", "one")
+    rebuild_index(root, database)
+    before = database.read_bytes()
+
+    _write_malformed_unit(root / "pkg" / "bad.py", "taxonomy.normalize")
+    with pytest.raises(ValueError, match=r"pkg/bad\.py"):
         rebuild_index(root, database)
+
+    assert database.read_bytes() == before
 
 
 def test_rebuild_error_preserves_original_cause(tmp_path: Path) -> None:

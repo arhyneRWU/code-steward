@@ -22,7 +22,13 @@ from pathlib import Path
 from benchmarks.guards import Exclusions
 from code_steward.indexer import index_python_file
 from code_steward.models import CodeUnit
-from code_steward.similarity import MIN_LINES, MIN_TOKENS, normalise, tokenise
+from code_steward.similarity import (
+    MIN_LINES,
+    MIN_TOKENS,
+    _declarations_by_start_line,
+    normalise,
+    tokenise,
+)
 
 FUNCTION_KINDS = frozenset({"function", "method"})
 
@@ -46,11 +52,8 @@ class CorpusUnit:
 
 
 def _declarations(tree: ast.AST) -> dict[int, ast.AST]:
-    found: dict[int, ast.AST] = {}
-    for node in ast.walk(tree):
-        if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
-            found[node.lineno] = node
-    return found
+    """Look declarations up the way the shipped comparison does."""
+    return _declarations_by_start_line(tree)
 
 
 def load_units(

@@ -20,10 +20,19 @@ from .relationships import refresh_relationships
 
 
 @dataclass(frozen=True, slots=True)
+class SkippedFile:
+    """One file the build could not index, and why."""
+
+    path: str
+    reason: str
+
+
+@dataclass(frozen=True, slots=True)
 class BuildStats:
     files: int
     units: int
     endpoints: int
+    skipped: tuple[SkippedFile, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,6 +43,19 @@ class UpdateStats:
 
 
 INDEXING_ERRORS = (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError)
+
+# Errors that describe the file rather than the project. Real trees
+# contain Python the running interpreter cannot parse -- vendored
+# Python 2, syntax from a newer release, generated stubs, templates
+# with a .py suffix. A whole-index abort on one of those makes the
+# tool unusable on the repository, which is a worse outcome than an
+# index that is one file short and says so.
+#
+# Everything else still aborts. A duplicate or malformed
+# `# code-steward:` tag is a mistake in the project that someone has
+# to fix, and a storage or filesystem failure is not a property of any
+# one file. Both keep the previous index intact.
+SKIPPABLE_ERRORS = (SyntaxError, UnicodeDecodeError)
 
 
 def _located(rel: str, exc: BaseException) -> BaseException:
@@ -68,10 +90,15 @@ def rebuild_index(
     try:
         conn = connect(temporary)
         file_count = unit_count = endpoint_count = 0
+        skipped: list[SkippedFile] = []
         for path in iter_python_files(project_root, excludes):
-            rel, units, endpoints = _index_replacement(project_root, path)
+            rel = path.relative_to(project_root).as_posix()
             try:
+                units, endpoints = index_python_file(project_root, path)
                 replace_file(conn, rel, units, endpoints)
+            except SKIPPABLE_ERRORS as exc:
+                skipped.append(SkippedFile(rel, f"{type(exc).__name__}: {exc}"))
+                continue
             except INDEXING_ERRORS as exc:
                 raise _located(rel, exc) from exc
             file_count += 1
@@ -82,7 +109,7 @@ def rebuild_index(
         conn.close()
         conn = None
         os.replace(temporary, destination)
-        return BuildStats(file_count, unit_count, endpoint_count)
+        return BuildStats(file_count, unit_count, endpoint_count, tuple(skipped))
     except BaseException:
         if conn is not None:
             conn.close()

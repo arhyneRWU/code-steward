@@ -45,6 +45,15 @@ def cmd_build(args: argparse.Namespace) -> int:
             f"indexed {stats.units} units, {stats.endpoints} endpoints "
             f"from {stats.files} Python files"
         )
+        if stats.skipped:
+            # Reported, never silent: an index that quietly covers
+            # less than the tree cannot be told from one that covers
+            # all of it, and "not found" would then mean two things.
+            print(f"skipped {len(stats.skipped)} file(s) that could not be indexed:")
+            for entry in stats.skipped[:10]:
+                print(f"  {entry.path}: {entry.reason}")
+            if len(stats.skipped) > 10:
+                print(f"  ... and {len(stats.skipped) - 10} more")
         print(destination)
     return 0
 
@@ -125,7 +134,7 @@ def cmd_packet(args: argparse.Namespace) -> int:
         root = root_from(args.root)
         conn, units, _ = _load(root)
         conn.close()
-        prepared = unit_shingles(root, units)
+        prepared = unit_shingles(root, units, cache=True)
         duplicates = {}
         for result in results:
             near = rank_similar_units(result.unit.unit_id, units, prepared, limit=3)
@@ -141,7 +150,7 @@ def cmd_similar(args: argparse.Namespace) -> int:
     root = root_from(args.root)
     conn, units, _ = _load(root)
     conn.close()
-    prepared = unit_shingles(root, units)
+    prepared = unit_shingles(root, units, cache=True)
 
     if args.draft is not None:
         source = sys.stdin.read() if args.draft == "-" else Path(args.draft).read_text("utf-8")
