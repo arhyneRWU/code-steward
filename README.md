@@ -176,10 +176,10 @@ The measurement decided the mechanism; this is the surface it ships behind.
 ```bash
 code-steward similar src.app.orders::apply_discount     # an indexed unit
 code-steward similar --draft new_function.py            # code not written yet
-code-steward packet "apply a percentage discount" --reuse
+code-steward trace app.py:42 --dry                      # the path, and what it duplicates
 ```
 
-`--draft` is the case the rest of the design is aimed at. An agent about to write a function can ask what already resembles it, using the same comparison the indexed path uses, before the code exists to be indexed. `packet --reuse` attaches near-duplicate evidence to each candidate, which is what separates a REUSE from a REFACTOR: a candidate that already exists three times over should not be reused a fourth time.
+`--draft` compares code that does not exist yet, using the same comparison the indexed path uses. It is the weakest path here — measured at 0.460 against 1.000 for a real body — and is worth one cheap attempt, no more. `trace --dry` carries the REFACTOR signal instead: a unit on the path that already exists two or three times over should not be reused a fourth time.
 
 Comparison runs over normalised function bodies — `ast.unparse` output, so comments, formatting, and docstrings are invisible to it. Identifiers are kept.
 
@@ -468,29 +468,27 @@ driving the CLI by hand.
 
 ```text
 .claude-plugin/plugin.json
-skills/searching-before-implementing/SKILL.md   # the search-before-implement workflow
-skills/searching-before-implementing/references/retrieval-limits.md
+skills/code-steward/SKILL.md                    # how to use the tool well
+skills/code-steward/references/retrieval-limits.md
 agents/reuse-reviewer.md                        # read-only reviewer subagent
 ```
 
-Both are written around the accuracy gap between the two tools: `similar` measured precision 1.000, the packet ranker measured Hit@1 46.67%. The skill and the agent are told to draft and compare first where that is possible, and to fall back to the ranker when it is not.
+- **`code-steward`** is the skill. It is organised around **moments in the work** rather than
+  around commands, and it opens with a table of how much each answer is worth — because the
+  gap between the strong rows and the weak ones is large, and treating a weak one as strong is
+  the main way to misuse this. It tells an agent to reach for Grep before `search`, to trace
+  from a `path:line`, to run the DRY pass across a whole path, to propose docstrings rather
+  than apply them, and to end an edit with `check`. It also says plainly when to skip the tool.
+- **`reuse-reviewer`** is a read-only reviewer subagent, kept so candidate evaluation does not
+  land in the main session.
 
-- **`searching-before-implementing`** teaches the workflow: run `code-steward packet` before
-  broad exploration, treat candidates as evidence rather than answers, read the minimum number
-  of unit bodies, classify the change, and fall back to ordinary exploration when the packet is
-  insufficient. It states plainly when Code Steward should *not* be used.
-- **`reuse-reviewer`** is the "isolated review agent" box in the diagram above. It receives a
-  task, runs `packet` and `read` in its own context, and returns a compact structured decision
-  so candidate evaluation never lands in the main session.
-
-Both are deliberately conservative about the ranker's quality, for the reasons set out in
-[Measured position](#measured-position): the top candidate is wrong more often than not,
-roughly one query in four returns a packet that does not contain the correct unit at all, and
-a plain keyword scan does better on both counts. They are also conservative about `similar`,
-for a different reason — it cannot see a function reimplemented in different words, so a
-silent result is not proof of absence either. Both require verification before any reuse
-decision. The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not find it"), not
+Both are deliberately conservative, and about the right things. Everything predictive is weak —
+a task sentence finds the duplicate 0.459 of the time and an agent's sketch 0.460 — while the
+tool is reliable on code that already exists. `similar` also cannot see a function
+reimplemented in different words, so a silent run rules out coincidence rather than proving
+absence. The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not find it"), not
 `CREATE`.
+
 
 Known gaps in this surface:
 

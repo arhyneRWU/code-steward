@@ -113,9 +113,10 @@ import, and another pins the five constants.
 
 The surface is `code-steward similar`, either against an indexed unit
 or against a draft that has not been written yet, and
-`code-steward packet --reuse`, which attaches near-duplicate evidence
-to each candidate. The draft path is the point: the reuse question is
-worth most before the code exists.
+`code-steward trace --dry`, which reports duplication across every
+unit on a call path. The draft path was once the point; measurement
+moved it. A sketch finds the duplicate 0.460 of the time and a real
+body 1.000, so the reliable moment is after the code exists.
 
 ### What the arm catches, and what it does not
 

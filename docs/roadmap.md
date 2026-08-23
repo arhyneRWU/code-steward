@@ -112,26 +112,54 @@ standard, and it measures the thing the product actually is.
 
 ## Stages, each with an exit criterion
 
-### Stage 0 -- make the skill describe the tool that exists
+### Stage 0 -- make the skill describe the tool that exists **(done)**
 
-Rewrite the skill around moments rather than commands. Rename it.
-Promote `trace`, add `--dry` and `--undocumented`, demote `packet`
-and `search`. Decide whether the ranking commands stay shipped at
-all.
+Renamed `searching-before-implementing` to `code-steward`, because
+the old name encoded a thesis that measurement killed twice and a
+tool name cannot go stale the same way. Rewritten around moments in
+the work rather than commands, opening with a reliability table.
+`packet` retired as a command -- `packet.py` stays, since six
+benchmark modules import it and those benchmarks are the record of
+why the ranking flow was abandoned.
 
-*Exit: `code-steward --help` and the skill describe one tool, and a
-reader can tell what it is for in a sentence.*
+The open decision on `search` resolved as **keep, but stop it being
+load-bearing**. Its job was never wrong -- grep returns a line, an
+index returns a unit -- but its guarantee was "best eight, ranked, no
+floor". `trace` now accepts a bare name or `path:line`, so the common
+case is deterministic and `search` is only for when you cannot guess
+the vocabulary at all.
+
+`tests/test_cli_surface.py` pins the command list, so adding or
+removing one is a deliberate act with a diff.
+
+*Exit met: nine commands, one thesis, and the skill's own table now
+tells a reader which answers to trust.*
 
 ### Stage 1 -- measure the skill, not the commands
 
 The paired A/B above. Keep the existing discipline: blind scoring,
 provenance stripped, negative result published either way.
 
-*Exit: a number saying whether an agent with the skill does better
-work, with a confidence interval -- or a documented kill.*
+*Exit met, and the number is null.* See
+[`skill-ab.md`](skill-ab.md). Skill arm 0.984 mean F1, control 0.929,
+paired difference +0.055 with a one-sided 95% lower bound of -0.099.
+The pre-registered detectable effect was 0.20, so this does not show
+the skill helping.
 
-This is the keystone. Everything after it is worth more once it
-exists, and it has a real chance of being unflattering.
+**The design could not answer the question, and that is the finding.**
+At 0.929 the control nearly saturates: this repository is 4,400 lines
+and an agent can just read it. The skill's claim is about
+repositories too large to read, and a repository small enough to read
+cannot test it. The next run needs Django or Home Assistant, harder
+questions, one question per agent, and the sign test pre-registered
+as primary -- most questions tie, and a mean difference is the wrong
+instrument for that.
+
+Recorded, and explicitly not the result: the arms differed on 5 of 20
+questions and **all five favoured the skill**, one-sided sign-test p
+= 0.031. Choosing that test after seeing 5/5 is how false positives
+are made, so it is a direction to power the next run against, not a
+finding.
 
 ### Stage 2 -- use it in anger for a week
 
@@ -179,12 +207,11 @@ Kept explicit, because today demonstrated how much this saves.
 
 These need a call and do not have one yet.
 
-1. **Do `packet` and `search` stay?** They are ~400 lines and two of
-   ten commands, they are honestly documented as weak, and they are
-   the main reason the tool reads as a search engine. Removing them
-   is a breaking change to a tool with no external users.
-2. **What is the skill called?** It should name the job, not the
-   killed thesis.
-3. **Is the CLI a public interface or a private substrate?** If the
-   skill is the product, command stability matters much less, and
-   consolidation gets cheaper.
+1. ~~Do `packet` and `search` stay?~~ **Resolved in Stage 0.**
+   `packet` is retired; `search` stays as the "I cannot guess the
+   vocabulary" path, no longer load-bearing.
+2. ~~What is the skill called?~~ **Resolved:** `code-steward`.
+3. **Is the CLI a public interface or a private substrate?** Still
+   open. There are no external users -- 0 stars, 0 forks, every issue
+   and PR self-authored -- so if the skill is the product, command
+   stability matters much less and consolidation gets cheaper.
