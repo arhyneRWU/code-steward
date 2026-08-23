@@ -2,7 +2,9 @@
 
 **Context-efficient code intelligence and stewardship for Claude Code.**
 
-Code Steward helps a coding agent decide **REUSE, EXTEND, or REFACTOR before the code is written**, rather than discovering the duplicate afterwards. It indexes a repository into stable code-unit IDs, finds the existing units a proposed change would overlap, and hands the agent a compact packet to act on.
+Code Steward helps a coding agent decide **REUSE, EXTEND, REFACTOR, or NEW on a drafted change, before it is kept** — rather than discovering the duplicate after it is merged. It indexes a repository into stable code-unit IDs, compares a drafted function against them, and hands the agent a compact packet to act on.
+
+The project started out aiming to make that decision from a task *sentence*, before any code existed. Measurement moved it: comparing a drafted body finds the existing function 99.4% of the time against 45.9% for a sentence, and adding more evidence to the sentence path did not change a single verdict at a detectable rate. [`docs/direction.md`](docs/direction.md) records what changed and why, including the assumptions that turned out to be wrong.
 
 The main coding session should receive **decisions and selected code units, not the full history of repository exploration**. Instead of repeatedly searching large files, rediscovering callers and tests, or writing something that already exists, Code Steward builds a compact map of a codebase, retrieves the relevant existing units, and delegates deeper investigation to isolated review agents.
 
@@ -11,7 +13,8 @@ The main coding session should receive **decisions and selected code units, not 
 > **What is measured today.** Both halves of the project have been compared against a simple control on real repositories.
 >
 > - **Reuse detection** works and ships. Five-token shingle comparison measures macro precision **1.000** and F1 **0.577** across three pinned public repositories, ahead of jscpd (0.506) and of this project's own metadata comparison (0.385), at 2.3× to 3.6× fewer bytes. See [Reuse similarity](#reuse-similarity).
-> - **Drafting and comparing beats describing the task.** On 250 held-out functions, sketching the code and comparing it surfaces the existing duplicate **99.4%** of the time, against **45.3%** for the packet ranker given a task sentence — and at slightly fewer bytes. See [Does the evidence arrive](#does-the-evidence-arrive).
+> - **Drafting and comparing beats describing the task.** On 250 held-out functions, sketching the code and comparing it surfaces the existing duplicate **99.4%** of the time, against **45.9%** for the packet ranker given a task sentence — and at slightly fewer bytes. This result is why the project reframed around drafts. See [Does the evidence arrive](#does-the-evidence-arrive).
+> - **Extra evidence in the packet did not change the verdict.** Sixty held-out cases put to a blinded reviewer agent, paired across arms: 0.683 without reuse evidence, 0.733 with, exact two-sided **p = 0.549**. Null. See [Does the verdict change](#does-the-verdict-change).
 > - **Retrieval ranking** is split against plain text search on `psf/requests`: ahead on Hit@K (93.33% vs 86.67%) after body term coverage became a scored field, behind on Hit@1 (33.33% vs 53.33%) and MRR. Its larger contribution is still compression — 3,987 bytes of packet against 21,107 bytes of source. See [Measured position](#measured-position).
 >
 > Treat the roadmap as open questions rather than delivered features.
@@ -23,7 +26,11 @@ Code Steward is being designed around two forms of stewardship:
 1. **Steward the context window.** Keep broad repository exploration, graph traversal, history inspection, and duplicate analysis out of the main coding context whenever they can be handled deterministically or inside a disposable subagent context.
 2. **Steward the codebase.** Search before implementation, reuse existing behavior where appropriate, understand the impact of changes, and avoid unnecessary duplication or parallel abstractions. The duplication half of this is now measured; see [Reuse similarity](#reuse-similarity).
 
-Both reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently not true — the packets are proportionally noisier than plain keyword search, but much cheaper per unit of noise. See [Measured position](#measured-position).
+A third has been added by measurement rather than design:
+
+3. **Be willing to say no.** On a third of cases where the right answer was to write the function, a reviewer handed the packet was talked into reusing something instead. The reviewer agent does have a declining verdict, but the packet cannot produce an empty result — `similar` has a result limit and no score floor — so the reviewer is always shown eight candidates however weak they are. A score floor and an honest empty-result path are the main line of work, not a tuning detail. See [Does the verdict change](#does-the-verdict-change).
+
+The first two reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently not true — the packets are proportionally noisier than plain keyword search, but much cheaper per unit of noise. See [Measured position](#measured-position).
 
 The intended workflow is:
 
@@ -156,7 +163,7 @@ Comparison runs over normalised function bodies — `ast.unparse` output, so com
 
 A function that was copied, pasted, and tidied is found. A function that was independently reimplemented in different words is not. Catching that needs a structural comparator, which is a different tool and has not been measured here. The limitation is pinned by a test so it cannot quietly change.
 
-There is nothing novel in the comparison itself — near-duplicate detection by token shingles is long-established, and jscpd is a mature tool that placed second on this benchmark. What is different here is where it sits: at indexed-unit granularity, keyed to stable IDs, answering the question before the code is written, and returning a packet an agent acts on rather than a report a person reads. The measured edge over jscpd is modest on F1 (0.571 against 0.521) and larger on bytes (2.3x fewer), and bytes are what make it affordable inside an agent's context.
+There is nothing novel in the comparison itself — near-duplicate detection by token shingles is long-established, and jscpd is a mature tool that placed second on this benchmark. What is different here is where it sits: at indexed-unit granularity, keyed to stable IDs, answering the question before the change is kept, and returning a packet an agent acts on rather than a report a person reads. The measured edge over jscpd is modest on F1 (0.571 against 0.521) and larger on bytes (2.3x fewer), and bytes are what make it affordable inside an agent's context.
 
 ### Does the evidence arrive
 
@@ -166,18 +173,32 @@ A case takes a function whose duplicate is already labelled, removes it from the
 
 | Arm | Duplicate surfaced | False positives | Mean bytes |
 | --- | --- | --- | --- |
-| `packet` (control) | 0.453 | 0.198 | 2,663 |
-| `packet --reuse` | 0.616 | 0.275 | 4,260 |
+| `packet` (control) | 0.459 | 0.176 | 2,782 |
+| `packet --reuse` | 0.654 | 0.264 | 4,405 |
 | **`similar --draft`** | **0.994** | 0.264 | **2,636** |
 
 **Drafting and comparing dominates.** It finds the existing function in 158 of 159 cases, at fewer bytes than the plain packet and no worse a false-positive rate. The skill and reviewer agent were already told to draft-and-compare before falling back to the ranker; that ordering was reasoned from a component number and is now measured.
 
-**`--reuse` is a real trade rather than a free win.** Sixteen more cases in a hundred where the duplicate arrives, for 60% more bytes. That is why it is opt-in.
+**`--reuse` gets the evidence there and does not change the answer.** Twenty more cases in a hundred where the duplicate arrives, for 58% more bytes — and, when the verdict itself is scored, no measurable improvement. See below.
 
-Three limits, none of them small:
+### Does the verdict change
 
-- **No verdict was scored.** No reviewer agent was run, so this measures evidence *arriving*, not a decision *changing*. A detector that surfaces perfectly and changes no verdicts would score perfectly here.
-- **246 of 496 cases were excluded** because the function has no docstring, so its task text would have been its own identifier. That means this speaks only about documented functions — and undocumented code is where the ranker is documented to do worst, so the control's 0.453 is its score on favourable ground.
+The table above measures evidence *arriving*. It does not measure a decision *changing*, which is the actual claim. So sixty of the held-out cases were put to a reviewer agent twice, once per packet arm, with candidates blinded to labels `C1..C8` so the reviewer could not open the file and answer from the source.
+
+| Arm | Positive | Negative | Overall |
+| --- | --- | --- | --- |
+| `packet` | 0.700 | 0.667 | 0.683 |
+| `packet --reuse` | 0.733 | 0.733 | 0.733 |
+
+**This came back null.** The arms are paired on the same cases, so the test is McNemar's: eleven cases disagreed, four favouring the plain packet and seven the reuse packet, exact two-sided **p = 0.549**. The five-point gap is noise at n=60. On the evidence so far, the extra 58% of bytes buys a better-populated packet and no better answer.
+
+**The expensive failure is one nobody was measuring.** On a third of the negative cases the reviewer was talked into REUSE or EXTEND when the right answer was to write the function. Retrieval always returns its eight best candidates, and a reviewer handed eight plausible functions tends to pick one. A missed duplicate costs some redundancy; a wrong reuse wires the caller to code that does not do the job.
+
+Caveats, and they matter: the reviewer sample stratifies by corpus, which over-weights Django where retrieval is strongest, so its surfaced rate is 0.733 against 0.459 pooled — read these as the reviewer's skill *given good retrieval*, not as an end-to-end number. n=30 per polarity per arm can detect a large effect and cannot rule out a small one. Blinding withholds paths a real reviewer would see, so the figures are a floor. One reviewer model, one prompt.
+
+Three further limits on the table above, none of them small:
+
+- **246 of 496 cases were excluded** because the function has no docstring, so its task text would have been its own identifier. That means this speaks only about documented functions — and undocumented code is where the ranker is documented to do worst, so the control's 0.459 is its score on favourable ground.
 - **`similar` has no score floor**, which is visible in the false positives on negative cases. Choosing one is deliberately not done here: it would be tuning against the gold set.
 
 Full method and caveats in [`docs/verdict.md`](docs/verdict.md). Reproduce with `make bench-verdict`.
@@ -346,6 +367,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - reuse detection (`similar`, `packet --reuse`), including comparison against unwritten drafts
 - the skill and reviewer agent updated to draft-and-compare before falling back to the ranker
 - a held-out measurement of whether the reuse evidence reaches the reviewer at all
+- a blinded reviewer-agent run scoring the verdict itself, which returned null for `--reuse`
 - benchmark anti-inflation guards: a rate with no denominator raises rather than publishing a perfect zero
 - exclusion accounting: a run that drops a file or a case reports it as dropped
 - pins enforced by tests rather than by documentation
@@ -354,12 +376,16 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 ### Next, in priority order
 
-1. **Write a second query set from documentation rather than source.** It sizes the vocabulary-overlap bias in every retrieval number above, and it is the held-out set needed to choose a body weight without tuning against the fifteen `requests` cases.
-2. **Run a reviewer agent over the held-out cases.** Evidence arrival is measured; whether it changes a REUSE/EXTEND/REFACTOR verdict is not, and that needs agent runs rather than a deterministic harness. See [`docs/verdict.md`](docs/verdict.md).
-3. **Decide whether `similar` needs a score floor.** Every arm surfaces something on a fifth to a quarter of negative cases. Must be decided on a held-out set, never the frozen one.
-4. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and the gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator.
-5. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-6. **Post-change DRY and blast-radius review.**
+Reordered after the reviewer measurement. See [`docs/direction.md`](docs/direction.md) for why the old order was wrong: it was built on the assumption that recall was the binding constraint, and it isn't.
+
+1. **Let the packet return nothing.** A score floor on `similar`, a packet that can legitimately return zero candidates, and a decision contract where writing new code is a normal outcome rather than a hedged report of not having found something. This is the tool's most expensive failure — a reviewer talked into reuse wires a caller to code that does not do the job — and it is currently unaddressed. The floor must be chosen on a held-out set, never the frozen one.
+2. **Make the draft the primary path end to end.** Drafting and comparing wins by 99.4% to 45.9% and the CLI, skill and reviewer agent still treat the sentence packet as the default entry point. This is mostly plumbing and documentation, not new measurement.
+3. **Measure draft-and-compare on a realistic draft.** The 0.994 is an upper bound: it compares the *real* removed body, not an approximation an agent would write. Rename tolerance bounds how fast that degrades (0.535 for a renamed signature, 0.015 for a wholly renamed body), so the true figure is somewhere below. This is the single number the reframed project most depends on.
+4. **Test whether the draft path escapes the docstring problem.** The verdict benchmark excludes 246 of 496 cases for having no docstring, and undocumented code is where the ranker is worst. Draft-and-compare never reads a docstring, so it may simply not have this failure — testable, untested.
+5. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and the gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator.
+6. **Write a second query set from documentation rather than source.** It sizes the vocabulary-overlap bias in every retrieval number above. Demoted, not dropped: it bears on the fallback path rather than the primary one.
+7. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
+8. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing
 
@@ -368,6 +394,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - **`metadata_similarity` as a reuse ranker.** Measured at macro F1 0.385 against 0.577, at 2.3x the bytes. It stays where it is, deduplicating a result set.
 - **jscpd as a dependency.** Second of four arms, but it needs Node and returns 3.6x the bytes.
 - **Tuning any arm against the similarity gold set.** The set was built, frozen, and measured once. Tuning against it would convert a benchmark into a target.
+- **Adding further signal to the packet.** Two of the last three changes did exactly that. Recall improved both times; the verdict did not move. Until something moves verdict accuracy with abstention, more evidence per candidate is not the lever.
 
 ## Claude Code plugin surface
 

@@ -3,26 +3,26 @@
     {
       "arm": "packet",
       "cases_scored": 250,
-      "false_positive_rate": 0.198,
-      "mean_bytes": 2663.4,
+      "false_positive_rate": 0.176,
+      "mean_bytes": 2781.8,
       "negatives": 91,
-      "negatives_false_positive": 18,
-      "negatives_unlabelled_evidence": 73,
+      "negatives_false_positive": 16,
+      "negatives_unlabelled_evidence": 75,
       "positives": 159,
-      "positives_surfaced": 72,
-      "surfaced_rate": 0.453
+      "positives_surfaced": 73,
+      "surfaced_rate": 0.459
     },
     {
       "arm": "packet-reuse",
       "cases_scored": 250,
-      "false_positive_rate": 0.275,
-      "mean_bytes": 4259.5,
+      "false_positive_rate": 0.264,
+      "mean_bytes": 4405.3,
       "negatives": 91,
-      "negatives_false_positive": 25,
-      "negatives_unlabelled_evidence": 66,
+      "negatives_false_positive": 24,
+      "negatives_unlabelled_evidence": 67,
       "positives": 159,
-      "positives_surfaced": 98,
-      "surfaced_rate": 0.616
+      "positives_surfaced": 104,
+      "surfaced_rate": 0.654
     },
     {
       "arm": "draft-similar",
