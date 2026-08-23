@@ -53,9 +53,7 @@ def test_score_arm_refuses_to_score_an_unlabeled_candidate() -> None:
 
 
 def test_load_labels_merges_disjoint_files(tmp_path: Path) -> None:
-    first = _write(
-        tmp_path / "a.json", [{"case_id": "c1", "unit_id": "u1", "label": "relevant"}]
-    )
+    first = _write(tmp_path / "a.json", [{"case_id": "c1", "unit_id": "u1", "label": "relevant"}])
     second = _write(
         tmp_path / "b.json", [{"case_id": "c1", "unit_id": "u2", "label": "irrelevant"}]
     )
@@ -66,9 +64,7 @@ def test_load_labels_merges_disjoint_files(tmp_path: Path) -> None:
 
 
 def test_load_labels_rejects_a_conflict_instead_of_picking_one(tmp_path: Path) -> None:
-    first = _write(
-        tmp_path / "a.json", [{"case_id": "c1", "unit_id": "u1", "label": "relevant"}]
-    )
+    first = _write(tmp_path / "a.json", [{"case_id": "c1", "unit_id": "u1", "label": "relevant"}])
     second = _write(
         tmp_path / "b.json", [{"case_id": "c1", "unit_id": "u1", "label": "irrelevant"}]
     )
@@ -86,9 +82,7 @@ def test_load_labels_accepts_an_agreeing_duplicate(tmp_path: Path) -> None:
 
 
 def test_load_labels_rejects_an_unknown_label(tmp_path: Path) -> None:
-    path = _write(
-        tmp_path / "a.json", [{"case_id": "c1", "unit_id": "u1", "label": "maybe"}]
-    )
+    path = _write(tmp_path / "a.json", [{"case_id": "c1", "unit_id": "u1", "label": "maybe"}])
 
     with pytest.raises(ValueError, match="unknown label"):
         load_labels([path])
