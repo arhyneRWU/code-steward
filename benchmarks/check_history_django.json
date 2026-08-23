@@ -1,0 +1,98 @@
+{
+  "commits_with_any_finding": {
+    "all_overlaps": 11,
+    "introduced": 5
+  },
+  "floor": 0.27,
+  "label": "django",
+  "note": "Alarm rates, not error rates. Nothing here is labelled.",
+  "per_commit": [
+    {
+      "all_overlaps": 9,
+      "commit": "1f5bf635df6f",
+      "functions": 25,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 3,
+      "commit": "5a260d309a4c",
+      "functions": 26,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 54,
+      "commit": "9e4a3f186b6b",
+      "functions": 141,
+      "introduced": 6
+    },
+    {
+      "all_overlaps": 4,
+      "commit": "5b3523d29be2",
+      "functions": 46,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 6,
+      "commit": "39b3e2d0c743",
+      "functions": 37,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "284d74d87438",
+      "functions": 1,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 7,
+      "commit": "c6e5cf926db9",
+      "functions": 69,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 25,
+      "commit": "c451719c389b",
+      "functions": 48,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 28,
+      "commit": "c800c8a84586",
+      "functions": 110,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 11,
+      "commit": "724d876038ab",
+      "functions": 46,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 3,
+      "commit": "ba6129c54c25",
+      "functions": 18,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 111,
+      "commit": "7f814ee937e0",
+      "functions": 539,
+      "introduced": 7
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "0f1b39b28b20",
+      "functions": 1,
+      "introduced": 0
+    }
+  ],
+  "rate_all_overlaps": 0.2358,
+  "rate_introduced": 0.0145,
+  "schema_version": 1,
+  "totals": {
+    "all_overlaps": 261,
+    "commits": 13,
+    "functions": 1107,
+    "introduced": 16
+  }
+}

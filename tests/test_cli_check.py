@@ -10,6 +10,7 @@ copy, or firing on a function's own previous revision.
 from __future__ import annotations
 
 import json
+import subprocess
 
 import pytest
 
@@ -61,6 +62,10 @@ def project(tmp_path):
     return tmp_path
 
 
+def _git(project, *argv):
+    subprocess.run(["git", *argv], cwd=project, check=True, capture_output=True)
+
+
 def _run(project, *argv):
     return main(["--root", str(project), *argv])
 
@@ -78,7 +83,7 @@ def test_check_stays_quiet_on_unrelated_code(project, capsys):
     new = project / "b.py"
     new.write_text(UNRELATED, encoding="utf-8")
     assert _run(project, "check", str(new)) == 0
-    assert "none overlap existing code" in capsys.readouterr().out
+    assert "none introduce new overlap" in capsys.readouterr().out
 
 
 def test_check_does_not_match_a_function_against_its_own_older_revision(project, capsys):
@@ -88,7 +93,7 @@ def test_check_does_not_match_a_function_against_its_own_older_revision(project,
     it as a duplicate of itself.
     """
     assert _run(project, "check", str(project / "a.py")) == 0
-    assert "none overlap existing code" in capsys.readouterr().out
+    assert "none introduce new overlap" in capsys.readouterr().out
 
 
 def test_check_reports_how_many_functions_it_looked_at(project, capsys):
@@ -128,7 +133,7 @@ def test_check_raising_the_floor_suppresses_a_weak_overlap(project, capsys):
     new = project / "b.py"
     new.write_text(COPIED, encoding="utf-8")
     assert _run(project, "check", str(new), "--floor", "0.99") == 0
-    assert "none overlap existing code" in capsys.readouterr().out
+    assert "none introduce new overlap" in capsys.readouterr().out
 
 
 def test_check_rate_reports_the_repository_baseline(project, capsys):
@@ -149,3 +154,43 @@ def test_check_rate_says_a_high_share_is_not_a_fault(project, capsys):
     """A baseline is information, not a verdict on the codebase."""
     assert _run(project, "check", "--rate") == 0
     assert "not a fault" in capsys.readouterr().out
+
+
+def test_overlap_that_predates_the_change_is_not_reported(project, capsys):
+    """The noise fix, and the reason this command is usable.
+
+    ``b.py`` duplicates ``a.py`` and is committed that way. Editing a
+    comment in it introduces no new duplication, so the pre-existing
+    overlap must stay hidden -- on a repository whose baseline runs
+    to 30-60%, reporting it is what makes the tool unreadable.
+    """
+    _git(project, "init", "-q")
+    _git(project, "checkout", "-q", "-b", "main")
+    (project / "b.py").write_text(COPIED, encoding="utf-8")
+    _git(project, "add", "-A")
+    _git(project, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "base")
+    rebuild_index(project, project / ".code-steward" / "index.sqlite3")
+
+    (project / "b.py").write_text(COPIED + "\n# a harmless trailing comment\n", encoding="utf-8")
+
+    assert _run(project, "check", str(project / "b.py")) == 0
+    assert "none introduce new overlap" in capsys.readouterr().out
+
+    # The overlap is real and --all-overlaps still shows it.
+    assert _run(project, "check", str(project / "b.py"), "--all-overlaps") == 0
+    assert "a::rank_things" in capsys.readouterr().out
+
+
+def test_a_newly_written_duplicate_is_still_reported(project, capsys):
+    """Hiding pre-existing overlap must not hide the actual finding."""
+    _git(project, "init", "-q")
+    _git(project, "checkout", "-q", "-b", "main")
+    _git(project, "add", "-A")
+    _git(project, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "base")
+
+    new = project / "b.py"
+    new.write_text(COPIED, encoding="utf-8")
+    assert _run(project, "check", str(new)) == 0
+    out = capsys.readouterr().out
+    assert "a::rank_things" in out
+    assert "1 of 1 changed function(s) introduce new overlap" in out

@@ -1,0 +1,212 @@
+{
+  "commits_with_any_finding": {
+    "all_overlaps": 27,
+    "introduced": 22
+  },
+  "floor": 0.27,
+  "label": "code-steward",
+  "note": "Alarm rates, not error rates. Nothing here is labelled.",
+  "per_commit": [
+    {
+      "all_overlaps": 5,
+      "commit": "7a573650aed2",
+      "functions": 42,
+      "introduced": 2
+    },
+    {
+      "all_overlaps": 8,
+      "commit": "2d21f4c14730",
+      "functions": 21,
+      "introduced": 6
+    },
+    {
+      "all_overlaps": 18,
+      "commit": "f3e0aaac2c42",
+      "functions": 89,
+      "introduced": 7
+    },
+    {
+      "all_overlaps": 4,
+      "commit": "fb03052dc78b",
+      "functions": 25,
+      "introduced": 2
+    },
+    {
+      "all_overlaps": 27,
+      "commit": "1f6b6f889b3f",
+      "functions": 84,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 1,
+      "commit": "551c7a8fcd8e",
+      "functions": 18,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 37,
+      "commit": "527df0598ea2",
+      "functions": 172,
+      "introduced": 8
+    },
+    {
+      "all_overlaps": 15,
+      "commit": "a984d262986d",
+      "functions": 52,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 4,
+      "commit": "5b64da5aa386",
+      "functions": 25,
+      "introduced": 4
+    },
+    {
+      "all_overlaps": 6,
+      "commit": "966cc11c4e3e",
+      "functions": 20,
+      "introduced": 6
+    },
+    {
+      "all_overlaps": 10,
+      "commit": "044486772ab9",
+      "functions": 63,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 9,
+      "commit": "9d0b85825ec4",
+      "functions": 55,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 4,
+      "commit": "9620e20277ec",
+      "functions": 32,
+      "introduced": 4
+    },
+    {
+      "all_overlaps": 16,
+      "commit": "8ff7505911f6",
+      "functions": 59,
+      "introduced": 2
+    },
+    {
+      "all_overlaps": 9,
+      "commit": "34296c5e5747",
+      "functions": 17,
+      "introduced": 3
+    },
+    {
+      "all_overlaps": 4,
+      "commit": "26128db067eb",
+      "functions": 12,
+      "introduced": 2
+    },
+    {
+      "all_overlaps": 7,
+      "commit": "abc20db44e9e",
+      "functions": 11,
+      "introduced": 7
+    },
+    {
+      "all_overlaps": 1,
+      "commit": "91c72b080f34",
+      "functions": 19,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 2,
+      "commit": "1908104b2806",
+      "functions": 8,
+      "introduced": 2
+    },
+    {
+      "all_overlaps": 4,
+      "commit": "b55ab97b404b",
+      "functions": 14,
+      "introduced": 4
+    },
+    {
+      "all_overlaps": 9,
+      "commit": "04cc172fbe87",
+      "functions": 30,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 14,
+      "commit": "cdba732856df",
+      "functions": 45,
+      "introduced": 5
+    },
+    {
+      "all_overlaps": 2,
+      "commit": "8cb07e82dff3",
+      "functions": 23,
+      "introduced": 2
+    },
+    {
+      "all_overlaps": 2,
+      "commit": "97990f230c6f",
+      "functions": 29,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 1,
+      "commit": "7f52bacc9954",
+      "functions": 21,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "84ee41a1a8da",
+      "functions": 8,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 1,
+      "commit": "d360c15212e6",
+      "functions": 28,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 3,
+      "commit": "d15178b3b02e",
+      "functions": 27,
+      "introduced": 1
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "48f7744b8876",
+      "functions": 15,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "bc96cc2d34dd",
+      "functions": 15,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "1f8ef1605e1d",
+      "functions": 24,
+      "introduced": 0
+    },
+    {
+      "all_overlaps": 0,
+      "commit": "a62b5f7f05e5",
+      "functions": 2,
+      "introduced": 0
+    }
+  ],
+  "rate_all_overlaps": 0.2018,
+  "rate_introduced": 0.0652,
+  "schema_version": 1,
+  "totals": {
+    "all_overlaps": 223,
+    "commits": 32,
+    "functions": 1105,
+    "introduced": 72
+  }
+}

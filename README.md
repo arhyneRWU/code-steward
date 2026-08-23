@@ -231,7 +231,16 @@ Treating every function as newly written and comparing it against the rest of it
 
 **Alarm rates, not error rates** — nothing there is labelled. Airflow's providers duplicate each other by design, so most of that 63% is probably the tool being right, and it is unusable as a blocking gate there anyway. Django is the low-duplication corpus and is still near 30%.
 
-So `check` ships as a report rather than a gate. `--fail-on-overlap` is opt-in, and `code-steward check --rate` gives you the figure for your own repository first. See [`docs/check.md`](docs/check.md).
+So `check` ships as a report rather than a gate. `--fail-on-overlap` is opt-in, and `code-steward check --rate` gives you the figure for your own repository first.
+
+**By default it reports only the overlaps your change introduced.** A function that already duplicated something before you touched it is not your finding. Replaying real commits — index each commit's parent, check the commit against it:
+
+| Repository | Commits | Every overlap | Only introduced | |
+| --- | --- | --- | --- | --- |
+| Django | 13 | 261 (20.1/commit) | **16 (1.2/commit)** | **16.3x** |
+| Code Steward | 32 | 223 (7.0/commit) | **72 (2.2/commit)** | **3.1x** |
+
+The spread is the interesting part: Django is mature, so its changed functions had already accumulated whatever overlap they have and almost none of it is newly introduced. Code Steward is young and actively being written, so more of its changed functions are genuinely new code. Both runs are small and neither is labelled. `--all-overlaps` restores the unfiltered view. See [`docs/check.md`](docs/check.md).
 
 ### Validity threats on record
 
@@ -388,6 +397,8 @@ The architecture is intentionally broader than FastAPI so that support for other
 - FastAPI endpoint enrichment
 - compact candidate search and reviewer packets (`search`, `packet`, `read`, `map`)
 - `check`, the post-write duplication pass: compares changed functions against the index and asserts when nothing overlaps
+- introduced-only reporting, so duplication that predates a change stays out of its review
+- a commit-replay benchmark that measures what the command would have said on real history
 - read-only reuse reviewer agent and the search-before-implement skill
 - conservative `CALLS` and `TESTED_BY` relationship extraction
 - Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
@@ -411,7 +422,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 Reordered after the reviewer measurement. See [`docs/direction.md`](docs/direction.md) for why the old order was wrong: it was built on the assumption that recall was the binding constraint, and it isn't.
 
-1. **Report only the overlaps a change introduces.** `check` currently reports every overlap a changed function has, including duplication that predates the change. On repositories where the baseline is 30–60%, that distinction is most of the difference between a usable report and noise. This is the single highest-value change on the list.
+1. ~~**Report only the overlaps a change introduces.**~~ Done and now the default: 16.3x fewer findings on Django, 3.1x on this repository.
 2. ~~**Let the packet return nothing.**~~ Done for the `similar` path: a 0.27 floor chosen on held-out data, an empty result that reports how many candidates it suppressed, and a decision contract where writing new code is a normal outcome. Still open for the packet ranker, which needs its own null distribution first.
 3. **Point the skill and reviewer agent at `check`.** They still open with the packet as the default entry point, and the draft path they were pointed at instead measures 0.460 — no better. The path that measures 1.000 is comparing code that exists, which is what `check` does, and neither the skill nor the agent mentions it. Documentation, not new measurement.
 4. ~~**Measure draft-and-compare on a realistic draft.**~~ Done, and it came back low: 0.700 unfloored, **0.460** with the shipped floor and counting unusable drafts. The reframe's headline margin is gone; a precision-based justification remains and has not itself been put to a reviewer. See [`docs/verdict.md`](docs/verdict.md).
