@@ -311,6 +311,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - blind candidate labeling and packet precision/noise measurement
 - a reuse-similarity gold set over three pinned public repositories, with four scored arms
 - reuse detection (`similar`, `packet --reuse`), including comparison against unwritten drafts
+- the skill and reviewer agent updated to draft-and-compare before falling back to the ranker
 - benchmark anti-inflation guards: a rate with no denominator raises rather than publishing a perfect zero
 - exclusion accounting: a run that drops a file or a case reports it as dropped
 - pins enforced by tests rather than by documentation
@@ -322,10 +323,9 @@ The architecture is intentionally broader than FastAPI so that support for other
 1. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
 2. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
 3. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-4. **Teach the skill and the reviewer agent to use `--reuse`.** The plugin surface does not yet call it, so the evidence exists and nothing consumes it.
-5. **Measure whether reuse evidence changes the verdict.** The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
-6. **A structural comparator for reimplementations.** Shingles miss a function rewritten in different words. Whether that population is large enough to matter is itself unmeasured.
-7. **Post-change DRY and blast-radius review.**
+4. **Measure whether reuse evidence changes the verdict.** The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
+5. **A structural comparator for reimplementations.** Shingles miss a function rewritten in different words. Whether that population is large enough to matter is itself unmeasured.
+6. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing
 
@@ -347,6 +347,8 @@ skills/searching-before-implementing/references/retrieval-limits.md
 agents/reuse-reviewer.md                        # read-only reviewer subagent
 ```
 
+Both are written around the accuracy gap between the two tools: `similar` measured precision 0.978, the packet ranker measured Hit@1 46.67%. The skill and the agent are told to draft and compare first where that is possible, and to fall back to the ranker when it is not.
+
 - **`searching-before-implementing`** teaches the workflow: run `code-steward packet` before
   broad exploration, treat candidates as evidence rather than answers, read the minimum number
   of unit bodies, classify the change, and fall back to ordinary exploration when the packet is
@@ -355,13 +357,14 @@ agents/reuse-reviewer.md                        # read-only reviewer subagent
   task, runs `packet` and `read` in its own context, and returns a compact structured decision
   so candidate evaluation never lands in the main session.
 
-Both are deliberately conservative about the retriever's current quality, for the reasons set
-out in [Measured position](#measured-position): the top candidate is wrong most of the time,
+Both are deliberately conservative about the ranker's quality, for the reasons set out in
+[Measured position](#measured-position): the top candidate is wrong more often than not,
 roughly one query in four returns a packet that does not contain the correct unit at all, and
-a plain keyword scan does better on both counts. The skill and the agent both require
-verification before any reuse decision, and neither is permitted to treat "not in the packet"
-as proof that code is absent. The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not
-find it"), not `CREATE`.
+a plain keyword scan does better on both counts. They are also conservative about `similar`,
+for a different reason — it cannot see a function reimplemented in different words, so a
+silent result is not proof of absence either. Both require verification before any reuse
+decision. The reviewer's no-result verdict is `NO_CANDIDATE` ("I did not find it"), not
+`CREATE`.
 
 Known gaps in this surface:
 
@@ -373,6 +376,8 @@ Known gaps in this surface:
   read-only contract is enforced by instruction, not by the tool allowlist.
 - Neither the skill nor the agent runs a text search alongside the packet, even though the
   control arm shows that would find units the packet misses. Doing so is roadmap item 2.
+- Whether the reuse evidence actually changes a reviewer's verdict is unmeasured. The arm has
+  a number; its effect on a decision does not.
 
 ## Why this project exists
 
