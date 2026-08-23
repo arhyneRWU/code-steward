@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from code_steward.indexer import index_python_file
+from code_steward.indexer import index_python_file, iter_python_files
 
 
 def _index_text(tmp_path: Path, text: str):
@@ -149,6 +149,40 @@ def test_duplicate_semantic_ids_fail(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="Duplicate Code Steward unit ID"):
         _index_text(tmp_path, text)
+
+
+def test_iter_python_files_skips_agent_worktrees(tmp_path: Path) -> None:
+    (tmp_path / "app.py").write_text("def go() -> None:\n    return None\n", encoding="utf-8")
+    worktree = tmp_path / ".claude" / "worktrees" / "agent-1"
+    worktree.mkdir(parents=True)
+    (worktree / "app.py").write_text("def go() -> None:\n    return None\n", encoding="utf-8")
+
+    found = {path.relative_to(tmp_path).as_posix() for path in iter_python_files(tmp_path)}
+    assert found == {"app.py"}
+
+
+def test_iter_python_files_skips_default_directories(tmp_path: Path) -> None:
+    (tmp_path / "app.py").write_text("x = 1\n", encoding="utf-8")
+    for name in (".git", ".venv", "venv", "__pycache__", ".code-steward", ".code-review-graph"):
+        directory = tmp_path / name
+        directory.mkdir()
+        (directory / "app.py").write_text("x = 1\n", encoding="utf-8")
+
+    found = {path.relative_to(tmp_path).as_posix() for path in iter_python_files(tmp_path)}
+    assert found == {"app.py"}
+
+
+def test_iter_python_files_applies_explicit_excludes(tmp_path: Path) -> None:
+    (tmp_path / "app.py").write_text("x = 1\n", encoding="utf-8")
+    fixtures = tmp_path / "tests" / "fixtures"
+    fixtures.mkdir(parents=True)
+    (fixtures / "sample.py").write_text("x = 1\n", encoding="utf-8")
+
+    found = {
+        path.relative_to(tmp_path).as_posix()
+        for path in iter_python_files(tmp_path, ["tests/fixtures"])
+    }
+    assert found == {"app.py"}
 
 
 def test_alias_and_region_cannot_share_an_id(tmp_path: Path) -> None:
