@@ -294,8 +294,7 @@ def run_experiment(database: Path, cases_path: Path) -> dict[str, Any]:
     variants: dict[str, Any] = {}
     for direction in DIRECTIONS:
         results = [
-            evaluate_case(case, units, endpoints, outgoing, incoming, direction)
-            for case in cases
+            evaluate_case(case, units, endpoints, outgoing, incoming, direction) for case in cases
         ]
         variants[direction] = {
             "summary": _summarize(results),
@@ -322,7 +321,10 @@ def _summary_markdown(report: dict[str, Any]) -> str:
         f"- Resolved CALLS edges: **{report['resolved_calls']}**",
         f"- Fusion: `{report['formula']}`",
         "",
-        "| Direction | Hit@1 | Hit@3 | Hit@5 | Hit@8 | MRR | Trap rate | Mean pool | Mean packet bytes |",
+        (
+            "| Direction | Hit@1 | Hit@3 | Hit@5 | Hit@8 | MRR | Trap rate | "
+            "Mean pool | Mean packet bytes |"
+        ),
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for direction in DIRECTIONS:
