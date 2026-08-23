@@ -208,3 +208,17 @@ bench-similarity-depth: guard-venv ## Measure the gold set's usable depth (CHECK
 bench-verdict: guard-venv ## Measure whether reuse evidence reaches the reviewer (CHECKOUTS=)
 	@$(PY) -m benchmarks.verdict.run \
 	  --checkouts $(CHECKOUTS) --output benchmarks/verdict/evidence.json
+
+.PHONY: bench-reviewer-prompts
+bench-reviewer-prompts: guard-venv ## Build blinded reviewer prompts (CHECKOUTS=, OUT= required)
+	@test -n "$(OUT)" || { echo 'usage: make bench-reviewer-prompts CHECKOUTS=<dir> OUT=<file>'; exit 2; }
+	@$(PY) -m benchmarks.verdict.agent_prompts \
+	  --checkouts $(CHECKOUTS) --output $(OUT)
+
+.PHONY: bench-reviewer-score
+bench-reviewer-score: guard-venv ## Score reviewer verdicts (PROMPTS=, ANSWERS= required)
+	@test -n "$(PROMPTS)" && test -n "$(ANSWERS)" || \
+	  { echo 'usage: make bench-reviewer-score PROMPTS=<file> ANSWERS=<dir>'; exit 2; }
+	@$(PY) -m benchmarks.verdict.agent_score \
+	  --prompts $(PROMPTS) --answers $(ANSWERS) \
+	  --output benchmarks/verdict/reviewer.json

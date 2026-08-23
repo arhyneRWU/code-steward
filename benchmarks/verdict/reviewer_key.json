@@ -1,0 +1,967 @@
+{
+  "answer_key": [
+    {
+      "arm": "packet",
+      "case_id": "neg:0131",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0131-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0131",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0131-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0121",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0121-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0121",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0121-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0115",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0115-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0115",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0115-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0110",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0110-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0110",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0110-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0127",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0127-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0127",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0127-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0116",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0116-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0116",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0116-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0141",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0141-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0141",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0141-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0119",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0119-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0119",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0119-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0122",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0122-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0122",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0122-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0128",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0128-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0128",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0128-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0127",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0127-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0127",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0127-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0252",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0252-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0252",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0252-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0296",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0296-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0296",
+      "corpus": "home-assistant",
+      "expected_label": "X2",
+      "kind": "reuse-available",
+      "task_id": "pos-0296-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0084",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0084-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0084",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0084-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0264",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0264-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0264",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0264-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0182",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0182-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0182",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0182-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0196",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0196-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0196",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0196-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0026",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0026-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0026",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0026-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0297",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0297-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0297",
+      "corpus": "home-assistant",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0297-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0071",
+      "corpus": "home-assistant",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0071-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0071",
+      "corpus": "home-assistant",
+      "expected_label": "X1",
+      "kind": "reuse-available",
+      "task_id": "pos-0071-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0003",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0003-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0003",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0003-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0033",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0033-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0033",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0033-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0011",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0011-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0011",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0011-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0022",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0022-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0022",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0022-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0032",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0032-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0032",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0032-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0027",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0027-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0027",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0027-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0038",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0038-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0038",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0038-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0043",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0043-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0043",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0043-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0031",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0031-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0031",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0031-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0013",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0013-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0013",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0013-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0091",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0091-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0091",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0091-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0299",
+      "corpus": "airflow",
+      "expected_label": "C4",
+      "kind": "reuse-available",
+      "task_id": "pos-0299-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0299",
+      "corpus": "airflow",
+      "expected_label": "C4",
+      "kind": "reuse-available",
+      "task_id": "pos-0299-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0256",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0256-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0256",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0256-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0199",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0199-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0199",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0199-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0279",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0279-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0279",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0279-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0232",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0232-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0232",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0232-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0254",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0254-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0254",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0254-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0290",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0290-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0290",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0290-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0291",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0291-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0291",
+      "corpus": "airflow",
+      "expected_label": "",
+      "kind": "reuse-available",
+      "task_id": "pos-0291-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0150",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0150-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0150",
+      "corpus": "airflow",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0150-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0067",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0067-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0067",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0067-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0101",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0101-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0101",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0101-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0057",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0057-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0057",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0057-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0051",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0051-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0051",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0051-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0077",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0077-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0077",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0077-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0053",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0053-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0053",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0053-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0079",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0079-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0079",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0079-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0089",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0089-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0089",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0089-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0086",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0086-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0086",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0086-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "neg:0093",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0093-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "neg:0093",
+      "corpus": "django",
+      "expected_label": "",
+      "kind": "no-reuse-available",
+      "task_id": "neg-0093-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0144",
+      "corpus": "django",
+      "expected_label": "C6",
+      "kind": "reuse-available",
+      "task_id": "pos-0144-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0144",
+      "corpus": "django",
+      "expected_label": "C6",
+      "kind": "reuse-available",
+      "task_id": "pos-0144-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0273",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0273-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0273",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0273-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0239",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0239-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0239",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0239-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0316",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0316-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0316",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0316-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0145",
+      "corpus": "django",
+      "expected_label": "C2",
+      "kind": "reuse-available",
+      "task_id": "pos-0145-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0145",
+      "corpus": "django",
+      "expected_label": "C2",
+      "kind": "reuse-available",
+      "task_id": "pos-0145-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0206",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0206-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0206",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0206-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0317",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0317-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0317",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0317-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0238",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0238-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0238",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0238-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0272",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0272-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0272",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0272-packet-reuse"
+    },
+    {
+      "arm": "packet",
+      "case_id": "pos:0207",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0207-packet"
+    },
+    {
+      "arm": "packet-reuse",
+      "case_id": "pos:0207",
+      "corpus": "django",
+      "expected_label": "C1",
+      "kind": "reuse-available",
+      "task_id": "pos-0207-packet-reuse"
+    }
+  ],
+  "instructions": "You are reviewing a change before it is written. A developer has described a function they are about to add. Below is what a code search returned from the existing repository.\n\nDecide, for each task, one of:\n\n- REUSE   -- an existing candidate already does this. Call it instead.\n- EXTEND  -- an existing candidate nearly does this. Modify it.\n- NEW     -- nothing here does this. Write the new function.\n\nAnswer only from what is shown. Do not use any tools, do not search the filesystem, and do not guess at code you cannot see. If the evidence does not support REUSE or EXTEND, answer NEW.\n\nReturn JSON only, no prose:\n\n{\"answers\": [{\"id\": \"<task id>\", \"verdict\": \"REUSE|EXTEND|NEW\", \"candidate\": \"<label, or empty for NEW>\", \"confidence\": \"high|low\"}]}\n",
+  "sample_per_kind": 10,
+  "schema_version": 1
+}

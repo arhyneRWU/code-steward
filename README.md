@@ -172,11 +172,25 @@ A case takes a function whose duplicate is already labelled, removes it from the
 
 **Drafting and comparing dominates.** It finds the existing function in 158 of 159 cases, at fewer bytes than the plain packet and no worse a false-positive rate. The skill and reviewer agent were already told to draft-and-compare before falling back to the ranker; that ordering was reasoned from a component number and is now measured.
 
-**`--reuse` is a real trade rather than a free win.** Sixteen more cases in a hundred where the duplicate arrives, for 60% more bytes. That is why it is opt-in.
+**`--reuse` gets the evidence there and does not change the answer.** Twenty more cases in a hundred where the duplicate arrives, for 58% more bytes — and, when the verdict itself is scored, no measurable improvement. See below.
 
-Three limits, none of them small:
+### Does the verdict change
 
-- **No verdict was scored.** No reviewer agent was run, so this measures evidence *arriving*, not a decision *changing*. A detector that surfaces perfectly and changes no verdicts would score perfectly here.
+The table above measures evidence *arriving*. It does not measure a decision *changing*, which is the actual claim. So sixty of the held-out cases were put to a reviewer agent twice, once per packet arm, with candidates blinded to labels `C1..C8` so the reviewer could not open the file and answer from the source.
+
+| Arm | Positive | Negative | Overall |
+| --- | --- | --- | --- |
+| `packet` | 0.700 | 0.667 | 0.683 |
+| `packet --reuse` | 0.733 | 0.733 | 0.733 |
+
+**This came back null.** The arms are paired on the same cases, so the test is McNemar's: eleven cases disagreed, four favouring the plain packet and seven the reuse packet, exact two-sided **p = 0.549**. The five-point gap is noise at n=60. On the evidence so far, the extra 58% of bytes buys a better-populated packet and no better answer.
+
+**The expensive failure is one nobody was measuring.** On a third of the negative cases the reviewer was talked into REUSE or EXTEND when the right answer was to write the function. Retrieval always returns its eight best candidates, and a reviewer handed eight plausible functions tends to pick one. A missed duplicate costs some redundancy; a wrong reuse wires the caller to code that does not do the job.
+
+Caveats, and they matter: the reviewer sample stratifies by corpus, which over-weights Django where retrieval is strongest, so its surfaced rate is 0.733 against 0.459 pooled — read these as the reviewer's skill *given good retrieval*, not as an end-to-end number. n=30 per polarity per arm can detect a large effect and cannot rule out a small one. Blinding withholds paths a real reviewer would see, so the figures are a floor. One reviewer model, one prompt.
+
+Three further limits on the table above, none of them small:
+
 - **246 of 496 cases were excluded** because the function has no docstring, so its task text would have been its own identifier. That means this speaks only about documented functions — and undocumented code is where the ranker is documented to do worst, so the control's 0.459 is its score on favourable ground.
 - **`similar` has no score floor**, which is visible in the false positives on negative cases. Choosing one is deliberately not done here: it would be tuning against the gold set.
 

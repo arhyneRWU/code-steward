@@ -1,0 +1,57 @@
+{
+  "arms": [
+    {
+      "arm": "packet",
+      "negative_accuracy": 0.667,
+      "negative_correct": 20,
+      "negative_talked_into_reuse": 10,
+      "negatives": 30,
+      "overall_accuracy": 0.683,
+      "positive_accuracy": 0.7,
+      "positive_correct": 21,
+      "positive_missed": 1,
+      "positive_unreachable": 8,
+      "positive_wrong_unit": 8,
+      "positives": 30
+    },
+    {
+      "arm": "packet-reuse",
+      "negative_accuracy": 0.733,
+      "negative_correct": 22,
+      "negative_talked_into_reuse": 8,
+      "negatives": 30,
+      "overall_accuracy": 0.733,
+      "positive_accuracy": 0.733,
+      "positive_correct": 22,
+      "positive_missed": 1,
+      "positive_unreachable": 6,
+      "positive_wrong_unit": 7,
+      "positives": 30
+    }
+  ],
+  "judgements_expected": 120,
+  "judgements_missing": 0,
+  "paired": {
+    "cases": 60,
+    "discordant": 11,
+    "exact_two_sided_p": 0.549,
+    "packet_correct_reuse_wrong": 4,
+    "reuse_correct_packet_wrong": 7,
+    "test": "McNemar, exact binomial on discordant pairs"
+  },
+  "sample_surfaced_rate": {
+    "airflow": {
+      "packet": 0.7,
+      "packet-reuse": 0.7
+    },
+    "django": {
+      "packet": 1.0,
+      "packet-reuse": 1.0
+    },
+    "home-assistant": {
+      "packet": 0.5,
+      "packet-reuse": 0.7
+    }
+  },
+  "schema_version": 1
+}

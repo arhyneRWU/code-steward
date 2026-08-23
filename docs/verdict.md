@@ -132,3 +132,87 @@ tolerance in [`docs/similarity.md`](similarity.md) bounds how fast
 that degrades — a renamed signature still scores 0.535, a wholly
 renamed body 0.015 — but the 0.994 here is an upper bound on what a
 draft achieves, not the figure a real draft would get.
+
+## The reviewer half: does the evidence change the verdict?
+
+Everything above measures evidence *arriving*. The product claim is
+that a reviewer reaches a better REUSE / EXTEND / REFACTOR decision,
+and evidence arriving does not prove that. This section measures the
+decision.
+
+Sixty held-out cases -- ten per corpus per polarity -- were put to a
+reviewer agent twice, once per packet arm, for 120 judgements. Every
+judgement came back; none were unparsable.
+
+Three things keep it honest. Candidates are **blinded**: unit IDs,
+file paths, and dotted qualnames are replaced with labels `C1..C8`,
+so a reviewer cannot open the file and answer from the source instead
+of from the packet. The **arms are unnamed**, and the two arms of one
+case are placed half a batch apart so no reviewer sees both. The
+**sample is drawn in hash order** of the case ID, before anything was
+run.
+
+| Arm | Positive | Negative | Overall |
+| --- | --- | --- | --- |
+| `packet` | 0.700 | 0.667 | 0.683 |
+| `packet-reuse` | 0.733 | 0.733 | 0.733 |
+
+A positive case is correct only when the reviewer answers REUSE or
+EXTEND *and names the labelled duplicate*. A negative case is correct
+only when it answers NEW. Committed at
+[`reviewer.json`](../benchmarks/verdict/reviewer.json), key at
+[`reviewer_key.json`](../benchmarks/verdict/reviewer_key.json).
+
+### What it says
+
+**The reuse evidence does not measurably change the verdict.** The
+arms are paired on the same sixty cases, so the right test is
+McNemar's. Eleven cases disagreed: four where the plain packet was
+right and the reuse packet wrong, seven the other way. Exact
+two-sided **p = 0.549**. The five-point overall gap is noise at this
+sample size, and nothing here supports the claim that attaching
+near-duplicate evidence produces better decisions.
+
+This is the measurement the project most needed and it came back
+null. `--reuse` costs 58% more bytes. On the evidence so far those
+bytes buy a better-populated packet and no better answer.
+
+**The expensive failure is the one nobody was measuring.** On a third
+of negative cases -- 10 of 30 for `packet`, 8 of 30 for
+`packet-reuse` -- the reviewer was talked into REUSE or EXTEND when
+the correct answer was to write the function. Retrieval always
+returns its eight best candidates, and a reviewer handed eight
+plausible-looking functions tends to pick one. This is worse than
+missing a duplicate: a missed duplicate costs a little redundancy, a
+wrong reuse wires the caller to code that does not do the job.
+
+**Verdict accuracy on positives is capped by retrieval.** For 8 of 30
+positive cases the labelled duplicate never entered the packet at
+all, so no reviewer could have named it. Those are counted as wrong,
+because they are the arm's failure and not the reviewer's -- and they
+are most of the gap between 0.700 and a perfect score.
+
+### Caveats
+
+**This sample is easier than the full case set.** Sampling ten cases
+per corpus per polarity gives Django a third of the weight, and
+Django is where retrieval is strongest: the duplicate reached the
+packet on 10 of 10 Django positives, against 5 of 10 for Home
+Assistant. The sub-sample's surfaced rate is 0.733 where the pooled
+figure over all 250 scored cases is 0.459. Read the accuracy figures
+as *the reviewer's skill given good retrieval*, not as an end-to-end
+product number, which would be lower.
+
+**n = 30 per polarity per arm.** The sample size was a budget, not a
+power calculation. It can detect a large effect and cannot rule out a
+small one; p = 0.549 says the data are consistent with no difference,
+not that no difference exists.
+
+**Blinding costs the reviewer information.** A real reviewer sees
+paths and module names, which carry genuine signal about whether two
+functions belong to the same concern. These figures are a floor.
+
+**One reviewer model, one prompt.** No claim is made that a different
+reviewer, or a prompt that argued harder for NEW, would score the
+same. The negative-case failure in particular looks like something a
+prompt change might move, and that is untested.
