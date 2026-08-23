@@ -39,6 +39,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import (
     CORPORA,
     CORPORA_BY_NAME,
@@ -142,12 +143,13 @@ def _parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = _parser().parse_args()
 
+    dropped = Exclusions()
     loaded: dict[str, list[CorpusUnit]] = {}
     for name, size in HELD_OUT_SIZE.items():
         corpus = CORPORA_BY_NAME[name]
         checkout = (args.checkouts / name).resolve()
         files = held_out_files(corpus, checkout, size)
-        loaded[name] = load_units(name, checkout, files)
+        loaded[name] = load_units(name, checkout, files, dropped)
         print(f"{name}: {len(loaded[name])} held-out units from {len(files)} files", flush=True)
 
     scores = _null_scores(loaded["home-assistant"], loaded["airflow"])
@@ -169,7 +171,7 @@ def main() -> None:
     scored: dict[tuple[str, str], float] = {}
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        gold = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        gold = load_units(corpus.name, checkout, corpus_files(corpus, checkout), dropped)
         prepared = {unit.unit_id: shingles(unit.tokens) for unit in gold}
         pairs = json.loads(labels.read_text(encoding="utf-8"))["pairs"]
         for row in pairs:
@@ -192,6 +194,7 @@ def main() -> None:
         "chosen_floor": floor,
         "curve": curve,
         "gold_recall_at_floor": gold_recall(labels, scored, floor),
+        "excluded": dropped.to_dict(),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

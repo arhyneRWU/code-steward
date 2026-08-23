@@ -1,4 +1,43 @@
 {
+  "excluded": {
+    "by_reason": {
+      "below-min-lines": 4643,
+      "below-min-tokens": 390,
+      "not-a-function": 4277,
+      "unparseable-file:SyntaxError": 19
+    },
+    "examples": {
+      "below-min-lines": [
+        "homeassistant.components.aosmith.__init__::async_unload_entry",
+        "homeassistant.components.aosmith.entity::AOSmithEntity.client",
+        "homeassistant.components.aosmith.entity::AOSmithStatusEntity.device",
+        "homeassistant.components.aosmith.entity::AOSmithEnergyEntity.energy_usage",
+        "homeassistant.components.aosmith.select::AOSmithHotWaterPlusSelectEntity.__init__"
+      ],
+      "below-min-tokens": [
+        "homeassistant.components.aosmith.select::AOSmithHotWaterPlusSelectEntity.suggested_object_id",
+        "homeassistant.components.aosmith.sensor::AOSmithEnergySensorEntity.native_value",
+        "homeassistant.components.azure_storage.__init__::async_unload_entry",
+        "homeassistant.components.flo.binary_sensor::FloPendingAlertsBinarySensor.is_on",
+        "homeassistant.components.flo.binary_sensor::FloWaterDetectedBinarySensor.is_on"
+      ],
+      "not-a-function": [
+        "homeassistant.components.aosmith.config_flow::AOSmithConfigFlow",
+        "homeassistant.components.aosmith.coordinator::AOSmithData",
+        "homeassistant.components.aosmith.coordinator::AOSmithStatusCoordinator",
+        "homeassistant.components.aosmith.coordinator::AOSmithEnergyCoordinator",
+        "homeassistant.components.aosmith.entity::AOSmithEntity"
+      ],
+      "unparseable-file:SyntaxError": [
+        "/private/tmp/claude-502/-Users-andrewrhyne-PycharmProjects/47142be5-bc35-42e8-80bb-5b98a88743ca/scratchpad/corpora/home-assistant/homeassistant/components/file/sensor.py",
+        "/private/tmp/claude-502/-Users-andrewrhyne-PycharmProjects/47142be5-bc35-42e8-80bb-5b98a88743ca/scratchpad/corpora/home-assistant/homeassistant/components/google_travel_time/helpers.py",
+        "/private/tmp/claude-502/-Users-andrewrhyne-PycharmProjects/47142be5-bc35-42e8-80bb-5b98a88743ca/scratchpad/corpora/home-assistant/homeassistant/components/hr_energy_qube/config_flow.py",
+        "/private/tmp/claude-502/-Users-andrewrhyne-PycharmProjects/47142be5-bc35-42e8-80bb-5b98a88743ca/scratchpad/corpora/home-assistant/homeassistant/components/hypontech/config_flow.py",
+        "/private/tmp/claude-502/-Users-andrewrhyne-PycharmProjects/47142be5-bc35-42e8-80bb-5b98a88743ca/scratchpad/corpora/home-assistant/homeassistant/components/igloohome/sensor.py"
+      ]
+    },
+    "total": 9329
+  },
   "note": "Alarm rate, not false-positive rate. Nothing here is labelled.",
   "per_corpus": {
     "airflow": {

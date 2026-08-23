@@ -29,6 +29,7 @@ from dataclasses import replace as dataclass_replace
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files
 from benchmarks.similarity.units import CorpusUnit, load_units
 from benchmarks.verdict.cases import UNDOCUMENTED, VerdictCase, build_cases, load_pairs
@@ -211,7 +212,9 @@ def main() -> None:
 
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        corpus_units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        corpus_units = load_units(
+            corpus.name, checkout, corpus_files(corpus, checkout), Exclusions()
+        )
         by_id = {unit.unit_id: unit for unit in corpus_units}
         prepared = {unit.unit_id: shingles(unit.tokens) for unit in corpus_units}
         # Re-key the indexed units onto the corpus-prefixed IDs the

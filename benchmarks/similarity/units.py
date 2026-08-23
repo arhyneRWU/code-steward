@@ -59,15 +59,19 @@ def load_units(
     corpus: str,
     checkout: Path,
     files: list[Path],
-    exclusions: Exclusions | None = None,
+    exclusions: Exclusions,
 ) -> list[CorpusUnit]:
     """Index a corpus sample and keep the units worth comparing.
 
-    Every skip is recorded rather than swallowed. A corpus loader that
+    Every skip is recorded rather than swallowed, and ``exclusions``
+    is **required** for that reason. It used to default to a fresh
+    object, so a caller that passed nothing got the counts built and
+    then discarded -- which is what all nine callers did. A corpus
+    loader that
     quietly drops what it could not parse reports a smaller and
     cleaner population than the one the pins describe.
     """
-    dropped = Exclusions() if exclusions is None else exclusions
+    dropped = exclusions
     units: list[CorpusUnit] = []
     for path in files:
         try:

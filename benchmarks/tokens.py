@@ -105,14 +105,16 @@ def _parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _parser().parse_args()
+    from benchmarks.guards import Exclusions
     from benchmarks.retrieval.run import run_benchmark
     from benchmarks.similarity.corpus import CORPORA, corpus_files
     from benchmarks.similarity.units import load_units
 
+    dropped = Exclusions()
     calibrations: list[Calibration] = []
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout), dropped)
         calibrations.append(calibrate(corpus.name, (unit.normalised for unit in units)))
 
     report = run_benchmark()

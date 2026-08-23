@@ -26,6 +26,7 @@ from typing import Any
 
 from rapidfuzz import fuzz
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files
 from benchmarks.similarity.generators import (
     ScoredPair,
@@ -206,9 +207,10 @@ def main() -> None:
     from benchmarks.similarity.corpus import corpus_roots
     from benchmarks.similarity.generators import run_jscpd
 
+    dropped = Exclusions()
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout), dropped)
         sources = {unit.unit_id: unit for unit in units}
         report = run_jscpd(
             checkout,

@@ -32,6 +32,7 @@ import json
 from dataclasses import replace as dataclass_replace
 from pathlib import Path
 
+from benchmarks.guards import Exclusions, assert_reports_exclusions
 from benchmarks.similarity.corpus import CORPORA_BY_NAME, corpus_files, held_out_files
 from benchmarks.similarity.floor import HELD_OUT_SIZE
 from benchmarks.similarity.units import load_units
@@ -59,11 +60,12 @@ def main() -> None:
     # turns out to be the difference that matters most.
     targets = [(name, size) for name, size in HELD_OUT_SIZE.items()] + [("django", 0)]
 
+    dropped = Exclusions()
     for name, size in targets:
         corpus = CORPORA_BY_NAME[name]
         checkout = (args.checkouts / name).resolve()
         files = held_out_files(corpus, checkout, size) if size else corpus_files(corpus, checkout)
-        entries = load_units(name, checkout, files)
+        entries = load_units(name, checkout, files, dropped)
         prepared = {entry.unit_id: shingles(entry.tokens) for entry in entries}
         units = [dataclass_replace(entry.unit, unit_id=entry.unit_id) for entry in entries]
 
@@ -98,7 +100,12 @@ def main() -> None:
         "shipped_floor": REUSE_FLOOR,
         "note": "Alarm rate, not false-positive rate. Nothing here is labelled.",
         "per_corpus": per_corpus,
+        "excluded": dropped.to_dict(),
     }
+    # An absent block and a zero block are different claims, and
+    # this report used to carry neither. See
+    # guards.assert_reports_exclusions.
+    assert_reports_exclusions(payload)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(payload, indent=2, sort_keys=True))

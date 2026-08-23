@@ -240,3 +240,20 @@ def test_the_corpus_loader_uses_the_product_definition_of_a_function():
     from code_steward.similarity import FUNCTION_KINDS
 
     assert corpus_units.FUNCTION_KINDS is FUNCTION_KINDS
+
+
+def test_every_committed_similarity_report_carries_its_exclusions():
+    """A dropped row that appears nowhere is a smaller, cleaner corpus.
+
+    `guards.py` states the rule in its own module docstring, and
+    `alarm.json` broke it: the loader recorded every drop through the
+    `Exclusions` machinery and no caller passed one in, so the counts
+    were built and discarded. That is how 43% of Home Assistant could
+    be excluded from a published alarm rate without it showing
+    anywhere in the artifact.
+    """
+    for name in ("alarm.json",):
+        payload = json.loads(
+            (ROOT / "benchmarks" / "similarity" / name).read_text(encoding="utf-8")
+        )
+        assert_reports_exclusions(payload)
