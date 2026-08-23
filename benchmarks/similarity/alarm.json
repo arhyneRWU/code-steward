@@ -1,0 +1,40 @@
+{
+  "note": "Alarm rate, not false-positive rate. Nothing here is labelled.",
+  "per_corpus": {
+    "airflow": {
+      "alarm_rate": {
+        "0.2": 0.7001,
+        "0.27": 0.6328,
+        "0.35": 0.5513,
+        "0.5": 0.3994
+      },
+      "functions": 5638,
+      "held_out": true,
+      "role": "organic-duplication"
+    },
+    "django": {
+      "alarm_rate": {
+        "0.2": 0.3862,
+        "0.27": 0.2969,
+        "0.35": 0.2243,
+        "0.5": 0.1294
+      },
+      "functions": 5541,
+      "held_out": false,
+      "role": "hard-negative"
+    },
+    "home-assistant": {
+      "alarm_rate": {
+        "0.2": 0.5561,
+        "0.27": 0.4549,
+        "0.35": 0.358,
+        "0.5": 0.2415
+      },
+      "functions": 1176,
+      "held_out": true,
+      "role": "template-duplication"
+    }
+  },
+  "schema_version": 1,
+  "shipped_floor": 0.27
+}

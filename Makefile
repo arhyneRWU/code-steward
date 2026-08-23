@@ -241,3 +241,8 @@ bench-draft-score: guard-venv ## Score realistic drafts (CHECKOUTS=, PROMPTS=, D
 	@$(PY) -m benchmarks.verdict.draft_score \
 	  --checkouts $(CHECKOUTS) --prompts $(PROMPTS) --drafts $(DRAFTS) \
 	  --output benchmarks/verdict/realistic_draft.json
+
+.PHONY: bench-alarm
+bench-alarm: guard-venv ## Measure how often check fires on ordinary code (CHECKOUTS= required)
+	@$(PY) -m benchmarks.similarity.alarm \
+	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/alarm.json

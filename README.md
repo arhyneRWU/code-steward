@@ -2,9 +2,22 @@
 
 **Context-efficient code intelligence and stewardship for Claude Code.**
 
-Code Steward helps a coding agent decide **REUSE, EXTEND, REFACTOR, or NEW on a drafted change, before it is kept** — rather than discovering the duplicate after it is merged. It indexes a repository into stable code-unit IDs, compares a drafted function against them, and hands the agent a compact packet to act on.
+Code Steward tells you when you have just written a function the repository already has. It indexes a repository into stable code-unit IDs, compares the functions you changed against them, and reports the overlaps — or asserts that there are none.
 
-The project started out aiming to make that decision from a task *sentence*, before any code existed. Measurement moved it, then partly moved it back: comparing the *real* body of a function finds its duplicate 99.4% of the time against 45.9% for a sentence — but with bodies an agent actually drafted from a name and docstring, the end-to-end figure is **46.0%**. The recall advantage is not there. What remains is a precision difference: the draft path reaches that number while returning nothing on most non-matches, where the packet path always returns eight candidates. [`docs/direction.md`](docs/direction.md) records the reframe and [`docs/verdict.md`](docs/verdict.md) records the remeasurement that shrank it.
+```bash
+code-steward check                    # what does this branch duplicate?
+code-steward check --rate             # is this repo quiet enough to gate on?
+```
+
+**Where this landed, and why.** The project set out to make the reuse decision *before* any code existed — from a task sentence. Measurement moved it twice, and the second move was the important one:
+
+| What is compared | Duplicate found |
+| --- | --- |
+| A task sentence, through the packet ranker | 0.459 |
+| A body an agent drafted from a name and docstring | 0.460 |
+| **The real body** | **1.000** |
+
+Same held-out cases. The comparison is not the variable — how much of the function exists when you run it is. So the useful moment is not before the code is written but after, and before it is kept: late enough that a real body exists, early enough that deleting it is cheap. That is what `check` does. [`docs/direction.md`](docs/direction.md) records the reframes and the assumptions that did not survive them.
 
 The main coding session should receive **decisions and selected code units, not the full history of repository exploration**. Instead of repeatedly searching large files, rediscovering callers and tests, or writing something that already exists, Code Steward builds a compact map of a codebase, retrieves the relevant existing units, and delegates deeper investigation to isolated review agents.
 
@@ -205,6 +218,21 @@ Three further limits on the table above, none of them small:
 
 Full method and caveats in [`docs/verdict.md`](docs/verdict.md). Reproduce with `make bench-verdict`.
 
+### How often `check` fires
+
+Treating every function as newly written and comparing it against the rest of its own repository, at the shipped 0.27 floor:
+
+| Codebase | Functions | Overlap something |
+| --- | --- | --- |
+| Airflow providers | 5,638 | 63.3% |
+| Home Assistant integrations | 1,176 | 45.5% |
+| Django | 5,541 | 29.7% |
+| Code Steward, `src/` only | 147 | 14.3% |
+
+**Alarm rates, not error rates** — nothing there is labelled. Airflow's providers duplicate each other by design, so most of that 63% is probably the tool being right, and it is unusable as a blocking gate there anyway. Django is the low-duplication corpus and is still near 30%.
+
+So `check` ships as a report rather than a gate. `--fail-on-overlap` is opt-in, and `code-steward check --rate` gives you the figure for your own repository first. See [`docs/check.md`](docs/check.md).
+
 ### Validity threats on record
 
 - The benchmark queries were written while reading the Requests source, so their wording shares vocabulary with the code. That inflates any lexical method, and it inflates the raw-text control more than the field-based ranker. A query set written from public documentation would test it.
@@ -359,6 +387,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - Python AST index with stable unit identifiers and optional source tags
 - FastAPI endpoint enrichment
 - compact candidate search and reviewer packets (`search`, `packet`, `read`, `map`)
+- `check`, the post-write duplication pass: compares changed functions against the index and asserts when nothing overlaps
 - read-only reuse reviewer agent and the search-before-implement skill
 - conservative `CALLS` and `TESTED_BY` relationship extraction
 - Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
@@ -382,14 +411,15 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 Reordered after the reviewer measurement. See [`docs/direction.md`](docs/direction.md) for why the old order was wrong: it was built on the assumption that recall was the binding constraint, and it isn't.
 
-1. ~~**Let the packet return nothing.**~~ Done for the `similar` path: a 0.27 floor chosen on held-out data, an empty result that reports how many candidates it suppressed, and a decision contract where writing new code is a normal outcome. Still open for the packet ranker, which needs its own null distribution first. This is the tool's most expensive failure — a reviewer talked into reuse wires a caller to code that does not do the job — and it is currently unaddressed. The floor must be chosen on a held-out set, never the frozen one.
-2. **Make the draft the primary path end to end.** Drafting and comparing wins by 99.4% to 45.9% and the CLI, skill and reviewer agent still treat the sentence packet as the default entry point. This is mostly plumbing and documentation, not new measurement.
-3. ~~**Measure draft-and-compare on a realistic draft.**~~ Done, and it came back low: 0.700 unfloored, **0.460** with the shipped floor and counting unusable drafts. The reframe's headline margin is gone; a precision-based justification remains and has not itself been put to a reviewer. See [`docs/verdict.md`](docs/verdict.md).
-4. **Test whether the draft path escapes the docstring problem.** The verdict benchmark excludes 246 of 496 cases for having no docstring, and undocumented code is where the ranker is worst. Draft-and-compare never reads a docstring, so it may simply not have this failure — testable, untested.
-5. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and the gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator.
-6. **Write a second query set from documentation rather than source.** It sizes the vocabulary-overlap bias in every retrieval number above. Demoted, not dropped: it bears on the fallback path rather than the primary one.
-7. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-8. **Post-change DRY and blast-radius review.**
+1. **Report only the overlaps a change introduces.** `check` currently reports every overlap a changed function has, including duplication that predates the change. On repositories where the baseline is 30–60%, that distinction is most of the difference between a usable report and noise. This is the single highest-value change on the list.
+2. ~~**Let the packet return nothing.**~~ Done for the `similar` path: a 0.27 floor chosen on held-out data, an empty result that reports how many candidates it suppressed, and a decision contract where writing new code is a normal outcome. Still open for the packet ranker, which needs its own null distribution first.
+3. **Point the skill and reviewer agent at `check`.** They still open with the packet as the default entry point, and the draft path they were pointed at instead measures 0.460 — no better. The path that measures 1.000 is comparing code that exists, which is what `check` does, and neither the skill nor the agent mentions it. Documentation, not new measurement.
+4. ~~**Measure draft-and-compare on a realistic draft.**~~ Done, and it came back low: 0.700 unfloored, **0.460** with the shipped floor and counting unusable drafts. The reframe's headline margin is gone; a precision-based justification remains and has not itself been put to a reviewer. See [`docs/verdict.md`](docs/verdict.md).
+5. **Test whether the draft path escapes the docstring problem.** The verdict benchmark excludes 246 of 496 cases for having no docstring, and undocumented code is where the ranker is worst. Draft-and-compare never reads a docstring, so it may simply not have this failure — testable, untested.
+6. **Size the reimplementation blind spot before building for it.** Shingles miss a function rewritten in different words, and the gold set cannot say how often that happens — two of its three generators are lexical, so the population is largely absent from the pool by construction. Sizing it needs a pool built by a non-lexical generator.
+7. **Write a second query set from documentation rather than source.** It sizes the vocabulary-overlap bias in every retrieval number above. Demoted, not dropped: it bears on the fallback path rather than the primary one.
+8. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
+9. ~~**Post-change DRY and blast-radius review.**~~ The DRY half is `check`. Blast radius is still open.
 
 ### Deliberately not doing
 
