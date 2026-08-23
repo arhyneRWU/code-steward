@@ -26,19 +26,10 @@ from pathlib import Path
 from rapidfuzz import fuzz
 
 from benchmarks.similarity.units import CorpusUnit
-
-# Five-token shingles: long enough that a shared ``for x in y:`` does
-# not register, short enough to survive a renamed variable.
-SHINGLE_SIZE = 5
-
-# A shingle occurring in more than this many units is boilerplate --
-# an import block, a logger call, a decorator preamble. Comparing
-# every pair that shares one is quadratic work for no signal.
-MAX_SHINGLE_DOCUMENT_FREQUENCY = 60
-
-# Two units must share at least this many distinct shingles before
-# their Jaccard score is worth computing.
-MIN_SHARED_SHINGLES = 3
+from code_steward.similarity import (
+    rank_all_pairs,
+    shingles,
+)
 
 
 @dataclass(slots=True, frozen=True)
@@ -53,47 +44,19 @@ class ScoredPair:
         return (self.left, self.right) if self.left < self.right else (self.right, self.left)
 
 
-def _shingles(unit: CorpusUnit) -> frozenset[int]:
-    tokens = unit.tokens
-    if len(tokens) < SHINGLE_SIZE:
-        return frozenset()
-    return frozenset(
-        hash(tokens[index : index + SHINGLE_SIZE])
-        for index in range(len(tokens) - SHINGLE_SIZE + 1)
-    )
-
-
 def shingle_pairs(units: list[CorpusUnit], top_k: int) -> list[ScoredPair]:
     """Rank pairs by Jaccard overlap of their five-token shingles.
 
-    This is the naive control. It has no model of code, no notion of
-    a signature, and no access to a name -- if it wins, the finding is
-    that the sophisticated arms bought nothing.
+    This was the naive control. It won, so it now ships as
+    ``code_steward.similarity`` and this function delegates to it
+    rather than keeping a second copy. The benchmark and the product
+    cannot report different numbers for the same arm because they are
+    the same code.
     """
-    sets = {unit.unit_id: _shingles(unit) for unit in units}
-    postings: dict[int, list[str]] = defaultdict(list)
-    for unit_id, shingles in sets.items():
-        for shingle in shingles:
-            postings[shingle].append(unit_id)
-
-    shared: dict[tuple[str, str], int] = defaultdict(int)
-    for holders in postings.values():
-        if len(holders) < 2 or len(holders) > MAX_SHINGLE_DOCUMENT_FREQUENCY:
-            continue
-        for index, left in enumerate(holders):
-            for right in holders[index + 1 :]:
-                shared[(left, right) if left < right else (right, left)] += 1
-
-    scored: list[ScoredPair] = []
-    for (left, right), count in shared.items():
-        if count < MIN_SHARED_SHINGLES:
-            continue
-        union = len(sets[left] | sets[right])
-        if not union:
-            continue
-        scored.append(ScoredPair(left, right, len(sets[left] & sets[right]) / union))
-    scored.sort(key=lambda pair: (-pair.score, pair.left, pair.right))
-    return scored[:top_k]
+    prepared = {unit.unit_id: shingles(unit.tokens) for unit in units}
+    return [
+        ScoredPair(left, right, score) for left, right, score in rank_all_pairs(prepared, top_k)
+    ]
 
 
 def _metadata_text(unit: CorpusUnit) -> str:

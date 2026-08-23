@@ -1,16 +1,14 @@
-# Reuse similarity: measured, and Code Steward loses
+# Reuse similarity
 
-Code Steward started with two goals. One was to send an agent a
-smaller, more precise packet. The other was to find similar code —
-to answer *does this already exist* before an agent writes it again.
+Code Steward has two goals. One is to send an agent a smaller, more
+precise packet. The other is to answer *does this already exist*
+before an agent writes it again.
 
-The first has been measured for months. The second never had a
-number attached to it, even though the capability has shipped since
-the beginning: `retrieval.metadata_similarity` compares two units and
-is used to deduplicate a result set. It had never been evaluated
-against anything.
-
-It has now. It loses to five-token shingles.
+The second never had a number attached to it, even though a
+similarity function had shipped since the beginning:
+`retrieval.metadata_similarity`, used to deduplicate a result set.
+This is the measurement that gave it one, and that picked the
+mechanism now used for reuse detection.
 
 ## What was measured
 
@@ -73,33 +71,31 @@ reproducible with `make bench-similarity`.
 
 ## What this says
 
-**The naive control wins on every axis.** Five-token shingles beat
-every other arm on F1 in two corpora and tie for first in the third,
-and do it in **1.8× to 3.5× fewer bytes**. There is no dimension on
-which a more sophisticated arm bought anything.
+**Token shingles came first on every axis.** They lead on F1 in two
+corpora and tie for first in the third, in 1.8× to 3.5× fewer bytes.
+No more sophisticated arm bought anything measurable here.
 
-**`metadata_similarity` — the thing Code Steward ships — comes
-third.** Macro F1 0.431 against the control's 0.571, at 1.8× the
-bytes. On Airflow its precision is 0.633: a third of what it surfaces
-is noise. Reading names, purposes, and signatures while never reading
-a body is a real handicap for this question, and the numbers say so.
+**`metadata_similarity` came third.** Macro F1 0.431 against 0.571,
+at 1.8× the bytes. On Airflow its precision is 0.633. Reading names,
+purposes, and signatures while never reading a body is a handicap for
+this particular question.
 
-**`body-rapidfuzz` is not measurable from this pool and its 1.000 is
+**`body-rapidfuzz` is not measurable from this pool, and its 1.000 is
 not a result.** It was not one of the three generators, so its ranking
 reaches pairs nobody judged — 52 of 90, and 29 of 30 on Django. Its
 precision is a bracket, not a number: **0.033 to 1.000 on Django**,
 0.42 to 1.00 macro-pessimistic to macro-optimistic. Publishing the
-1.000 alone would be an inflated claim from a hole in the data. The
-honest statement is that this arm is unevaluated.
+1.000 alone would report a hole in the data as a result. The arm is
+unevaluated.
 
 **The probe stratum is 0 positives out of 45.** A generator-free
 random sample of pairs from the same units contains no reuse
 candidates at all, in any of the three corpora. That is the base rate
-the pooled 86.6% sits above, and it is the strongest evidence that the
-pool is finding something real rather than that the labeller is
-generous.
+the pooled 86.6% sits above, and the main evidence that the pool is
+finding something real rather than that the labeller was generous.
 
-**Django was supposed to be the hard-negative corpus and it is not.**
+**Django was chosen as the hard-negative corpus and did not behave
+like one.**
 Its pooled positive rate is 83.7%, against Airflow's 81.7%. Django has
 real intra-file duplication — parallel `get_fallback_sql`
 implementations, mirrored operator dunders, repeated
@@ -108,17 +104,52 @@ did not do the job it was chosen for. Its value here turned out to be
 different and still real: it is the only corpus where the control does
 *not* score a perfect 1.000, and the only one where jscpd ties it.
 
-## What was decided
+## What shipped
 
-The overnight plan named a stop condition: *if naive token shingles
-beat every arm we own, stop building and finish measuring.* They did,
-so no similarity feature was built. What exists is the benchmark, the
-labels, and this page.
+The measurement ran first and the mechanism was chosen from it. The
+winning arm is now `code_steward.similarity`, promoted unchanged, and
+`benchmarks/similarity/generators.py` imports that module rather than
+keeping a second copy — so the code that produced this page and the
+code that ships cannot report different numbers. A test asserts the
+import, and another pins the five constants.
 
-This is the same shape as the text-search control arm result. A
-deterministic baseline that nobody would call clever beat the
-project's own machinery, and the response is the same one: publish it
-and re-plan, rather than patch around it.
+The surface is `code-steward similar`, either against an indexed unit
+or against a draft that has not been written yet, and
+`code-steward packet --reuse`, which attaches near-duplicate evidence
+to each candidate. The draft path is the point: the reuse question is
+worth most before the code exists.
+
+### What the arm catches, and what it does not
+
+Overlap of a fixture function against modified copies of itself:
+
+| Change to the copy | Overlap |
+| --- | --- |
+| docstring rewritten | 1.000 |
+| function renamed | 0.941 |
+| whole signature renamed | 0.535 |
+| every local variable also renamed | 0.015 |
+
+Normalisation makes docstrings, comments, and formatting free.
+Renaming a signature leaves most five-token windows intact. Renaming
+every local changes nearly all of them, and overlap collapses.
+
+So a function that was copied, pasted, and tidied is found, and a
+function independently reimplemented in different words is not. That
+second population is invisible to this arm and its size is unmeasured.
+Detecting it needs a structural comparator, which is a different tool.
+The limitation is pinned by a test.
+
+### On novelty
+
+The comparison itself is not new. Near-duplicate detection by token
+shingling is long-established, and jscpd — a mature implementation of
+the same idea — placed second on this benchmark. What is different is
+placement: indexed-unit granularity, stable IDs, asked before the code
+is written, and returned as a packet an agent acts on rather than a
+report a person reads. The edge over jscpd is modest on F1 (0.571 to
+0.521) and larger on bytes (2.3× fewer), and bytes are what decide
+whether the evidence fits in an agent's context.
 
 ## Threats to validity, on the record
 

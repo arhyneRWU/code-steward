@@ -2,27 +2,27 @@
 
 **Context-efficient code intelligence and stewardship for Claude Code.**
 
-Code Steward is an early-stage project for helping coding agents work more carefully with existing code while using less long-lived context. The central idea is simple: the main coding session should receive **decisions and selected code units, not the full history of repository exploration**.
+Code Steward helps a coding agent decide **REUSE, EXTEND, or REFACTOR before the code is written**, rather than discovering the duplicate afterwards. It indexes a repository into stable code-unit IDs, finds the existing units a proposed change would overlap, and hands the agent a compact packet to act on.
 
-Instead of repeatedly searching large files, rediscovering callers and tests, or creating functionality that already exists, Code Steward is designed to build a compact map of a codebase, retrieve the most relevant existing units, and delegate deeper investigation to isolated review agents.
+The main coding session should receive **decisions and selected code units, not the full history of repository exploration**. Instead of repeatedly searching large files, rediscovering callers and tests, or writing something that already exists, Code Steward builds a compact map of a codebase, retrieves the relevant existing units, and delegates deeper investigation to isolated review agents.
 
 > **Project status:** early development. The architecture is being implemented and tested first against Python and FastAPI codebases. The public API, plugin behavior, and storage format may change.
 
-> **What is measured today:** both of this project's original goals have now been measured against a naive control, and both lost.
+> **What is measured today.** Both halves of the project have been compared against a simple control on real repositories.
 >
-> - **Retrieval.** On `psf/requests`, Code Steward's ranking is **worse than plain text search** on every ranking metric. Its demonstrated value is **compression** — 4,039 bytes of packet against 21,107 bytes of source for the same candidates, and 3.6x fewer wasted bytes per query — not better recall or a cleaner packet. See [Measured position](#measured-position).
-> - **Reuse similarity.** Across three pinned public repositories and 298 blind-labelled pairs, `metadata_similarity` — the similarity function Code Steward ships — reaches macro F1 **0.431** against **0.571** for five-token shingle Jaccard, a control with no model of code at all, and costs 1.8x the bytes. See [Reuse similarity](#reuse-similarity-measured-and-also-lost).
+> - **Reuse detection** works and ships. Five-token shingle comparison reaches macro precision 0.978 and F1 0.571 across three pinned public repositories, ahead of jscpd (0.521) and of this project's own metadata comparison (0.431). See [Reuse similarity](#reuse-similarity).
+> - **Retrieval ranking** does not beat plain text search on `psf/requests`, on any ranking metric. What it contributes is compression: 4,039 bytes of packet against 21,107 bytes of source for the same candidates. See [Measured position](#measured-position).
 >
-> Read the roadmap as a set of open questions, not a set of delivered features.
+> Treat the roadmap as open questions rather than delivered features.
 
 ## Goals
 
 Code Steward is being designed around two forms of stewardship:
 
 1. **Steward the context window.** Keep broad repository exploration, graph traversal, history inspection, and duplicate analysis out of the main coding context whenever they can be handled deterministically or inside a disposable subagent context.
-2. **Steward the codebase.** Search before implementation, reuse existing behavior where appropriate, understand the impact of changes, and avoid unnecessary duplication or parallel abstractions. The duplication half of this is now measured; see [Reuse similarity](#reuse-similarity-measured-and-also-lost).
+2. **Steward the codebase.** Search before implementation, reuse existing behavior where appropriate, understand the impact of changes, and avoid unnecessary duplication or parallel abstractions. The duplication half of this is now measured; see [Reuse similarity](#reuse-similarity).
 
-Both goals reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds, by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently false — Code Steward's packets are proportionally noisier than plain keyword search, they are simply much cheaper per unit of noise. See [Measured position](#measured-position).
+Both reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently not true — the packets are proportionally noisier than plain keyword search, but much cheaper per unit of noise. See [Measured position](#measured-position).
 
 The intended workflow is:
 
@@ -67,17 +67,17 @@ The control arm is plain text search: drop stopwords from the query, scan every 
 | MRR | 0.550 | **0.667** |
 | Bytes handed to the reviewer | **4,039** | 21,107 |
 
-Read that honestly: **the ranker loses on every ranking metric.** The four cases Code Steward missed entirely, the control ranked 1st, 1st, 3rd, and 2nd.
+The ranker is behind the control on every ranking metric. The four cases Code Steward missed entirely, the control ranked 1st, 1st, 3rd, and 2nd.
 
 The Code Steward column reflects the current pipeline, which scores whole docstring bodies as well as summaries. Before that change it read Hit@1 40.00% and MRR 0.500; the improvement is real and does not close the gap. `docs/retrieval.md` carries both.
 
 Two things follow.
 
-**What survives is compression, not recall.** 4,039 bytes against 21,107 to inspect the same candidates is a real 5.2x, and it understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more still to work out where each match begins and ends.
+**The contribution is compression, not recall.** 4,039 bytes against 21,107 to inspect the same candidates is 5.2x, and that understates the gap: the control arm is handed unit boundaries by the index for free, so an agent with only text search would pay more again to work out where each match begins and ends.
 
-**What does not survive is the premise that fuzzy field scoring is the differentiator.** It is not. The fix is to adopt lexical body matching and fuse it with field scoring, not to keep tuning the weights. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
+**Fuzzy field scoring is not the differentiator.** The next step is lexical body matching fused with field scoring, rather than more weight tuning. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
 
-### Noise: measured, and the answer is split
+### Noise
 
 The project's goal is to reduce what an agent has to read *and* how much of it is irrelevant. Both halves are now measured.
 
@@ -93,35 +93,62 @@ The answer splits cleanly, and neither half should be quoted without the other:
 - **By share of the packet, Code Steward is noisier.** 56% of what it returns is judged not worth reading, against 42% for keyword search. It shows the agent a *higher proportion* of junk.
 - **By bytes, Code Steward wastes 3.6x less.** 2,288 wasted bytes per query against 8,124. The junk it shows is far cheaper to skip.
 
-So the packet format is doing real work and the ranking is not. Code Steward is currently a good compressor wrapped around a poor selector. That is a fixable shape — the fix is roadmap item 2, and it is why item 1 was to build this measurement first.
+The packet format is doing the work here and the ranking is not. That is a fixable shape, and it is why the measurement came before the fix.
 
 One incidental finding: all four units the benchmark had declared "traps" were judged *plausible*, not irrelevant. They are reasonable near-misses, not noise, so the trap rate reported elsewhere in this project was never a noise metric and should not be read as one.
 
 Reproduce with `benchmarks/real_repo/label_sheet.py` (emits blind sheets) and `benchmarks/real_repo/precision.py` (scores them). Labels live in `benchmarks/real_repo/requests_candidate_labels.json`.
 
-### Reuse similarity: measured, and also lost
+### Reuse similarity
 
-The second original goal was to find similar code — to answer *does this already exist* before an agent writes it again. Code Steward has shipped a similarity function since the beginning, `retrieval.metadata_similarity`, used to deduplicate a result set. It had never been evaluated against anything.
-
-Three public repositories pinned to full commit SHAs (`home-assistant/core`, `apache/airflow`, `django/django`), sampled by a stated hash rule rather than by hand. Candidate pairs pooled from three independent generators, provenance stripped, 298 pairs labelled blind. Four arms scored from one label file at depth 30.
+Answering *does this already exist* before an agent writes it again. Three public repositories pinned to full commit SHAs (`home-assistant/core`, `apache/airflow`, `django/django`), sampled by a stated hash rule rather than by hand. Candidate pairs pooled from three independent generators, provenance stripped, 298 pairs labelled blind. Four arms scored from one label file at depth 30.
 
 | Arm | Precision | Recall (in pool) | F1 | Bytes |
 | --- | --- | --- | --- | --- |
-| **token-shingle** (control) | **0.978** | **0.404** | **0.571** | **55,642** |
+| **token-shingle** | **0.978** | **0.404** | **0.571** | **55,642** |
 | jscpd | 0.899 | 0.367 | 0.521 | 127,401 |
-| `metadata_similarity` (ships today) | 0.744 | 0.304 | 0.431 | 102,457 |
+| `metadata_similarity` | 0.744 | 0.304 | 0.431 | 102,457 |
 | body-rapidfuzz | unevaluated | 0.180 | 0.276 | 193,159 |
 
-Macro means over the three corpora. Read it the same way as the retrieval table: **the naive control wins on every axis**, including bytes, and the arm Code Steward ships comes third. On Airflow `metadata_similarity` scores precision 0.633 — a third of what it surfaces is noise.
+Macro means over the three corpora. Five-token shingle comparison came first and now ships as `code_steward.similarity`; see [Finding reuse before the code exists](#finding-reuse-before-the-code-exists). The benchmark imports that module rather than keeping its own copy, so the measured code and the shipped code are the same code.
 
-`body-rapidfuzz` returned 52 of 90 pairs that nobody labelled, and 29 of 30 on Django. Its precision is a bracket of **0.033 to 1.000**, not a number, and it is reported as unevaluated rather than as the 1.000 its labelled subset would suggest.
+`metadata_similarity`, which this project already had, came third. It stays where it is — deduplicating a result set — and is not used for reuse detection.
 
-Two findings hold the result up rather than decorating it:
+`body-rapidfuzz` returned 52 of 90 pairs that nobody labelled, and 29 of 30 on Django. Its precision is a bracket of 0.033 to 1.000, so it is reported as unevaluated rather than as the 1.000 its labelled subset suggests.
 
-- **A generator-free random sample of 45 pairs contained 0 positives**, in all three corpora. That is the base rate the pooled 86.6% sits above, and it is the reason the pooled rate can be read as signal rather than as a generous labeller.
-- **Django was chosen as the hard-negative corpus and did not do that job**: 83.7% pooled positive rate against Airflow's 81.7%. It has real intra-file duplication. The corpus selection rule is published and was not changed afterwards.
+Two results that bear on how much to trust the rest:
 
-No similarity feature was built on the strength of this. The measurement was run to decide whether one should exist, and the answer it gave was *not this one*. Full numbers, method, and five validity threats are in [`docs/similarity.md`](docs/similarity.md). Reproduce with `make bench-similarity-corpora` then `make bench-similarity`.
+- A generator-free random sample of 45 pairs contained **0 positives**, in all three corpora. That is the base rate the pooled 86.6% sits above.
+- Django was chosen as the hard-negative corpus and did not behave like one: 83.7% pooled positive rate against Airflow's 81.7%. It has real intra-file duplication. The selection rule was published beforehand and was not changed afterwards.
+
+Full numbers, method, and five validity threats are in [`docs/similarity.md`](docs/similarity.md). Reproduce with `make bench-similarity-corpora` then `make bench-similarity`.
+
+### Finding reuse before the code exists
+
+The measurement decided the mechanism; this is the surface it ships behind.
+
+```bash
+code-steward similar src.app.orders::apply_discount     # an indexed unit
+code-steward similar --draft new_function.py            # code not written yet
+code-steward packet "apply a percentage discount" --reuse
+```
+
+`--draft` is the case the rest of the design is aimed at. An agent about to write a function can ask what already resembles it, using the same comparison the indexed path uses, before the code exists to be indexed. `packet --reuse` attaches near-duplicate evidence to each candidate, which is what separates a REUSE from a REFACTOR: a candidate that already exists three times over should not be reused a fourth time.
+
+Comparison runs over normalised function bodies — `ast.unparse` output, so comments, formatting, and docstrings are invisible to it. Identifiers are kept.
+
+**What it catches and what it does not.** On a fixture function, overlap against modified copies of itself:
+
+| Change to the copy | Overlap |
+| --- | --- |
+| docstring rewritten | 1.000 |
+| function renamed | 0.941 |
+| whole signature renamed | 0.535 |
+| every local variable also renamed | 0.015 |
+
+A function that was copied, pasted, and tidied is found. A function that was independently reimplemented in different words is not. Catching that needs a structural comparator, which is a different tool and has not been measured here. The limitation is pinned by a test so it cannot quietly change.
+
+There is nothing novel in the comparison itself — near-duplicate detection by token shingles is long-established, and jscpd is a mature tool that placed second on this benchmark. What is different here is where it sits: at indexed-unit granularity, keyed to stable IDs, answering the question before the code is written, and returning a packet an agent acts on rather than a report a person reads. The measured edge over jscpd is modest on F1 (0.571 against 0.521) and larger on bytes (2.3x fewer), and bytes are what make it affordable inside an agent's context.
 
 ### Validity threats on record
 
@@ -154,6 +181,10 @@ Candidate generation should happen before model reasoning whenever possible. The
 
 The goal is to reduce a large repository to a small evidence packet before an agent is asked to make an architectural decision. The packet part works. The ranking does not yet beat a stopword-stripped keyword scan. Indexing docstring bodies recovered part of the gap and none of the Hit@K gap, which places the remaining signal in **code** bodies — identifiers such as `rebuild_proxies` — that no scored field currently reads. See [Measured position](#measured-position).
 
+### Comparison before implementation
+
+The reuse question is asked against an indexed unit or against a draft that has not been written yet. Both paths normalise through `ast.unparse` and compare the same way, so a draft and its eventual indexed self produce the same result. Nothing is stored: shingles are built on demand from source, so no index schema depends on this and no benchmark number moves because the feature exists.
+
 ### Isolated review agents
 
 A reviewer should receive only the task and a small candidate packet. It can then pull exact code units, tests, history, and graph relationships only when needed. Its final result should be compact and structured so that exploratory material does not accumulate in the main coding session.
@@ -166,11 +197,13 @@ Code Steward extracts its own conservative `CALLS` edges. Reranking candidates b
 
 Structural relationships are still stored and still useful for impact analysis and test discovery. They are simply not a ranking input, and the case for an external graph has to rest on a capability other than ranking.
 
-### DRY and clone analysis (benchmarked, not implemented)
+### Reuse detection
 
-[jscpd](https://github.com/kucherenko/jscpd) provides mature duplicate-code detection. Code Steward is intended to treat clone findings as evidence for a reuse or refactoring decision, not as an automatic instruction to abstract every duplicated block.
+`code_steward.similarity` compares five-token windows of normalised function bodies. It is the arm that won the benchmark, promoted unchanged, and the benchmark imports it rather than keeping a copy.
 
-It is now benchmarked as one of four arms on the reuse-similarity gold set, where it reaches macro F1 0.521 — ahead of `metadata_similarity`, behind the shingle control, and at 2.3x the control's bytes. Nothing is wired up: no clone evidence reaches a packet or a reviewer today. See [Reuse similarity](#reuse-similarity-measured-and-also-lost).
+Duplicate findings are evidence for a decision, not an instruction to abstract every repeated block. A candidate carrying duplicates points at REFACTOR rather than REUSE; it does not settle the question, and the reviewer still has to.
+
+[jscpd](https://github.com/kucherenko/jscpd) is benchmarked as one of the four arms and reaches F1 0.521, second of four. It is not a dependency: it needs Node, and it returned 2.3x the bytes for slightly worse F1.
 
 ## Code Steward and Graph Code Review
 
@@ -180,7 +213,7 @@ It is now benchmarked as one of four arms on the reuse-similarity gold set, wher
 
 **Their moat is elsewhere, and it is real.** A Tree-sitter parser across roughly 55 languages against this project's Python-only AST index, and a typed edge graph against Code Steward's conservative `CALLS` and `TESTED_BY` extraction. Blast-radius analysis from a diff is theirs; Code Steward has nothing equivalent.
 
-**Neither project answers the reuse question today.** A search across their package for `duplicate|clone|jaccard|simhash|minhash|levenshtein|difflib` finds no node-to-node comparison of any kind — no similarity, no clone detection, no DRY analysis. It is not claimed, either. Code Steward has now *measured* that question and found its own implementation losing to a naive control, which is a different position from theirs but not a better one.
+**Graph Code Review does not compare one node to another.** A search across its package for `duplicate|clone|jaccard|simhash|minhash|levenshtein|difflib` returns 38 hits, and all of them are deduplication by identity, a `difflib` call that renders a refactor preview, or a cosine similarity used once — as `_cosine_similarity(query_vec, vec)`, which is query-to-node, not node-to-node. There is no way to ask which two functions resemble each other, and none is claimed. Worth noting that they store a per-node embedding already, so node-to-node is not far away for them; unoccupied is not the same as defensible.
 
 | Question | Code Steward | Graph Code Review |
 | --- | --- | --- |
@@ -189,7 +222,7 @@ It is now benchmarked as one of four arms on the reuse-similarity gold set, wher
 | Language coverage | Python | ~55 languages |
 | Typed call / import edges | conservative, Python only | the moat |
 | Blast radius from a diff | none | weighted SQL relaxation |
-| Similar / duplicate functions | benchmarked, unbuilt | absent, not claimed |
+| Similar / duplicate functions | measured and shipped | absent, not claimed |
 
 They answer *what breaks if I change this*. Code Steward answers *what is the smallest thing you can read to decide*. Those compose.
 
@@ -277,6 +310,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - docstring-body indexing as a scoring input
 - blind candidate labeling and packet precision/noise measurement
 - a reuse-similarity gold set over three pinned public repositories, with four scored arms
+- reuse detection (`similar`, `packet --reuse`), including comparison against unwritten drafts
 - benchmark anti-inflation guards: a rate with no denominator raises rather than publishing a perfect zero
 - exclusion accounting: a run that drops a file or a case reports it as dropped
 - pins enforced by tests rather than by documentation
@@ -288,14 +322,17 @@ The architecture is intentionally broader than FastAPI so that support for other
 1. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
 2. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
 3. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-4. **Decide whether reuse detection ships at all, and on what.** The measurement says the capability is reachable — a shingle matcher with no model of code reaches precision 0.978 — and that Code Steward's own machinery is not what reaches it. Shipping the control as the feature is a legitimate answer; so is not shipping reuse detection. This is a product question, not a measurement question, and it is deliberately left open rather than answered by whichever arm won.
-5. **Post-change DRY and blast-radius review.**
+4. **Teach the skill and the reviewer agent to use `--reuse`.** The plugin surface does not yet call it, so the evidence exists and nothing consumes it.
+5. **Measure whether reuse evidence changes the verdict.** The arm is measured; its effect on a reviewer's REUSE/EXTEND/REFACTOR decision is not. That needs a labelled set of verdicts, not of pairs.
+6. **A structural comparator for reimplementations.** Shingles miss a function rewritten in different words. Whether that population is large enough to matter is itself unmeasured.
+7. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing
 
 - **External structural graph integration for ranking.** Tested, no metric moved. See [Structural graph integration](#structural-graph-integration-tested-not-adopted).
 - **Further tuning of the existing five-field fuzzy weights.** The control arm shows the ceiling of that approach is below plain keyword search.
-- **`metadata_similarity` as a reuse ranker.** Measured at macro F1 0.431 against a naive control's 0.571, at 1.8x the bytes. It stays where it is — deduplicating a result set — and is not promoted to a user-facing similarity feature.
+- **`metadata_similarity` as a reuse ranker.** Measured at macro F1 0.431 against 0.571, at 1.8x the bytes. It stays where it is, deduplicating a result set.
+- **jscpd as a dependency.** Second of four arms, but it needs Node and returns 2.3x the bytes.
 - **Tuning any arm against the similarity gold set.** The set was built, frozen, and measured once. Tuning against it would convert a benchmark into a target.
 
 ## Claude Code plugin surface

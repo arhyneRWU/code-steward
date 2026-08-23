@@ -6,12 +6,11 @@ reusing it would save anyone anything: a two-line property is
 duplicated all over every codebase and no reviewer would file that as
 a reuse finding.
 
-Normalisation runs through ``ast.unparse``, which discards comments
-and formatting and re-emits canonical source. Identifiers are kept.
-Renaming locals would turn the token-shingle arm into a structural
-comparator, and structural comparison is a different arm with
-different failure modes -- worth building later, not worth smuggling
-into the control.
+Normalisation, tokenisation, and the size floors all come from
+``code_steward.similarity``. The benchmark deliberately does not own
+its own copy: the arm that won this benchmark now ships, and the only
+way to guarantee that the measured code and the shipped code stay the
+same code is for one to import the other.
 """
 
 from __future__ import annotations
@@ -23,14 +22,7 @@ from pathlib import Path
 from benchmarks.guards import Exclusions
 from code_steward.indexer import index_python_file
 from code_steward.models import CodeUnit
-
-# A unit under five lines is too small for reuse to be the right
-# call even when two of them are identical.
-MIN_LINES = 5
-
-# Below this many normalised tokens the shingle arm has nothing to
-# work with and every pair scores near 1.0 by accident.
-MIN_TOKENS = 20
+from code_steward.similarity import MIN_LINES, MIN_TOKENS, normalise, tokenise
 
 FUNCTION_KINDS = frozenset({"function", "method"})
 
@@ -51,48 +43,6 @@ class CorpusUnit:
     @property
     def line_count(self) -> int:
         return self.end_line - self.start_line + 1
-
-
-def _strip_docstring(node: ast.AST) -> None:
-    body = getattr(node, "body", None)
-    if not body:
-        return
-    first = body[0]
-    if (
-        isinstance(first, ast.Expr)
-        and isinstance(first.value, ast.Constant)
-        and isinstance(first.value.value, str)
-    ):
-        del body[0]
-        if not body:
-            body.append(ast.Pass())
-
-
-def normalise(node: ast.AST) -> str:
-    """Re-emit a declaration as canonical source without docstrings."""
-    clone = ast.parse(ast.unparse(node)).body[0]
-    for child in ast.walk(clone):
-        if isinstance(child, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef):
-            _strip_docstring(child)
-    return ast.unparse(clone)
-
-
-def tokenise(text: str) -> tuple[str, ...]:
-    """Split normalised source into comparable tokens."""
-    tokens: list[str] = []
-    current: list[str] = []
-    for char in text:
-        if char.isalnum() or char == "_":
-            current.append(char)
-            continue
-        if current:
-            tokens.append("".join(current))
-            current = []
-        if not char.isspace():
-            tokens.append(char)
-    if current:
-        tokens.append("".join(current))
-    return tuple(tokens)
 
 
 def _declarations(tree: ast.AST) -> dict[int, ast.AST]:

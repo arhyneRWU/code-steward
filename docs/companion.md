@@ -104,26 +104,26 @@ a bug in either. Three consequences:
   `UNCERTAIN`, not a confident verdict backed by an unverifiable
   claim.
 
-## What cannot be specified yet
+## The candidate this enriches
 
-The original plan for this contract assumed Code Steward would have a
-reuse-detection feature for their graph to enrich. It does not, and
-the measurement is the reason:
-[`docs/similarity.md`](similarity.md) records that the similarity
-function this project ships loses to five-token shingles on every
-corpus, so no reuse feature was built.
+Reuse detection now exists — `code-steward similar` and
+`packet --reuse`, described in [`docs/similarity.md`](similarity.md) —
+so the enrichment above has something concrete to attach to.
 
-That leaves the most interesting half of this contract — *enrich a
-reuse candidate with its callers and its test coverage* — describing a
-candidate nothing currently produces. The rules above are written so
-they will hold whenever such a feature exists, and the table above
-lists the facts it would want, but the integration cannot be built
-before the product question in the
-[roadmap](../README.md#next-in-priority-order) is answered.
+A reuse candidate carries what this project can derive: an overlap
+score, the units it duplicates, and its own conservative `CALLS` and
+`TESTED_BY` edges. What it does not carry is coverage across languages
+this project does not parse, or a blast radius. Those are the facts
+worth asking their graph for, and only after a candidate has been
+selected.
 
-The rest of the contract is not blocked. Callers and test coverage for
-a unit already in a packet is a real enrichment of an existing output,
-and it is the piece that could be implemented first.
+One consequence of the shipped arm is worth stating here, because it
+bounds what the enrichment can be trusted to say. Shingle comparison
+finds copies that were pasted and tidied; it does not find a function
+independently reimplemented in different words. An enrichment layer
+built on top inherits that blind spot exactly, and must not be
+described as an answer to *does this exist anywhere* — only to *does
+this text already exist here*.
 
 ## What this contract is not
 
