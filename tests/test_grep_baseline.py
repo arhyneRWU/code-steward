@@ -139,7 +139,7 @@ def test_run_baseline_scores_a_case_it_can_answer(
 
     report = run_baseline(project, database, cases_path)
 
-    assert report["strategy"] == "ripgrep-term-coverage"
+    assert report["strategy"] == "text-search-term-coverage"
     assert report["summary"]["case_count"] == 1
     assert report["summary"]["hit_rate_at_1"] == 1.0
     # "value" appears in the trap's signature, so a term-coverage

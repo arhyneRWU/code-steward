@@ -1,4 +1,4 @@
-"""Measure a keyword-search control arm on the real-repository cases.
+"""Measure a plain text-search control arm on the real cases.
 
 Code Steward's value claim is that structured retrieval beats what an
 agent gets from plain text search. That claim is untested until plain
@@ -17,9 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import shutil
 import sqlite3
-import subprocess
 import time
 from bisect import bisect_right
 from collections import defaultdict
@@ -103,37 +101,32 @@ def query_terms(query: str) -> list[str]:
     return list(seen)
 
 
-def ripgrep_lines(term: str, root: Path) -> list[tuple[str, int]]:
-    """Return ``(relative_path, lineno)`` for each matching line."""
-    completed = subprocess.run(
-        [
-            "rg",
-            "--ignore-case",
-            "--fixed-strings",
-            "--line-number",
-            "--no-heading",
-            "--with-filename",
-            "--glob",
-            "*.py",
-            "--",
-            term,
-            ".",
-        ],
-        cwd=root,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if completed.returncode not in (0, 1):
-        raise RuntimeError(f"ripgrep failed for {term!r}: {completed.stderr.strip()}")
+def python_files(root: Path) -> list[Path]:
+    """List indexable Python files, in a stable order."""
+    return sorted(path for path in root.rglob("*.py") if path.is_file())
 
+
+def search_lines(term: str, root: Path) -> list[tuple[str, int]]:
+    """Return ``(relative_path, lineno)`` for each matching line.
+
+    This replicates ``rg --ignore-case --fixed-strings --glob '*.py'``
+    on the same tree and returns identical hits. It is implemented in
+    Python so the control arm carries no system dependency: a control
+    that only runs where ripgrep happens to be installed is a control
+    that stops running.
+    """
+    needle = term.lower()
     hits: list[tuple[str, int]] = []
-    for line in completed.stdout.splitlines():
-        path, _, rest = line.partition(":")
-        lineno, _, _ = rest.partition(":")
-        if not lineno.isdigit():
+    for path in python_files(root):
+        rel = path.relative_to(root).as_posix()
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            # ripgrep skips files it cannot decode rather than failing.
             continue
-        hits.append((path.removeprefix("./"), int(lineno)))
+        for lineno, line in enumerate(text.splitlines(), 1):
+            if needle in line.lower():
+                hits.append((rel, lineno))
     return hits
 
 
@@ -153,7 +146,7 @@ def rank_units(
     total_hits = 0
 
     for term in terms:
-        for rel_path, lineno in ripgrep_lines(term, root):
+        for rel_path, lineno in search_lines(term, root):
             total_hits += 1
             unit_id = enclosing_unit(spans.get(rel_path, []), lineno)
             if unit_id is None:
@@ -270,9 +263,6 @@ def evaluate_case(
 
 
 def run_baseline(project_root: Path, database: Path, cases_path: Path) -> dict[str, Any]:
-    if shutil.which("rg") is None:
-        raise RuntimeError("ripgrep (rg) is required for the grep baseline")
-
     spans = load_spans(database)
     span_index = {span.unit_id: span for group in spans.values() for span in group}
     cases = load_cases(cases_path)
@@ -286,7 +276,7 @@ def run_baseline(project_root: Path, database: Path, cases_path: Path) -> dict[s
 
     return {
         "schema_version": 1,
-        "strategy": "ripgrep-term-coverage",
+        "strategy": "text-search-term-coverage",
         "cases_path": cases_path.name,
         "summary": {
             "case_count": len(results),
@@ -315,7 +305,7 @@ def run_baseline(project_root: Path, database: Path, cases_path: Path) -> dict[s
 def _summary_markdown(report: dict[str, Any]) -> str:
     summary = report["summary"]
     lines = [
-        "# Requests ripgrep control baseline",
+        "# Requests text-search control baseline",
         "",
         f"- Cases: **{summary['case_count']}**",
         f"- Hit@1: **{summary['hit_rate_at_1']:.2%}**",

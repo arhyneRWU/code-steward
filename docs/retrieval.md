@@ -165,7 +165,7 @@ v1 remains valid as a regression guard against itself, but its
 absolute numbers should not be read as retrieval quality on real
 repositories.
 
-## The ripgrep control arm
+## The text-search control arm
 
 Every result above compares Code Steward against Code Steward. The
 value claim -- that structured retrieval beats what an agent already
@@ -173,8 +173,12 @@ gets from text search -- had never been measured, so
 `benchmarks/real_repo/grep_baseline.py` measures it.
 
 The control arm derives search terms from the query by dropping
-stopwords, runs a case-insensitive fixed-string `rg` per term, and
-ranks units by distinct term coverage then hit density. It imports no
+stopwords, runs a case-insensitive fixed-string scan per term over
+every `.py` file, and ranks units by distinct term coverage then hit
+density. The scan replicates `rg --ignore-case --fixed-strings --glob
+'*.py'` and was verified to return byte-identical candidate lists and
+summary metrics; it is implemented in Python so the control arm has no
+system dependency and keeps running in CI. It imports no
 Code Steward scoring code. It reads unit line spans from the index
 only to attribute a matched line to an enclosing unit, which is
 segmentation rather than ranking.
@@ -183,7 +187,7 @@ segmentation rather than ranking.
 
 On the same 15 Requests cases, at the same K:
 
-| Metric | Production retrieval | Docstring bodies (PR #40) | ripgrep control |
+| Metric | Production retrieval | Docstring bodies (PR #40) | Text-search control |
 | --- | --- | --- | --- |
 | Hit@1 | 40.00% | 46.67% | **53.33%** |
 | Hit@3 | 53.33% | 60.00% | **80.00%** |
@@ -234,8 +238,8 @@ experiment; equal-weight RRF is not the right final answer.
 ### What this changes
 
 Ranking is not the differentiator. On these cases a reviewer running
-`rg` finds the right unit more often than the current pipeline does.
-What the pipeline still provides that `rg` does not is a bounded,
+plain text search finds the right unit more often than the current pipeline does.
+What the pipeline still provides that text search does not is a bounded,
 structured packet: 4104 bytes against 21107 to inspect the same number
 of candidates, a 5.1x difference, before counting the files an agent
 without the index would have to open to segment the matches at all.
@@ -256,5 +260,5 @@ curated fields. A query set written from the public documentation
 rather than the source would test this.
 
 The control arm is also handed unit boundaries for free. An agent with
-only `rg` would pay to segment matches itself, so the 21107-byte cost
-above understates the real cost of the grep workflow.
+only text search would pay to segment matches itself, so the
+21107-byte cost above understates the real cost of that workflow.

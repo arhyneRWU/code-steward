@@ -20,7 +20,7 @@ The GitHub Actions workflow checks out that exact upstream commit, builds a Code
 
 The workflow then evaluates the unchanged production `retrieve_units()` pipeline against the manually verified cases in `requests_retrieval.json`. The retrieval report records Hit@1/3/5/K, macro recall, MRR, known traps and redundancy, returned candidate count, packet bytes, and retrieval latency. `CALLS` relationships are not consumed by this baseline.
 
-`grep_baseline.py` is the control arm. It answers whether Code Steward's ranking beats plain text search on the same cases, using no Code Steward scoring code. It currently does not: see the "ripgrep control arm" section in `docs/retrieval.md`.
+`grep_baseline.py` is the control arm. It answers whether Code Steward's ranking beats plain text search on the same cases, using no Code Steward scoring code. It currently does not: see the "text-search control arm" section in `docs/retrieval.md`.
 
 `calls_reachability.py` is a separate structural opportunity probe. It starts from the unchanged production candidate packet and asks whether missed gold units are one resolved `CALLS` hop away in the outgoing, incoming, or union graph. It does not alter retrieval ranking or relationship extraction.
 
@@ -54,6 +54,6 @@ python benchmarks/real_repo/grep_baseline.py \
   --output-dir validation-results/requests
 ```
 
-The grep baseline requires `rg` on PATH.
+The grep baseline has no system dependencies; its scan replicates `rg --ignore-case --fixed-strings --glob '*.py'` in Python.
 
 A successful build implies zero Python parse failures for the indexed scope because Code Steward now fails atomically on malformed Python instead of silently producing a partial index.

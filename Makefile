@@ -154,7 +154,7 @@ clean: ## Remove build, cache, and index artifacts
 	@echo "cleaned"
 
 .PHONY: bench-grep
-bench-grep: guard-venv ## Run the ripgrep control arm (ROOT=, DB=, OUT= required)
+bench-grep: guard-venv ## Run the text-search control arm (ROOT=, DB=, OUT= required)
 	@$(PY) benchmarks/real_repo/grep_baseline.py \
 	  --project-root $(ROOT) --database $(DB) \
 	  --cases benchmarks/real_repo/requests_retrieval.json --output-dir $(OUT)
