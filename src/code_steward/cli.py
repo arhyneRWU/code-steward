@@ -3,12 +3,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sqlite3
 import sys
 from pathlib import Path
 
 from . import __version__
-from .db import all_endpoints, all_units, connect, get_unit, replace_file
-from .indexer import index_python_file, iter_python_files
+from .db import all_endpoints, all_units, connect, get_unit
+from .maintenance import rebuild_index, update_index_file
 from .packet import build_packet
 from .retrieval import rank_units, retrieve_units
 
@@ -23,26 +24,20 @@ def db_path(root: Path) -> Path:
 
 def cmd_build(args: argparse.Namespace) -> int:
     root = root_from(args.root)
-    conn = connect(db_path(root))
-    count_units = count_files = count_endpoints = 0
-    for path in iter_python_files(root, args.exclude):
-        try:
-            units, endpoints = index_python_file(root, path)
-        except (SyntaxError, UnicodeDecodeError, ValueError) as exc:
-            if not args.quiet:
-                print(f"skip {path}: {exc}", file=sys.stderr)
-            continue
-        rel = path.relative_to(root).as_posix()
-        replace_file(conn, rel, units, endpoints)
-        count_files += 1
-        count_units += len(units)
-        count_endpoints += len(endpoints)
+    destination = db_path(root)
+    try:
+        stats = rebuild_index(root, destination, args.exclude)
+    except (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError) as exc:
+        if not args.quiet:
+            print(f"build failed: {exc}", file=sys.stderr)
+        return 1
+
     if not args.quiet:
         print(
-            f"indexed {count_units} units, {count_endpoints} endpoints "
-            f"from {count_files} Python files"
+            f"indexed {stats.units} units, {stats.endpoints} endpoints "
+            f"from {stats.files} Python files"
         )
-        print(db_path(root))
+        print(destination)
     return 0
 
 
@@ -51,23 +46,33 @@ def cmd_update(args: argparse.Namespace) -> int:
     db = db_path(root)
     if args.if_exists and not db.exists():
         return 0
+
     path = Path(args.path).resolve()
-    if path.suffix != ".py" or not path.exists():
+    if path.suffix != ".py":
         return 0
     try:
-        path.relative_to(root)
+        rel = path.relative_to(root).as_posix()
     except ValueError:
         return 0
+
+    if not path.exists() and not db.exists():
+        return 0
+
     conn = connect(db)
     try:
-        units, endpoints = index_python_file(root, path)
-    except (SyntaxError, UnicodeDecodeError, ValueError) as exc:
+        stats = update_index_file(conn, root, path)
+    except (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError) as exc:
         if not args.quiet:
-            print(f"could not index {path}: {exc}", file=sys.stderr)
+            print(f"could not update {path}: {exc}", file=sys.stderr)
         return 1
-    replace_file(conn, path.relative_to(root).as_posix(), units, endpoints)
+    finally:
+        conn.close()
+
     if not args.quiet:
-        print(f"updated {len(units)} units from {path.relative_to(root)}")
+        if path.exists():
+            print(f"updated {stats.primary_units} units from {rel}")
+        else:
+            print(f"removed {rel} from index")
     return 0
 
 
