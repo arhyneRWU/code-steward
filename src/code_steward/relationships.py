@@ -6,12 +6,19 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from .db import all_units, replace_hard_relationships_for_provenance
+from .db import (
+    all_units,
+    hard_relationships_for_provenance,
+    replace_hard_relationships_for_provenance,
+)
 from .models import CodeUnit, HardRelationship
 
 PYTHON_AST_PROVENANCE = "python-ast"
+TESTS_PROVENANCE = "tests"
 _CALLER_KINDS = {"function", "async_function", "class"}
 _METHOD_KINDS = {"function", "async_function"}
+_TEST_FUNCTION_KINDS = {"function", "async_function"}
+_FIXTURE_DECORATORS = ("fixture", "yield_fixture")
 
 
 def _module_key(path: str) -> str:
@@ -272,6 +279,118 @@ def extract_python_call_relationships(
         )
 
     return dict(relationships), parsed_sources
+
+
+def is_test_file(path: str) -> bool:
+    """Report whether a path matches pytest's default file discovery."""
+    name = path.replace("\\", "/").rsplit("/", 1)[-1]
+    if not name.endswith(".py"):
+        return False
+    stem = name[: -len(".py")]
+    return stem.startswith("test_") or stem.endswith("_test")
+
+
+def _is_fixture(unit: CodeUnit) -> bool:
+    for decorator in unit.decorators:
+        head = decorator.split("(", 1)[0].strip()
+        if head.rsplit(".", 1)[-1] in _FIXTURE_DECORATORS:
+            return True
+    return False
+
+
+def is_test_unit(unit: CodeUnit) -> bool:
+    """Report whether a unit is a pytest test function.
+
+    Detection is deliberately conservative: the unit must live in a
+    pytest-discoverable file, be a function, carry a ``test_`` name,
+    and not be a fixture.
+    """
+    if unit.kind not in _TEST_FUNCTION_KINDS:
+        return False
+    if not is_test_file(unit.path):
+        return False
+    if not (unit.name == "test" or unit.name.startswith("test_")):
+        return False
+    return not _is_fixture(unit)
+
+
+def extract_tested_by_relationships(
+    units: list[CodeUnit],
+    call_edges: list[HardRelationship],
+) -> dict[str, list[HardRelationship]]:
+    """Invert resolved test-to-production call edges into TESTED_BY."""
+    units_by_id = {unit.unit_id: unit for unit in units}
+    test_units = {unit_id for unit_id, unit in units_by_id.items() if is_test_unit(unit)}
+
+    aggregated: dict[tuple[str, str], set[int]] = defaultdict(set)
+    for edge in call_edges:
+        if edge.relation != "CALLS" or edge.target_kind != "unit":
+            continue
+        if edge.source_unit_id not in test_units:
+            continue
+        target = units_by_id.get(edge.target_ref)
+        if target is None or is_test_file(target.path):
+            continue
+        lines = edge.evidence.get("lines") or []
+        aggregated[(target.unit_id, edge.source_unit_id)].update(
+            line for line in lines if isinstance(line, int)
+        )
+
+    relationships: dict[str, list[HardRelationship]] = defaultdict(list)
+    for (target_unit_id, test_unit_id), lines in sorted(aggregated.items()):
+        test_unit = units_by_id[test_unit_id]
+        relationships[target_unit_id].append(
+            HardRelationship(
+                source_unit_id=target_unit_id,
+                relation="TESTED_BY",
+                target_kind="unit",
+                target_ref=test_unit_id,
+                provenance=TESTS_PROVENANCE,
+                evidence={
+                    "path": test_unit.path,
+                    "name": test_unit.name,
+                    "qualname": test_unit.qualname,
+                    "lines": sorted(lines),
+                },
+            )
+        )
+    return dict(relationships)
+
+
+def refresh_tested_by_relationships(conn: sqlite3.Connection) -> int:
+    """Refresh TESTED_BY edges from stored resolved call edges."""
+    units = all_units(conn)
+    call_edges = hard_relationships_for_provenance(
+        conn,
+        PYTHON_AST_PROVENANCE,
+        relation="CALLS",
+    )
+    relationships = extract_tested_by_relationships(units, call_edges)
+
+    known = {unit.unit_id for unit in units}
+    stale_sources = {
+        edge.source_unit_id
+        for edge in hard_relationships_for_provenance(conn, TESTS_PROVENANCE)
+        if edge.source_unit_id in known
+    }
+    count = 0
+    for source_unit_id in sorted(stale_sources | set(relationships)):
+        edges = relationships.get(source_unit_id, [])
+        replace_hard_relationships_for_provenance(
+            conn,
+            source_unit_id,
+            TESTS_PROVENANCE,
+            edges,
+        )
+        count += len(edges)
+    return count
+
+
+def refresh_relationships(conn: sqlite3.Connection, project_root: Path) -> tuple[int, int]:
+    """Refresh every deterministic extractor Code Steward owns."""
+    calls = refresh_python_call_relationships(conn, project_root)
+    tested_by = refresh_tested_by_relationships(conn)
+    return calls, tested_by
 
 
 def refresh_python_call_relationships(

@@ -460,6 +460,19 @@ def replace_soft_relationships(
             )
 
 
+def _row_to_hard_relationship(row: sqlite3.Row) -> HardRelationship:
+    return HardRelationship(
+        source_unit_id=row["source_unit_id"],
+        relation=row["relation"],
+        target_kind=row["target_kind"],
+        target_ref=row["target_ref"],
+        provenance=row["provenance"],
+        evidence=json.loads(row["evidence_json"]),
+        source_hash=row["source_hash"],
+        target_hash=row["target_hash"],
+    )
+
+
 def all_hard_relationships(conn: sqlite3.Connection) -> list[HardRelationship]:
     rows = conn.execute(
         """
@@ -467,19 +480,23 @@ def all_hard_relationships(conn: sqlite3.Connection) -> list[HardRelationship]:
         ORDER BY source_unit_id, relation, target_kind, target_ref, provenance
         """
     ).fetchall()
-    return [
-        HardRelationship(
-            source_unit_id=row["source_unit_id"],
-            relation=row["relation"],
-            target_kind=row["target_kind"],
-            target_ref=row["target_ref"],
-            provenance=row["provenance"],
-            evidence=json.loads(row["evidence_json"]),
-            source_hash=row["source_hash"],
-            target_hash=row["target_hash"],
-        )
-        for row in rows
-    ]
+    return [_row_to_hard_relationship(row) for row in rows]
+
+
+def hard_relationships_for_provenance(
+    conn: sqlite3.Connection,
+    provenance: str,
+    relation: str | None = None,
+) -> list[HardRelationship]:
+    """Read hard edges written by one deterministic extractor."""
+    query = "SELECT * FROM hard_relationships WHERE provenance = ?"
+    parameters: list[str] = [provenance]
+    if relation is not None:
+        query += " AND relation = ?"
+        parameters.append(relation)
+    query += " ORDER BY source_unit_id, relation, target_kind, target_ref"
+    rows = conn.execute(query, tuple(parameters)).fetchall()
+    return [_row_to_hard_relationship(row) for row in rows]
 
 
 def all_soft_relationships(conn: sqlite3.Connection) -> list[SoftRelationship]:
