@@ -166,8 +166,8 @@ A case takes a function whose duplicate is already labelled, removes it from the
 
 | Arm | Duplicate surfaced | False positives | Mean bytes |
 | --- | --- | --- | --- |
-| `packet` (control) | 0.453 | 0.198 | 2,663 |
-| `packet --reuse` | 0.616 | 0.275 | 4,260 |
+| `packet` (control) | 0.459 | 0.176 | 2,782 |
+| `packet --reuse` | 0.654 | 0.264 | 4,405 |
 | **`similar --draft`** | **0.994** | 0.264 | **2,636** |
 
 **Drafting and comparing dominates.** It finds the existing function in 158 of 159 cases, at fewer bytes than the plain packet and no worse a false-positive rate. The skill and reviewer agent were already told to draft-and-compare before falling back to the ranker; that ordering was reasoned from a component number and is now measured.
@@ -177,7 +177,7 @@ A case takes a function whose duplicate is already labelled, removes it from the
 Three limits, none of them small:
 
 - **No verdict was scored.** No reviewer agent was run, so this measures evidence *arriving*, not a decision *changing*. A detector that surfaces perfectly and changes no verdicts would score perfectly here.
-- **246 of 496 cases were excluded** because the function has no docstring, so its task text would have been its own identifier. That means this speaks only about documented functions — and undocumented code is where the ranker is documented to do worst, so the control's 0.453 is its score on favourable ground.
+- **246 of 496 cases were excluded** because the function has no docstring, so its task text would have been its own identifier. That means this speaks only about documented functions — and undocumented code is where the ranker is documented to do worst, so the control's 0.459 is its score on favourable ground.
 - **`similar` has no score floor**, which is visible in the false positives on negative cases. Choosing one is deliberately not done here: it would be tuning against the gold set.
 
 Full method and caveats in [`docs/verdict.md`](docs/verdict.md). Reproduce with `make bench-verdict`.

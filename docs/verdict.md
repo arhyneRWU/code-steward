@@ -52,25 +52,33 @@ below, it is the largest caveat on this page.
 
 | Arm | Duplicate surfaced | False positives | Unlabelled evidence | Mean bytes |
 | --- | --- | --- | --- | --- |
-| `packet` (control) | 0.453 | 0.198 | 73 | 2,663 |
-| `packet-reuse` | 0.616 | 0.275 | 66 | 4,260 |
+| `packet` (control) | 0.459 | 0.176 | 75 | 2,782 |
+| `packet-reuse` | 0.654 | 0.264 | 67 | 4,405 |
 | **`draft-similar`** | **0.994** | 0.264 | 65 | **2,636** |
 
 Positives n=159, negatives n=91, identical across arms. Committed at
 [`benchmarks/verdict/evidence.json`](../benchmarks/verdict/evidence.json);
 reproduce with `make bench-verdict`.
 
+These figures are a re-run after body term coverage entered the
+ranker's score; the first run predated it. Both packet arms moved a
+little in the same direction — a slightly higher surfaced rate, a
+slightly lower false-positive rate, a few more bytes. `draft-similar`
+is unchanged to three places, which is expected: that arm does not
+use the ranker. The movement is small enough that no conclusion on
+this page turns on it.
+
 ## What it says
 
 **`--reuse` earns its place, and it is not free.** It lifts the
-surfaced rate from 0.453 to 0.616 — sixteen more cases in a hundred
-where the duplicate reaches the reviewer — and costs **60% more bytes**
-and 7.7 points of false-positive rate. That is a real trade, not a
+surfaced rate from 0.459 to 0.654 — twenty more cases in a hundred
+where the duplicate reaches the reviewer — and costs **58% more bytes**
+and 8.8 points of false-positive rate. That is a real trade, not a
 free win, and it is why the flag is opt-in rather than default.
 
 **Drafting and comparing dominates everything else.** 0.994 against
-the control's 0.453, at *fewer* bytes than the plain packet (2,636 vs
-2,663) and a false-positive rate no worse than `--reuse`. One case in
+the control's 0.459, at *fewer* bytes than the plain packet (2,636 vs
+2,782) and a false-positive rate no worse than `--reuse`. One case in
 159 was missed. This is the strongest result the project has produced
 and it is the one that most directly supports the design: if an agent
 can sketch the function, sketching and comparing finds the existing
@@ -83,7 +91,7 @@ from a component number. It is now measured.
 **The control is being flattered and still loses badly.** Half the
 cases were excluded because the function has no docstring — and
 undocumented code is precisely where the ranker is
-[documented to do worst](retrieval.md). The 0.453 is the packet path's
+[documented to do worst](retrieval.md). The 0.459 is the packet path's
 score on its best available ground.
 
 **Every arm surfaces something on a fifth to a quarter of negatives.**
