@@ -93,6 +93,43 @@ That distinction is the whole reason the message exists. A model
 handed a slice treats it as the truth, and a silently partial path is
 worse than no path.
 
+## Assembling from someone else's selection
+
+`--members-from` takes the member list from outside instead of
+walking our own edges:
+
+```bash
+code-steward trace "pkg.mod::Class.method" --members-from members.txt
+code-review-graph query ... | jq -r '...' | code-steward trace TARGET --members-from -
+```
+
+One ref per line -- a unit ID, `path:line`, or `path::name` -- each
+optionally prefixed `caller:`, `callee:` or `test:`. A ref that
+resolves to nothing indexed is printed to stderr rather than dropped,
+because a bundle quietly missing a member is worse than one that says
+what it could not place.
+
+**Why it exists.** The limit above is not a perception problem. We
+record `response.has_header` as an unresolved symbol row and decline
+to promote it to an edge, so those callers never reach a slice.
+Measured on 200 Django functions, a broader graph's selection
+rendered through this bundle reached **+0.207 caller recall** at a
+median of **24 bytes fewer** than our own bundle
+([`context-cost.md`](context-cost.md)). On
+`HttpResponseBase.has_header`, plain `trace` finds no callers and the
+two-step finds nine.
+
+**It knows nothing about who produced the list.** Not their schema,
+not their name, not whether they are installed. That is what keeps
+every published number in this repository reproducible from this
+repository and a Python interpreter, which is rule 1 of
+[`companion.md`](companion.md).
+
+**Call sites survive the handoff.** An external list carries spans
+but not the line inside a caller where the call happens, so that line
+is recomputed here from our own AST. The assembled bundle is strictly
+more informative than the list it was built from.
+
 ## Other limits
 
 - **Resolution is conservative, but no longer blind to `src/`.**

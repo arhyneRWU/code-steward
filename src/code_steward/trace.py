@@ -27,6 +27,7 @@ small slice from a broken one.
 
 from __future__ import annotations
 
+import ast
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -270,6 +271,115 @@ def resolve_target(query: str, units: list[CodeUnit]) -> list[CodeUnit]:
         ]
 
     return [unit for unit in units if query in (unit.name, unit.qualname)]
+
+
+@dataclass(slots=True, frozen=True)
+class MemberRef:
+    """One line of an externally supplied member list."""
+
+    role: str
+    ref: str
+
+
+def parse_member_refs(text: str) -> list[MemberRef]:
+    """Read a member list: one ref per line, role optional.
+
+    The list may come from anywhere -- another tool's graph, a grep, a
+    person who already knows the answer. This function is deliberately
+    ignorant of which: coupling assembly to one producer's schema
+    would make that producer a dependency, and the measurement that
+    motivated this seam says the value is in the selection, not in
+    whose selection it is.
+    """
+    refs: list[MemberRef] = []
+    for line in text.splitlines():
+        entry = line.strip()
+        if not entry or entry.startswith("#"):
+            continue
+        role = "caller"
+        for candidate in ("caller", "callee", "test"):
+            prefix = candidate + ":"
+            if entry.startswith(prefix):
+                role, entry = candidate, entry[len(prefix) :].strip()
+                break
+        if entry:
+            refs.append(MemberRef(role=role, ref=entry))
+    return refs
+
+
+def resolve_member_refs(
+    refs: list[MemberRef], units: list[CodeUnit]
+) -> tuple[list[tuple[str, CodeUnit]], list[str]]:
+    """Resolve refs against the index, keeping what did not resolve.
+
+    A ref that names nothing indexed is returned rather than dropped.
+    A bundle quietly missing a member an external selector found is
+    worse than one that says which member it could not place.
+    """
+    resolved: list[tuple[str, CodeUnit]] = []
+    unresolved: list[str] = []
+    for entry in refs:
+        matches = resolve_target(entry.ref, units)
+        if not matches and "::" in entry.ref:
+            path, _, qualname = entry.ref.partition("::")
+            wanted = path.replace("\\", "/")
+            matches = [
+                unit
+                for unit in units
+                if (unit.path == wanted or unit.path.endswith("/" + wanted))
+                and qualname in (unit.qualname, unit.name)
+            ]
+        if matches:
+            resolved.append((entry.role, matches[0]))
+        else:
+            unresolved.append(entry.ref)
+    return resolved, unresolved
+
+
+def _call_lines(project_root: Path, unit: CodeUnit, callee: str) -> tuple[int, ...]:
+    """Lines inside ``unit`` that call ``callee``, from our own AST.
+
+    An external member list carries spans but not call sites, so the
+    bundle would lose the one pointer that makes a forty-line caller
+    readable. We have the source; there is no reason to lose it.
+    """
+    try:
+        tree = ast.parse((project_root / unit.path).read_text(encoding="utf-8"))
+    except (OSError, SyntaxError, UnicodeDecodeError, ValueError):
+        return ()
+    lines: set[int] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not (unit.start_line <= node.lineno <= unit.end_line):
+            continue
+        func = node.func
+        name = func.id if isinstance(func, ast.Name) else getattr(func, "attr", "")
+        if name == callee:
+            lines.add(node.lineno)
+    return tuple(sorted(lines))
+
+
+def slice_from_members(
+    project_root: Path,
+    target: CodeUnit,
+    members: list[tuple[str, CodeUnit]],
+) -> Slice:
+    """Assemble a slice around ``target`` from a member list."""
+    seen = {target.unit_id}
+    built: list[SliceMember] = []
+    for role, unit in members:
+        if unit.unit_id in seen:
+            continue
+        seen.add(unit.unit_id)
+        if role == "callee":
+            call_lines = _call_lines(project_root, target, unit.name)
+        else:
+            call_lines = _call_lines(project_root, unit, target.name)
+        built.append(SliceMember(unit=unit, role=role, depth=1, call_lines=call_lines))
+    order = {role: index for index, role in enumerate(ROLE_ORDER)}
+    built.sort(key=lambda member: (order.get(member.role, 99), member.unit.unit_id))
+    return Slice(target=target, members=built, edges_walked=len(built))
 
 
 @dataclass(slots=True, frozen=True)
