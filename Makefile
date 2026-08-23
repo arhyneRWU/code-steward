@@ -94,6 +94,10 @@ packet: guard-venv ## Emit a reviewer packet (Q="task intent")
 bench: guard-venv ## Run the frozen retrieval benchmark
 	@$(PY) -m benchmarks.retrieval.run
 
+.PHONY: bench-matrix
+bench-matrix: guard-venv ## Run the retrieval validity matrix (PIPELINE=retrieve|search)
+	@$(PY) -m benchmarks.retrieval.matrix --pipeline $(or $(PIPELINE),retrieve)
+
 # --- worktrees --------------------------------------------------------
 
 .PHONY: guard-name
