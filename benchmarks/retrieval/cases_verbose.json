@@ -1,0 +1,128 @@
+[
+  {
+    "id": "exact-taxonomy-intent",
+    "category": "direct lexical intent",
+    "query": "a customer typed a common market name for a fish and we need the single official scientific name our master list agrees on",
+    "relevant": ["taxonomy.normalize"],
+    "traps": ["billing.normalize-price"],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 5
+  },
+  {
+    "id": "similar-name-different-behavior",
+    "category": "false lexical similarity",
+    "query": "two suppliers spell the same animal differently and everything downstream should see one agreed spelling before it compares those records",
+    "relevant": ["taxonomy.normalize"],
+    "traps": ["billing.normalize-price"],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 5
+  },
+  {
+    "id": "missing-docstring",
+    "category": "missing documentation",
+    "query": "a shipment arrived with the vendor's own printed sticker text and we must work out which animal in our master list it means",
+    "relevant": ["taxonomy.lookup-label"],
+    "traps": [],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 5
+  },
+  {
+    "id": "wrapper-shared-implementation",
+    "category": "wrapper and shared implementation",
+    "query": "while ingesting a vendor feed we need whatever the vendor called the animal turned into the spelling the rest of our system uses",
+    "relevant": ["imports.resolve-species", "taxonomy.normalize"],
+    "traps": [],
+    "redundancy_groups": [
+      ["imports.resolve-species", "api.resolve-species", "cli.resolve-species"]
+    ],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 6
+  },
+  {
+    "id": "independent-overlapping-implementations",
+    "category": "multiple implementations",
+    "query": "rows imported by an old tool have ragged capitalization and spacing in the animal name field and should be brought into one form",
+    "relevant": ["legacy.canonicalize-species", "taxonomy.normalize"],
+    "traps": ["billing.normalize-price"],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 6
+  },
+  {
+    "id": "conceptual-region",
+    "category": "conceptual region",
+    "query": "before accepting an order confirm somebody is actually buying it, that we hold enough stock, and that we know where to send it",
+    "relevant": ["orders.validation"],
+    "traps": [],
+    "input_types": [],
+    "return_type": "",
+    "limit": 6
+  },
+  {
+    "id": "vocabulary-mismatch",
+    "category": "query expansion candidate",
+    "query": "at startup the program should pick up whatever tunable values an operator wrote into a file on disk instead of built-in defaults",
+    "relevant": ["config.load"],
+    "traps": ["records.fetch"],
+    "input_types": ["str"],
+    "return_type": "dict[str, str]",
+    "limit": 5
+  },
+  {
+    "id": "synonym-save-settings",
+    "category": "query expansion candidate",
+    "query": "after somebody changes their choices on the options screen those choices need to be written somewhere so they survive a restart",
+    "relevant": ["preferences.persist"],
+    "traps": ["config.load"],
+    "input_types": [],
+    "return_type": "",
+    "limit": 5
+  },
+  {
+    "id": "semantic-logout",
+    "category": "query expansion candidate",
+    "query": "when somebody clicks sign out their current login has to stop working immediately so a stolen browser tab cannot keep acting as them",
+    "relevant": ["session.revoke"],
+    "traps": ["auth.verify"],
+    "input_types": [],
+    "return_type": "",
+    "limit": 5
+  },
+  {
+    "id": "related-not-equivalent-cache",
+    "category": "related but not equivalent concepts",
+    "query": "a value we kept around to avoid recomputing it has gone stale and needs dropping so the next request recalculates it",
+    "relevant": ["cache.evict"],
+    "traps": ["records.remove"],
+    "input_types": ["str"],
+    "return_type": "bool",
+    "limit": 5
+  },
+  {
+    "id": "repository-abbreviation",
+    "category": "abbreviation and vocabulary mismatch",
+    "query": "we want a listing of every source file living underneath a project checkout so we can decide which ones to analyze",
+    "relevant": ["repository.inventory"],
+    "traps": ["orders::validate_inventory"],
+    "input_types": ["str"],
+    "return_type": "list[str]",
+    "limit": 5
+  },
+  {
+    "id": "wrapper-redundancy",
+    "category": "candidate redundancy",
+    "query": "given a printed animal name from anywhere in the system we want the one shared helper that produces the spelling our master list uses",
+    "relevant": ["taxonomy.normalize"],
+    "traps": [],
+    "redundancy_groups": [
+      ["imports.resolve-species", "api.resolve-species", "cli.resolve-species"]
+    ],
+    "input_types": ["str"],
+    "return_type": "str",
+    "limit": 6
+  }
+]
