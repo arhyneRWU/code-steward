@@ -10,7 +10,7 @@ from pathlib import Path
 from . import __version__
 from .check import alarm_rate, changed_python_files, check_files
 from .config import resolve_excludes
-from .db import all_endpoints, all_units, connect, get_unit
+from .db import all_endpoints, all_hard_relationships, all_units, connect, get_unit
 from .indexer import is_excluded
 from .maintenance import rebuild_index, update_index_file
 from .packet import DUPLICATE_LIMIT, build_packet
@@ -21,6 +21,7 @@ from .similarity import (
     rank_with_floor,
     unit_shingles,
 )
+from .trace import build_slice, render_markdown, slice_to_dict
 
 
 def root_from(value: str | None) -> Path:
@@ -276,6 +277,33 @@ def cmd_similar(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_trace(args: argparse.Namespace) -> int:
+    """Emit one function plus the path around it as a bundle."""
+    root = root_from(args.root)
+    conn, units, _ = _load(root)
+    relationships = all_hard_relationships(conn)
+    conn.close()
+
+    sliced = build_slice(
+        args.unit,
+        units,
+        relationships,
+        callers_depth=args.callers,
+        callees_depth=args.callees,
+        include_tests=not args.no_tests,
+        limit=args.limit,
+    )
+    if sliced is None:
+        print(f"unknown unit: {args.unit}", file=sys.stderr)
+        return 2
+
+    if args.json:
+        print(json.dumps(slice_to_dict(sliced), indent=2))
+        return 0
+    print(render_markdown(root, sliced, source=not args.signatures), end="")
+    return 0
+
+
 def cmd_read(args: argparse.Namespace) -> int:
     root = root_from(args.root)
     conn, _, _ = _load(root)
@@ -442,6 +470,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     check.add_argument("--json", action="store_true")
     check.set_defaults(func=cmd_check)
+
+    trace = sub.add_parser(
+        "trace", help="bundle one function with its callers, callees, and tests"
+    )
+    trace.add_argument("unit", help="an indexed unit ID")
+    trace.add_argument("--callers", type=int, default=1, help="how far to walk up (default 1)")
+    trace.add_argument("--callees", type=int, default=1, help="how far to walk down (default 1)")
+    trace.add_argument("--limit", type=int, default=40, help="maximum units in the slice")
+    trace.add_argument("--no-tests", action="store_true", help="leave TESTED_BY units out")
+    trace.add_argument(
+        "--signatures", action="store_true", help="signatures instead of full bodies"
+    )
+    trace.add_argument("--json", action="store_true")
+    trace.set_defaults(func=cmd_trace)
 
     read = sub.add_parser("read", help="extract exactly one indexed code unit")
     read.add_argument("unit")

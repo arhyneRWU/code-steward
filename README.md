@@ -5,9 +5,12 @@
 Code Steward tells you when you have just written a function the repository already has. It indexes a repository into stable code-unit IDs, compares the functions you changed against them, and reports the overlaps — or asserts that there are none.
 
 ```bash
+code-steward trace "pkg.mod::fn"      # this function, its callers, callees, tests
 code-steward check                    # what does this branch duplicate?
 code-steward check --rate             # is this repo quiet enough to gate on?
 ```
+
+`trace` is the context-window half: one function plus the path around it as a self-contained bundle, for handing to a model that cannot hold the repository. Measured at **10.3x** compression against reading the files on Django, mean bundle 4,170 bytes — with the honest caveat that call resolution only reaches 54.7% of Django's functions. See [`docs/trace.md`](docs/trace.md).
 
 **Where this landed, and why.** The project set out to make the reuse decision *before* any code existed — from a task sentence. Measurement moved it twice, and the second move was the important one:
 
@@ -397,6 +400,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - FastAPI endpoint enrichment
 - compact candidate search and reviewer packets (`search`, `packet`, `read`, `map`)
 - `check`, the post-write duplication pass: compares changed functions against the index and asserts when nothing overlaps
+- `trace`, the function follower: one unit plus its callers, callees, and tests as a compact bundle
 - introduced-only reporting, so duplication that predates a change stays out of its review
 - a commit-replay benchmark that measures what the command would have said on real history
 - read-only reuse reviewer agent and the search-before-implement skill
