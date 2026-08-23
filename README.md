@@ -199,6 +199,8 @@ Their headline figure is a **65x** token reduction. Their own FAQ states the bas
 
 One methodological note, recorded because this project would want it recorded about itself: their multi-hop score moved from 0.545 to 0.909 by tuning two heuristics against the same eleven tasks within one session. That is the failure mode the [design principles](#design-principles) below exist to prevent, and it is why the similarity gold set here was frozen before it was scored and is listed under [deliberately not doing](#deliberately-not-doing) as a tuning target.
 
+The boundary a real integration would have to respect — what it may read, what happens when their graph is absent, stale, or wrong, and the rule that no benchmark number may move because their tool is installed — is specified in [`docs/companion.md`](docs/companion.md). It is a specification with nothing implemented behind it, and nothing in it has been measured.
+
 Read at commit `3887605`. Neither project is a dependency of the other.
 
 ## Code-unit addressing
