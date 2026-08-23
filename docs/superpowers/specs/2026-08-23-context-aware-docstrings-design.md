@@ -1,330 +1,274 @@
-# Context-aware docstrings: drift detection and assisted fill
+# Context-aware docstrings: what was measured, and what survives
 
-Status: design, not implemented. Written 2026-08-23.
+Status: the design this file originally carried was **measured and
+abandoned** the same day it was written. What remains is a much
+smaller build. Both halves are recorded here, because knowing why the
+larger idea died is what stops it being proposed again.
 
-## Summary
+## The idea
 
-Two commands under `code-steward docs`, sharing one bundle format and
-built in this order:
+Use the `trace` follower to bundle a function with its callers,
+callees and tests, and use that bundle two ways:
 
-1. `docs drift` -- read-only. Nominate documented functions whose
-   docstring may no longer describe the code, emit a `trace` slice for
-   each, and let an agent adjudicate.
-2. `docs fill` -- read-only. Find undocumented functions, emit a
-   `trace` slice for each in dependency order, and propose docstrings.
-   Prints proposals; never edits source.
+1. **`docs drift`** -- find documented functions whose docstring no
+   longer matches the code, and have an agent adjudicate.
+2. **`docs fill`** -- find undocumented functions and have an agent
+   write docstrings that are aware of how the function is actually
+   called.
 
-Drift is built first because it is measurable and because it becomes
-the only automated check `fill` has.
+The original design specified drift first, on the reasoning that it
+was the measurable half and would serve as fill's only automated
+check. **That ordering was backwards, and drift does not survive at
+all.**
 
-## Why this and not an off-the-shelf tool
+## What killed drift
 
-`pydoclint`, `darglint`, and Ruff's preview `DOC` rules already compare
-a docstring's params, returns, and raises against the function's own
-signature and body. That work is done and this project should not
-redo it. `docs drift` defers local checking to those tools explicitly,
-and the documentation must say so.
+Drift needed a cheap way to nominate suspects before spending an
+agent on them. Three signals were specified. None survived contact
+with measurement, and the measurement was cheap enough that it should
+have happened before the design was written.
 
-What none of them do is adjudicate a docstring against the function's
-callers, callees, and tests. That requires a call graph, which this
-project already builds, and a judgement step, which no linter has.
+### Signal 1 -- docstring names an identifier absent from the body
 
-The precedent is `jscpd` placing second on this project's own
-similarity benchmark. An off-the-shelf tool that already solves the
-problem is a reason not to build, and checking for one first is now
-part of the process.
+Predicted in the original design to be "the highest-precision signal
+available". Measured on this repository's own `src/`, 76 documented
+functions:
 
-## What is already available
+| Body model | Nominated | True positives |
+| --- | --- | --- |
+| Generous (names, attributes, params, nested defs, string tokens) | 0 | 0 |
+| Strict (identifiers only) | 5 | **0** |
 
-`CodeUnit` stores `doc_text`, `signature`, `parameters`, `returns`,
-and `body_hash`, so "which functions are undocumented" is a query
-against the existing index rather than new parsing.
+On third-party corpora, with the strict model:
 
-`trace.build_slice` already assembles target, callers with call sites,
-callees, and tests, and `trace.render_markdown` already renders it.
-Both commands consume that directly.
+| Package | Documented fns | Nominated | Rate |
+| --- | --- | --- | --- |
+| `_pytest` | 794 | 162 | 20.4% |
+| `packaging` | 246 | 79 | 32.1% |
+| `requests` | 163 | 41 | 25.2% |
+| `urllib3` | 163 | 39 | 23.9% |
+| Django (backtick-only) | 3,046 | 122 | 4.0% |
 
-`check.changed_python_files` already resolves a changed-file set from
-a git ref. Both commands reuse it.
+Hand-read: 28 of 28 urllib3 nominations are false positives, 24 of 24
+Django, 5 of 5 here.
 
-`pyproject.toml` enables pydocstyle formatting rules and deliberately
-defers the D1xx missing-docstring rules; see `docs/code-quality.md`.
-`docs fill` is therefore opt-in tooling, not enforcement of a policy
-this repository has adopted.
+**The signal has no operating point.** Loosen the body model and it
+finds nothing; tighten it and it finds only false positives. There is
+no threshold between those states to tune toward.
 
-## Scope and write policy
+The failure families are structural, not tunable:
 
-Both subcommands default to **changed files**, resolved from `--base`,
-exactly as `check` does. `--all` widens to the repository.
+- **Sphinx cross-reference roles.** ``:meth:`start_connect` `` is
+  *by definition* a reference to code elsewhere.
+- **Type names in prose.** "Returns a `QuerySet`" -- named because it
+  is the return type, absent because a factory built it.
+- **`.. versionchanged::` and deprecation notes.** These name removed
+  or renamed identifiers, so absence from the body is guaranteed by
+  construction.
+- **Deliberate "see also" pointers** to sibling functions.
+- **Settings and attribute names** owned by another object.
+- **Private-name convention**: docstring says `start_connect`, body
+  says `self._start_connect`.
 
-Changed-file scope is a deliberate default, not a workaround:
+Note what that list is. The signal fires on docstrings that name the
+types they return, the settings they read, and the siblings they
+mirror. `"""Return the name."""` never trips it. **The signal is
+inversely correlated with docstring quality.**
 
-- `git blame` over a line range is affordable per changed file and
-  expensive across a whole repository.
-- Drift is introduced by edits, so a changed-file set is where it
-  lives.
-- It makes `docs` composable with `check` in one pre-commit pass,
-  which is issue #55 item 1, the path-level pass that does not exist
-  yet.
+It is also published research -- Kabir et al., *Detecting outdated
+code element references in software repository documentation*, EMSE
+2023 -- so it was neither novel nor untested.
 
-**Neither subcommand writes to source.** `fill` prints proposed
-docstrings and a unified diff to stdout; applying them is the agent's
-or the developer's action.
+### Signal 2 -- stale by git blame
 
-The reasoning: a generated docstring is the one output of this project
-that cannot be scored, because ground truth for the correct docstring
-is exactly what a function without one lacks. Writing unverifiable
-generated prose into source is how a tool with a measurement culture
-loses it.
+Already shipped. `docvet` (PyPI, v1.15.1, 28 releases) has a
+`freshness` check whose `stale-drift` rule compares git blame
+timestamps on code lines against docstring lines, with a configurable
+threshold. `docvet freshness --mode drift` is signal 2.
 
-The counter-argument is recorded rather than dismissed: a `--write`
-flag is what makes fill usable across hundreds of functions, and
-requiring a manual apply step is friction that may mean nobody runs
-it. The decision is to ship read-only, use it on a real repository,
-and revisit `--write` once the proposals have been read in anger.
+`docvet` also defaults to git-diff scope, which the original design
+presented as a deliberate choice of its own, and ships a
+`trivial-docstring` rule, which was the design's "deliberately
+skipped" section.
 
-## Nomination
+This is the `jscpd` precedent exactly: an off-the-shelf tool that
+already does the thing. The original design has a section titled "Why
+this and not an off-the-shelf tool" that checked pydoclint, darglint
+and Ruff, and missed the one tool that *is* the feature.
 
-Nomination is **local and cheap**. The slice is used at adjudication,
-not at nomination. This is a smaller claim than "slice-level
-detection" and is stated here so it is not overstated later: two of
-the three surviving signals need no graph at all. What no linter does
-is the adjudication step that follows.
-
-### Signal 1 -- identifier named in the docstring is absent from the body
-
-The docstring names `_resolve_target` and nothing in the normalised
-body mentions it. Pure text against the unparsed body: no graph, no
-git, no dependency on call resolution.
-
-Expected to be the highest-precision signal available, and it is also
-reused as `fill`'s hallucination metric.
-
-### Signal 2 -- stale by blame
-
-The newest commit touching the function's body lines is later than the
-newest commit touching its docstring lines, via `git blame -w -M`
-(ignore whitespace, follow moves).
-
-This is the volume driver and the noisiest signal. Reformatting,
-renames, and mass refactors all move body lines without changing
-meaning, and a body edited more recently than its docstring describes
-a great deal of perfectly accurate documentation.
-
-**This is the signal most likely to fail the kill criterion below.**
-If it does, `docs drift` becomes a smaller and sharper tool, and that
-is an acceptable outcome.
+One useful finding survives the deletion, recorded for whoever
+revisits this: **per-line-range blame is the wrong primitive.** One
+whole-file `git blame -w -M --porcelain`, sliced in Python, is
+cheaper than three line-range blames of the same file, because
+blame's cost is walking the file's history and `-L` does not shorten
+that. Measured here: 19 whole-file blames took 0.57 s against 4.18 s
+for 152 per-range blames. `-M` itself is free; `-C` costs ~30%.
 
 ### Signal 3 -- visibility claim contradicted by callers
 
-The docstring says internal, private, or do not call directly, and
-there are resolved callers outside the module. Genuinely graph-based,
-high precision, low volume. Expected to fire a handful of times per
-repository.
+No volume. Docstrings in this repository making a privacy claim
+(`internal`, `private`, `do not call`, `not part of the public`):
+**0 of 281**. Elsewhere: `requests` 1.2%, `packaging` 2.4%,
+`_pytest` 3.9%, `urllib3` 0%.
 
-### Deliberately not built: documented raise absent from the callee tree
+That small share then has to survive edge resolution. Of 3,485
+`CALLS` edges in this repository, 820 resolve to a unit (**23.5%**),
+and only 252 of those are cross-file. Expected yield is 0-2
+nominations per repository -- not a stratum, and not a subsystem.
 
-Call resolution is at 54.7%. At that rate, "nothing in the callee tree
-raises `ValueError`" is not evidence that nothing raises `ValueError`.
-Shipping this signal now would manufacture false positives and
-attribute them to the docstring rather than to the resolver.
+### The kill criterion was itself broken
 
-Revisit after issue #55 item 3 raises call resolution.
+The original design pre-registered: *precision at least twice the
+control base rate, Fisher's exact p < 0.05, per signal.* That
+conjoins a point-estimate gate at exactly the true value with a test
+whose null is RR = 1. Simulated probability that a signal which
+genuinely doubles the base rate survives:
 
-## Adjudication
+| True base rate | n=33/arm | n=100 | n=300 | n=800 |
+| --- | --- | --- | --- | --- |
+| 0.05 | 0.023 | 0.199 | 0.527 | 0.522 |
+| 0.10 | 0.112 | 0.434 | 0.518 | 0.505 |
+| 0.20 | 0.315 | 0.526 | 0.510 | 0.516 |
+| 0.33 | 0.546 | 0.518 | 0.510 | 0.514 |
 
-Each nominated function is emitted as a `trace` bundle -- target
-source, callers with call sites, callees, tests -- and an agent
-returns `DRIFT`, `CLEAR`, or `UNSURE`.
+It asymptotes at ~0.51 at any n. This is not an underpowered design
+that a larger labelling budget would rescue: 1,600 labels buy the
+same coin flip as 66. Had the study run, a null would have been
+indistinguishable from a real 2x signal, and nothing in the procedure
+would have revealed that.
 
-`CLEAR` and `UNSURE` are ordinary outcomes and must be worded that
-way. `NO_CANDIDATE` in the reviewer agent was written as "a report
-that you did not find something, not a finding that nothing exists",
-and that hedge is part of why the reviewer was talked into a positive
-verdict on a third of negative cases. The declining verdicts here get
-plain wording.
+**If a criterion of this shape is ever pre-registered again**, state
+it as a one-sided 95% CI lower bound on the risk ratio exceeding the
+threshold, and simulate its power before committing to it.
 
-Code Steward does not call a model. It assembles the bundle; the agent
-judges. This follows the measured result in
-`benchmarks/verdict/bundle_score.py`: a cheap model handed an
-assembled bundle scored 0.917 with 30/30 on negatives, while a larger
-reviewer handed a ranked packet false-positived on a third.
+Two further defects, recorded so they are not rediscovered:
 
-## Measurement
+- **Signals 1 and 3 cannot be blinded.** Their nomination condition
+  is visible in the case the labeller reads, so "precision" would
+  measure the rate at which a labeller applies the signal's own rule.
+- **The synthetic control exercises no signal.** A body mutation adds
+  and removes no docstring identifiers, and either never moves blame
+  (uncommitted) or always moves it (committed). It is a positive
+  control for *adjudication*, not nomination.
 
-Two numbers, and the second is the one that matters.
+## What survives
 
-### Nomination rate -- unlabelled, cheap
+**`fill` is the buildable half**, which is the reverse of the
+original ordering. Drift needed a cheap nomination signal and has
+none. Fill needs one too -- and has a perfectly reliable one:
+`doc_text == ""`. A function either has a docstring or it does not.
 
-`docs drift --rate` reports nomination rate per signal across the
-pinned public corpora, before adjudication. Follows `check --rate`. If
-a signal nominates most of a mature repository, that is reported
-plainly and the tool is a report rather than a gate, in those words.
+And it needs no new subsystem.
 
-### Precision against a control -- labelled, expensive
+### The build
 
-A nominated function labelled `DRIFT` proves nothing alone, because
-the base rate is unknown. If a third of all documented functions are
-drifted, a signal with 33% precision is worth zero.
+A selector on the command that already exists:
 
-Procedure:
+    code-steward trace --undocumented [--base REF]
 
-- Sample 100 nominated functions, stratified across the three
-  signals, capped per repository so one corpus cannot dominate.
-- Sample 100 un-nominated documented functions at random from the
-  same repositories.
-- Shuffle both sets together, strip every trace of which set a case
-  came from, and label blind: `DRIFT` / `CLEAR` / `UNSURE`. Same
-  format, same labeller, no way to distinguish a nomination from a
-  control.
+Emit one `trace` bundle per undocumented function in scope. The agent
+already in the loop writes the docstring. Code Steward assembles and
+does not judge, which is the only architecture this project has
+measured -- a cheap model handed an assembled bundle scored 0.917
+with 30/30 on negatives, against a larger reviewer handed a ranked
+packet false-positiving on a third (`benchmarks/verdict/bundle_score.py`).
 
-### Pre-registered kill criterion
+No `docdrift.py`, no `docfill.py`, no `gitmeta.line_range_commits()`,
+no model client in the dependency tree, no API key, and nothing
+leaves the machine that was not already going to the agent.
 
-Fixed before the measurement runs:
+### Why not adopt an existing generator
 
-> A signal survives only if its precision is at least **twice** the
-> base rate measured in the control, with the difference significant
-> by Fisher's exact test at p < 0.05.
+`wright` (PyPI `wright`, `surajs1999/WrightAI`) does caller- and
+callee-aware LLM docstring generation with a call-graph ordering. It
+is real prior art on the *idea* and is not adoptable here:
 
-Per signal, not pooled. Pooling would let signal 1 carry signal 2.
+- **AGPL-3.0.** Code Steward is MIT. Depending on it or customising
+  it is a derivative work and would force relicensing.
+- **It is the client half of a hosted service.** Its dependencies
+  include `workos`, `supabase`, `brevo-python`, `sentry-sdk`,
+  `python-jose`, `slowapi`, `fastapi` and `uvicorn`. Run against a
+  private repository, source leaves the machine through several
+  channels, one of which fires on crashes the user never sees.
+- **One release, 0.1.0, 0 stars, no published numbers.** Evidence
+  that someone tried the idea; not evidence that it works.
 
-Any signal that fails is dropped, and the negative result is written
-into `docs/doc-drift.md`, as the p = 0.549 reuse-evidence result was.
+It is prior art on novelty, not on quality. Those are separate claims
+and should not be conflated.
 
-### Synthetic positive control -- separate, and not the headline
+### What the bundle must fix first
 
-Mutate documented functions semantically -- invert a condition, change
-a return value, drop a raise -- and check whether the pipeline catches
-it. This manufactures labelled positives at no cost.
+Three defects found while reviewing the design against the code.
+These block `--undocumented` and are the actual work:
 
-Synthetic drift is not distributed like real drift, so this is a
-sanity floor: failing it is damning, passing it proves little. It does
-not appear in headline numbers.
+1. **`render_markdown` emits `purpose`, not `doc_text`.**
+   `indexer._purpose` falls back to the function name with
+   underscores stripped, so an undocumented callee renders with a
+   pseudo-docstring like "resolve target". An agent cannot tell that
+   from a real one-line summary. Either `--undocumented` needs its
+   own renderer or `render_markdown` needs a flag.
+2. **The index is stale on changed files.** `check_files` already
+   re-parses changed paths rather than trusting the DB, because
+   indexed line numbers are from a prior revision. `build_slice`
+   looks the target up in `all_units` and returns `None` if absent --
+   so a function *added* in the change, the certain case for fill,
+   cannot be sliced at all. The spec must say whether `--undocumented`
+   requires a fresh `update` or re-indexes in memory.
+3. **"What callers do with the result" is not stored.**
+   `evidence["lines"]` records `node.lineno` with no `col_offset` and
+   no parent reference, so whether a caller subscripts, awaits or
+   discards the result is not derivable. Either re-parse caller files
+   or drop the claim.
 
-### Adjudication scored separately from nomination
+### What is dropped from the original fill design
 
-Reuses the shape of `benchmarks/verdict/bundle_score.py`: cheap model,
-blind labels, invented findings counted. Nomination recall and agent
-precision are different failures with different fixes. Conflating
-retrieval with judgement is how this project misdiagnosed itself
-twice.
+**Topological ordering by callee.** Measured: 82 undocumented
+functions in `src/code_steward` form **43 connected components with
+34 singletons** over 60 resolved edges. 41% of the work has no
+ordering constraint at all, and most components cover two or three
+functions. The claim that "by the time a caller's docstring is
+written, everything it invokes is already documented" is false at
+this resolution. A stable file-and-line order costs nothing and
+produces the same result for 41% of nodes.
 
-### Held out by construction
+This was the most elaborate mechanism in the original design and the
+one it admitted could not be scored.
 
-Sampling uses the existing hash-order slicing in
-`benchmarks/similarity/corpus.py`, so the labelled set never overlaps
-whatever is tuned against. Once labelled, it is frozen and is never
-tuned against.
+**Trivial-function skipping** stays, but reusing what exists rather
+than inventing a notion: skip a unit if `indexer._accessor_role` is
+non-empty, the name is a dunder, or the normalised body tokenises
+below `similarity.MIN_TOKENS`.
 
-## Fill
+## Numbers, and which corpus each belongs to
 
-### Dependency order
+Recorded because the original design quoted one of these without its
+corpus and the review then conflated two different metrics.
 
-`fill` runs in dependency order, not file order: callees first, then
-the target, then callers. Topological sort over the resolved callee
-graph, cycles broken arbitrarily.
+| Quantity | Value | Scope |
+| --- | --- | --- |
+| Functions with >= 1 resolved neighbour | 54.7% | Django |
+| Functions with >= 1 resolved neighbour | 90.4% | Code Steward |
+| `CALLS` edges resolving to a unit | 23.5% | Code Steward |
+| Signal 1 precision | 0 / 57 hand-read | Code Steward, Django, urllib3 |
+| Privacy-claiming docstrings | 0 / 281 | Code Steward |
 
-By the time a caller's docstring is written, everything it invokes is
-already documented, so the docstring describes composed behaviour
-rather than guessing at it. This is what makes the pass "beginning to
-end" rather than a loop over undocumented functions.
+**These are different measurements.** "Half of Django's functions get
+a non-empty slice" and "a quarter of individual call edges resolve"
+are both true. Claims about a *path* being complete want the edge
+number; claims about a slice being non-empty want the function
+number.
 
-### Return contracts without annotations
+## What would have to be true to revisit drift
 
-Undocumented functions are usually also unannotated, so
-`CodeUnit.returns` is empty exactly when it is needed. The bundle
-therefore carries two things the AST supplies without inference:
+- An off-the-shelf pass supplies the findings, so nomination is not
+  ours to solve. `docvet freshness --format json` is the obvious
+  source.
+- The contribution is then **adjudication only**: hand an agent the
+  slice and get `DRIFT` / `CLEAR` / `UNSURE`. That is the one slot no
+  existing tool occupies.
+- It is measured as a paired test on one variable -- adjudicate the
+  same findings with and without the slice -- which is this project's
+  standard and something the original design could not do, because it
+  measured nomination and adjudication together against a base rate.
 
-- the shape of every `return` statement in the body;
-- what each caller does with the result -- subscripts it, awaits it,
-  truth-tests it, discards it.
-
-A caller that writes `if result is None` says more about the return
-contract than an annotation would.
-
-### The closed loop
-
-After `fill` proposes a docstring, `docs drift` runs against it.
-Signal 1 catches a hallucinated delegation directly.
-
-Acceptance criteria for `fill`:
-
-- proposals pass `docs drift` clean;
-- a blind spot-check of 30 proposals;
-- **hallucination metric**: the proportion of generated docstrings
-  naming an identifier absent from the slice. This should be zero, and
-  if it is not, the number is published.
-
-### Deliberately skipped
-
-Trivial functions -- one-line returns, properties, dunders. This
-repository defers D1xx on purpose. Blanket coverage that emits
-"Return the name." is noise that makes real docstrings harder to
-find. Undocumented and trivial is a legitimate state.
-
-## Components
-
-| Module | Responsibility |
-| --- | --- |
-| `src/code_steward/docdrift.py` | The three signals, a `DocFinding` type, nomination and rate. Consumes `trace.build_slice`. |
-| `src/code_steward/docfill.py` | Undocumented selection, topological ordering, bundle emission. |
-| `src/code_steward/gitmeta.py` | Gains `line_range_commits()` -- `git blame -w -M` over a line range. Its only new dependency. |
-| `src/code_steward/cli.py` | `cmd_docs`, with `drift` and `fill` subcommands. Reuses `check.changed_python_files`. |
-| `benchmarks/docs/` | `nominate_rate.py`, `label_sample.py`, `drift_score.py`, `fill_score.py`. |
-| `docs/doc-drift.md` | The public page, including whichever signals die. |
-
-## Data flow
-
-    changed files (--base)  ->  index lookup  ->  documented units
-      -> signal 1 / 2 / 3    ->  nominated units
-      -> trace.build_slice   ->  bundle per unit
-      -> agent               ->  DRIFT / CLEAR / UNSURE
-
-    changed files (--base)  ->  index lookup  ->  undocumented units
-      -> skip trivial        ->  topological sort by callee edges
-      -> trace.build_slice   ->  bundle per unit, in order
-      -> agent               ->  proposed docstring
-      -> docs drift          ->  hallucination check
-
-## Error handling
-
-- No git repository, or `--base` unresolvable: signal 2 is skipped
-  with a stated reason, and signals 1 and 3 still run. Absence of git
-  degrades the tool; it must not fail it.
-- Unparseable docstring section: the docstring is treated as prose.
-  Signals must not require a Google or NumPy section layout.
-- Empty slice: `trace` already renders the message that unresolved
-  dynamic dispatch may mean incomplete rather than isolated. That
-  message must reach the adjudicating agent, not be stripped.
-- A unit whose file no longer exists on disk: skipped, counted, and
-  reported in the summary rather than silently dropped.
-
-## Testing
-
-- Per-signal unit tests over fixture trees, following the existing
-  pattern.
-- Blame tests need a real temporary git repository each, which is
-  slower than the rest of the suite; they are marked and kept few.
-- **Assert the finding, never that the command ran.** Both the
-  introduced-only filter and the shingle cache passed their tests
-  while doing nothing, because those tests checked that output
-  appeared rather than what was in it.
-
-## Risks
-
-- `docs drift` may reduce to one good signal. The kill criterion is
-  the answer, and a one-signal tool that is right is preferable to a
-  three-signal tool that is not.
-- `docs fill` may produce docstrings that read plausibly and are
-  subtly wrong in ways no automated check catches. Staying read-only
-  and emitting proposals limits the damage; it does not eliminate it.
-- Neither answer is airtight, and neither should be described as one.
-
-## Relationship to issue #55
-
-This lands inside item 1, the path-level pass, rather than beside it:
-`check` and `docs` share a changed-file scope and a bundle format, and
-composing them is the point.
-
-It is blocked in part by item 3, call resolution, which is why the
-documented-raise signal is deferred.
+That is a small, honest experiment. It is not this document.
