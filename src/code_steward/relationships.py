@@ -11,6 +11,7 @@ from .models import CodeUnit, HardRelationship
 
 PYTHON_AST_PROVENANCE = "python-ast"
 _CALLER_KINDS = {"function", "async_function", "class"}
+_METHOD_KINDS = {"function", "async_function"}
 
 
 def _module_key(path: str) -> str:
@@ -81,6 +82,21 @@ def _top_level_symbols(units: list[CodeUnit]) -> dict[tuple[str, str], str]:
     return symbols
 
 
+def _same_class_methods(units: list[CodeUnit]) -> dict[tuple[str, str, str], str]:
+    classes = {(_module_key(unit.path), unit.qualname) for unit in units if unit.kind == "class"}
+    candidates: dict[tuple[str, str, str], list[str]] = defaultdict(list)
+    for unit in units:
+        if unit.kind not in _METHOD_KINDS or "." not in unit.qualname:
+            continue
+        class_qualname, _, _ = unit.qualname.rpartition(".")
+        module = _module_key(unit.path)
+        if (module, class_qualname) not in classes:
+            continue
+        candidates[(module, class_qualname, unit.name)].append(unit.unit_id)
+
+    return {key: unit_ids[0] for key, unit_ids in candidates.items() if len(unit_ids) == 1}
+
+
 def _caller_for_line(units: list[CodeUnit], lineno: int) -> CodeUnit | None:
     candidates = [
         unit
@@ -95,13 +111,41 @@ def _caller_for_line(units: list[CodeUnit], lineno: int) -> CodeUnit | None:
     )
 
 
+def _same_class_self_target(
+    func: ast.AST,
+    caller: CodeUnit,
+    current_module: str,
+    same_class_methods: dict[tuple[str, str, str], str],
+) -> str | None:
+    if caller.kind not in _METHOD_KINDS or "." not in caller.qualname:
+        return None
+
+    parts = _attribute_parts(func)
+    if len(parts) != 2 or parts[0] != "self":
+        return None
+
+    class_qualname, _, _ = caller.qualname.rpartition(".")
+    return same_class_methods.get((current_module, class_qualname, parts[1]))
+
+
 def _resolved_unit(
     func: ast.AST,
+    caller: CodeUnit,
     current_module: str,
     top_level_symbols: dict[tuple[str, str], str],
+    same_class_methods: dict[tuple[str, str, str], str],
     module_aliases: dict[str, str],
     symbol_aliases: dict[str, tuple[str, str]],
 ) -> tuple[str | None, str]:
+    same_class_target = _same_class_self_target(
+        func,
+        caller,
+        current_module,
+        same_class_methods,
+    )
+    if same_class_target is not None:
+        return same_class_target, "same-class-self"
+
     if isinstance(func, ast.Name):
         local = top_level_symbols.get((current_module, func.id))
         if local is not None:
@@ -151,6 +195,7 @@ def extract_python_call_relationships(
         units_by_path[unit.path].append(unit)
 
     top_level_symbols = _top_level_symbols(units)
+    same_class_methods = _same_class_methods(units)
     aggregated: dict[
         tuple[str, str, str],
         dict[str, Any],
@@ -180,8 +225,10 @@ def extract_python_call_relationships(
             expression = _expression(node.func)
             target_unit_id, resolution = _resolved_unit(
                 node.func,
+                caller,
                 current_module,
                 top_level_symbols,
+                same_class_methods,
                 module_aliases,
                 symbol_aliases,
             )
