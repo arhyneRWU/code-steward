@@ -263,3 +263,17 @@ bench-trace: guard-venv ## Measure trace bundle compression (ROOT=, LABEL= requi
 	@$(PY) -m benchmarks.trace_bundle \
 	  --root $(ROOT) --label $(LABEL) --prefix "$(PREFIX)" \
 	  --output benchmarks/trace_bundle_$(LABEL).json
+
+.PHONY: bench-bundle-prompts
+bench-bundle-prompts: guard-venv ## Build small-model DRY bundles (CHECKOUTS=, OUT= required)
+	@test -n "$(OUT)" || { echo 'usage: make bench-bundle-prompts CHECKOUTS=<dir> OUT=<file>'; exit 2; }
+	@$(PY) -m benchmarks.verdict.bundle_prompts \
+	  --checkouts $(CHECKOUTS) --output $(OUT)
+
+.PHONY: bench-bundle-score
+bench-bundle-score: guard-venv ## Score small-model DRY judgement (PROMPTS=, ANSWERS=, MODEL=)
+	@test -n "$(PROMPTS)" && test -n "$(ANSWERS)" || \
+	  { echo 'usage: make bench-bundle-score PROMPTS=<file> ANSWERS=<dir> MODEL=<name>'; exit 2; }
+	@$(PY) -m benchmarks.verdict.bundle_score \
+	  --prompts $(PROMPTS) --answers $(ANSWERS) --model $(or $(MODEL),unknown) \
+	  --output benchmarks/verdict/small_model_dry.json

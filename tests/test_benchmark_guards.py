@@ -200,6 +200,8 @@ def test_every_benchmark_module_imports():
         "benchmarks.similarity.alarm",
         "benchmarks.check_history",
         "benchmarks.trace_bundle",
+        "benchmarks.verdict.bundle_prompts",
+        "benchmarks.verdict.bundle_score",
         "benchmarks.verdict.draft_prompts",
         "benchmarks.verdict.draft_score",
         "benchmarks.verdict.run",

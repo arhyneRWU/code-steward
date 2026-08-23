@@ -12,6 +12,8 @@ code-steward check --rate             # is this repo quiet enough to gate on?
 
 `trace` is the context-window half: one function plus the path around it as a self-contained bundle, for handing to a model that cannot hold the repository. Measured at **10.3x** compression against reading the files on Django, mean bundle 4,170 bytes — with the honest caveat that call resolution only reaches 54.7% of Django's functions. See [`docs/trace.md`](docs/trace.md).
 
+**And a small model can use it.** Given a 5.9 KB bundle of eight functions and asked which two duplicate each other, Haiku 4.5 scores **0.917** against blind labels — 25/30 on bundles containing a labelled duplicate, **30/30** on bundles containing none. All five misses were declines; it never named a wrong pair and never invented one. That is the first direct evidence that the pipeline this project was built for works. See [`docs/small-model.md`](docs/small-model.md).
+
 **Where this landed, and why.** The project set out to make the reuse decision *before* any code existed — from a task sentence. Measurement moved it twice, and the second move was the important one:
 
 | What is compared | Duplicate found |
@@ -42,11 +44,13 @@ Code Steward is being designed around two forms of stewardship:
 1. **Steward the context window.** Keep broad repository exploration, graph traversal, history inspection, and duplicate analysis out of the main coding context whenever they can be handled deterministically or inside a disposable subagent context.
 2. **Steward the codebase.** Search before implementation, reuse existing behavior where appropriate, understand the impact of changes, and avoid unnecessary duplication or parallel abstractions. The duplication half of this is now measured; see [Reuse similarity](#reuse-similarity).
 
-A third has been added by measurement rather than design:
+A third and a fourth have been added by measurement rather than design:
 
 3. **Be willing to say no.** On a third of cases where the right answer was to write the function, a reviewer handed the packet was talked into reusing something instead — because retrieval returned its eight best candidates whether or not any fitted. `similar` now applies a **relevance floor of 0.27**, chosen on a held-out cross-corpus null distribution as the smallest value holding the false-positive rate at or under 1%. It keeps 167 of the 170 labelled duplicates. An empty result is now something the tool can assert rather than a search that failed. See [`docs/floor.md`](docs/floor.md).
 
    The packet ranker is still unfloored: its score is on a different scale and no null distribution has been measured for it. Inventing a threshold for an uncharacterised scale would be the same mistake in a new place.
+
+4. **Assemble, don't rank.** The two measurements that most resemble each other gave opposite answers: a large reviewer handed a *ranked packet* was talked into a duplicate that was not there on 33% of clean cases; a cheap model handed a *complete bundle* did it on 0 of 30. Ranking is itself a suggestion — being told these are the best candidates makes picking one feel like finishing the job. Months of this project went into ranking better. On this evidence, assembling a complete-enough slice matters more, and is cheaper to build.
 
 The first two reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently not true — the packets are proportionally noisier than plain keyword search, but much cheaper per unit of noise. See [Measured position](#measured-position).
 
@@ -401,6 +405,7 @@ The architecture is intentionally broader than FastAPI so that support for other
 - compact candidate search and reviewer packets (`search`, `packet`, `read`, `map`)
 - `check`, the post-write duplication pass: compares changed functions against the index and asserts when nothing overlaps
 - `trace`, the function follower: one unit plus its callers, callees, and tests as a compact bundle
+- a small-model acceptance test: Haiku 4.5 scoring 0.917 on DRY judgement from a bundle, against blind labels
 - introduced-only reporting, so duplication that predates a change stays out of its review
 - a commit-replay benchmark that measures what the command would have said on real history
 - read-only reuse reviewer agent and the search-before-implement skill

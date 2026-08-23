@@ -1,0 +1,38 @@
+{
+  "bundles": 60,
+  "counts": {
+    "negative_correct": 30,
+    "negatives": 30,
+    "positive_correct": 25,
+    "positive_missed": 5,
+    "positives": 30
+  },
+  "ground_truth": "blind pair labels, not this project's similarity scores",
+  "misses": [
+    {
+      "bundle": "pos-48878df7ea5f2826",
+      "outcome": "declined"
+    },
+    {
+      "bundle": "pos-1a34ddc8cefdf2c5",
+      "outcome": "declined"
+    },
+    {
+      "bundle": "pos-937fc5fbf5cd18ac",
+      "outcome": "declined"
+    },
+    {
+      "bundle": "pos-4ead88057e36e4cf",
+      "outcome": "declined"
+    },
+    {
+      "bundle": "pos-4b4c70a79ee707e5",
+      "outcome": "declined"
+    }
+  ],
+  "model": "haiku-4.5",
+  "negative_accuracy": 1.0,
+  "overall_accuracy": 0.917,
+  "positive_accuracy": 0.833,
+  "schema_version": 1
+}

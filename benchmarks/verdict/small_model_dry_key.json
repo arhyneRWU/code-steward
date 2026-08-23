@@ -1,0 +1,457 @@
+{
+  "answer_key": [
+    {
+      "bundle_id": "pos-f624396ad65f2985",
+      "corpus": "home-assistant",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-3f8e6452ba4f42c3",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-3983dd5244e319c3",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "D"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-aebc3243bd0efdea",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-f12e5843e71238e0",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-2f0740fb88783620",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "D"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-5c1f4cd02634334b",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-7705577bfd5a7edf",
+      "corpus": "home-assistant",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-4793cdf8728ba114",
+      "corpus": "home-assistant",
+      "expected": [
+        "E",
+        "F"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-d1d3911946010770",
+      "corpus": "home-assistant",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "neg-home-assistant-0",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-1",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-2",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-3",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-4",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-5",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-6",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-7",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-8",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-home-assistant-9",
+      "corpus": "home-assistant",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "pos-9412cf8e8cf174a9",
+      "corpus": "airflow",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-82aeed352105f26d",
+      "corpus": "airflow",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-4f5f9e3887d01fe0",
+      "corpus": "airflow",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-48878df7ea5f2826",
+      "corpus": "airflow",
+      "expected": [
+        "C",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-e352ab85bfcddc32",
+      "corpus": "airflow",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-a152750cc07cb211",
+      "corpus": "airflow",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-f780586097f43bb4",
+      "corpus": "airflow",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-543581326d2b6e5f",
+      "corpus": "airflow",
+      "expected": [
+        "A",
+        "D"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-8242b4b528c7d6fa",
+      "corpus": "airflow",
+      "expected": [
+        "D",
+        "E"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-1a34ddc8cefdf2c5",
+      "corpus": "airflow",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "neg-airflow-0",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-1",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-2",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-3",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-4",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-5",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-6",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-7",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-8",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-airflow-9",
+      "corpus": "airflow",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "pos-a2611fd486ea35cd",
+      "corpus": "django",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-a9b841c87051a19c",
+      "corpus": "django",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-937fc5fbf5cd18ac",
+      "corpus": "django",
+      "expected": [
+        "A",
+        "C"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-6bd45a8c903668cc",
+      "corpus": "django",
+      "expected": [
+        "C",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-4c4659a85688f7e6",
+      "corpus": "django",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-4ead88057e36e4cf",
+      "corpus": "django",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-f46a72feafe5df34",
+      "corpus": "django",
+      "expected": [
+        "A",
+        "B"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-4b4c70a79ee707e5",
+      "corpus": "django",
+      "expected": [
+        "A",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-f22fd773ec3209d6",
+      "corpus": "django",
+      "expected": [
+        "C",
+        "D"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "pos-7ec78917d6d3d0d4",
+      "corpus": "django",
+      "expected": [
+        "G",
+        "H"
+      ],
+      "kind": "duplicate-present"
+    },
+    {
+      "bundle_id": "neg-django-0",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-1",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-2",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-3",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-4",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-5",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-6",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-7",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-8",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    },
+    {
+      "bundle_id": "neg-django-9",
+      "corpus": "django",
+      "expected": [],
+      "kind": "no-duplicate"
+    }
+  ],
+  "bundle_size": 8,
+  "instructions": "Each bundle below contains eight Python functions from one codebase, labelled A through H.\n\nFor each bundle, decide whether any two of them do substantially the same work -- one is a duplicate or near-duplicate of the other, such that a maintainer would want them merged.\n\nJudge behaviour, not surface text. Two functions with different names and variables can be duplicates. Two functions that look similar but serve genuinely different purposes are not.\n\nAt most one pair per bundle. If no two functions duplicate each other, say so -- that is a common and correct answer, and guessing a pair when none exists is worse than declining.\n\nReturn JSON only, no prose:\n\n{\"answers\": [{\"id\": \"<bundle id>\", \"duplicate_pair\": [\"A\", \"D\"], \"confidence\": \"high|low\"}]}\n\nUse \"duplicate_pair\": [] when nothing in the bundle duplicates anything else.\n",
+  "schema_version": 1
+}
