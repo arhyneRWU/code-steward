@@ -150,3 +150,34 @@ producing noise.
 Standalone Pylint and a static type checker such as mypy or Pyright are not blocking CI yet. Ruff already covers many Pylint-derived checks, and the type-analysis policy should be chosen after the public data model and plugin interfaces settle enough to make the signal useful.
 
 Those tools can be added later as separate, justified quality gates rather than as overlapping dependencies added by default.
+
+## Type checking
+
+`make types` runs mypy over `src` and `benchmarks`; CI runs it in the
+lint job.
+
+It is deliberately not strict. The value it earns is narrow and
+specific: **catching a call that cannot work** -- a wrong argument
+count, a name used before it exists -- in code the test suite does
+not execute.
+
+That matters because of where this project's defects live. The
+benchmark layer is larger than the product (2,517 statements against
+1,953) and half covered (50.1% against 89.7%), and running most of it
+needs pinned corpora that CI does not have. When `load_units` gained
+a required parameter, **three callers were left broken and merged to
+main while 331 tests passed**, because nothing executes them without
+a corpus. mypy found all three in under a minute, on a codebase that
+had never been type-checked.
+
+The whole baseline was twelve findings: three real breakages and
+five pieces of typing hygiene. That is cheap enough that leaving it
+off was the more expensive choice.
+
+Coverage is the wrong instrument for this. Every one of the defects
+found on 2026-08-23 executed its lines -- the shingle cache wrote its
+rows, the introduced-only filter ran its comparison, `render_markdown`
+rendered its purpose, `load_units` recorded every exclusion. What
+they had in common was a value computed and then discarded or
+misused, with plausible output. Raising coverage would not have
+caught one of them.

@@ -444,8 +444,8 @@ def rank_all_pairs(
     for (left, right), count in shared.items():
         if count < MIN_SHARED_SHINGLES:
             continue
-        value = jaccard(prepared[left], prepared[right])
-        if value:
-            scored.append((left, right, value))
+        score = jaccard(prepared[left], prepared[right])
+        if score:
+            scored.append((left, right, score))
     scored.sort(key=lambda row: (-row[2], row[0], row[1]))
     return scored[:limit]

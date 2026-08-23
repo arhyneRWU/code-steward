@@ -34,6 +34,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from benchmarks.guards import Exclusions
 from benchmarks.similarity.corpus import CORPORA, corpus_files, hash_order
 from benchmarks.similarity.units import CorpusUnit, load_units
 
@@ -110,7 +111,7 @@ def main() -> None:
 
     for corpus in CORPORA:
         checkout = (args.checkouts / corpus.name).resolve()
-        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout))
+        units = load_units(corpus.name, checkout, corpus_files(corpus, checkout), Exclusions())
         by_id = {unit.unit_id: unit for unit in units}
 
         rows = [row for row in pairs if row["corpus"] == corpus.name]

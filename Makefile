@@ -67,6 +67,10 @@ test: guard-venv ## Run the test suite
 lint: guard-venv ## Run ruff lint checks
 	@$(RUFF) check .
 
+.PHONY: types
+types: guard-venv ## Run mypy over src and benchmarks
+	@$(PY) -m mypy
+
 .PHONY: fmt
 fmt: guard-venv ## Apply ruff formatting and import sorting
 	@$(RUFF) check --fix .

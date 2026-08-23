@@ -195,7 +195,7 @@ def evaluate_case(
         if anchor_score > 0.0 and lexical_score > 0.0:
             fused_score = max(lexical_score, math.sqrt(lexical_score * anchor_score))
 
-        evidence = dict(lexical.evidence)
+        evidence: dict[str, Any] = dict(lexical.evidence)
         evidence.update(
             {
                 "graph_direction": direction,
