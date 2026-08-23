@@ -1,0 +1,1237 @@
+{
+  "count": 204,
+  "description": "Relevance labels for every candidate returned by any arm on the Requests cases. Assigned from the query and the unit source alone, without the arm, the rank, or the recorded gold unit. Independently reproduced the gold key on 15 of 15 cases.",
+  "entries": [
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Whole adapter class; contains several select_proxy call sites.",
+      "unit_id": "adapters::HTTPAdapter"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Deprecated connection getter that calls select_proxy.",
+      "unit_id": "adapters::HTTPAdapter.get_connection"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Calls select_proxy then builds proxy manager connection.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Builds proxy auth headers; proxy-related but not selection.",
+      "unit_id": "adapters::HTTPAdapter.proxy_headers"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Caches ProxyManager per proxy URL; consumes an already-selected proxy.",
+      "unit_id": "adapters::HTTPAdapter.proxy_manager_for"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Uses select_proxy to decide full versus path URL.",
+      "unit_id": "adapters::HTTPAdapter.request_url"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Passes proxies through to connection and request_url; does not select.",
+      "unit_id": "adapters::HTTPAdapter.send"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "irrelevant",
+      "reason": "Builds TLS/pool kwargs; no proxy handling.",
+      "unit_id": "adapters::_urllib3_request_context"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "irrelevant",
+      "reason": "Top-level request API; only documents a proxies parameter.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "irrelevant",
+      "reason": "Cookie exception class; unrelated to proxies.",
+      "unit_id": "cookies::CookieConflictError"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Calls resolve_proxies to populate kwargs before dispatch; no selection logic.",
+      "unit_id": "sessions::Session.send"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "irrelevant",
+      "reason": "Changes HTTP method on redirect; nothing about proxies.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_method"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Rebuilds proxies across redirects via rebuild_proxies.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Merges environment proxies into a proxies mapping; does not pick per-URL proxy.",
+      "unit_id": "utils::resolve_proxies"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "relevant",
+      "reason": "Implements picking proxy URL for a given request URL from proxies dict.",
+      "unit_id": "utils::select_proxy"
+    },
+    {
+      "case_id": "requests-001-proxy-selection",
+      "label": "plausible",
+      "reason": "Nested env-var lookup for proxy settings; not URL-to-proxy matching.",
+      "unit_id": "utils::should_bypass_proxies.get_proxy"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Chooses connection pool and proxy; no URL sanitizing.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Rebuilds URL with Host header for cookie matching; keeps auth and fragment.",
+      "unit_id": "cookies::MockRequest.get_full_url"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Clears cookies from a jar; unrelated to URLs.",
+      "unit_id": "cookies::remove_cookie_by_name"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Reports Python implementation and version; unrelated to URLs.",
+      "unit_id": "help::_implementation"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Sequences prepare_* steps; no URL stripping detail.",
+      "unit_id": "models::PreparedRequest.prepare"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "plausible",
+      "reason": "Parses and reconstructs URL including auth and fragment; keeps rather than strips.",
+      "unit_id": "models::PreparedRequest.prepare_url"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Merges proxy/verify/cert settings from environment.",
+      "unit_id": "sessions::Session.merge_environment_settings"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "plausible",
+      "reason": "Strips Authorization header on cross-host redirect, not URL credentials.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_auth"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "plausible",
+      "reason": "Manipulates redirect fragment and calls rebuild_auth.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "plausible",
+      "reason": "Extracts username/password from URL but does not strip them.",
+      "unit_id": "utils::get_auth_from_url"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "plausible",
+      "reason": "Reassembles URL preserving auth and fragment; adds scheme instead of stripping.",
+      "unit_id": "utils::prepend_scheme_if_needed"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "irrelevant",
+      "reason": "Builds proxy mapping; no URL auth or fragment handling.",
+      "unit_id": "utils::resolve_proxies"
+    },
+    {
+      "case_id": "requests-002-strip-url-auth-fragment",
+      "label": "relevant",
+      "reason": "Removes fragment and userinfo, rebuilding the remaining URL.",
+      "unit_id": "utils::urldefragauth"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "plausible",
+      "reason": "Returns name-value dict from jar; opposite direction.",
+      "unit_id": "cookies::RequestsCookieJar.get_dict"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "irrelevant",
+      "reason": "Strips quotes when inserting a cookie; not dict conversion.",
+      "unit_id": "cookies::RequestsCookieJar.set_cookie"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "irrelevant",
+      "reason": "Copies an existing jar; no dict involved.",
+      "unit_id": "cookies::_copy_cookie_jar"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "relevant",
+      "reason": "Builds a CookieJar from a key/value dictionary.",
+      "unit_id": "cookies::cookiejar_from_dict"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "irrelevant",
+      "reason": "Pulls cookies from an HTTP response into a jar, not a dict.",
+      "unit_id": "cookies::extract_cookies_to_jar"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "plausible",
+      "reason": "Accepts a dict and delegates to cookiejar_from_dict for merging.",
+      "unit_id": "cookies::merge_cookies"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "plausible",
+      "reason": "Converts a Morsel into a Cookie; different input type.",
+      "unit_id": "cookies::morsel_to_cookie"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "irrelevant",
+      "reason": "Request container storing a cookies attribute; no conversion.",
+      "unit_id": "models::Request"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "plausible",
+      "reason": "Initializes session cookies via cookiejar_from_dict call site.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "irrelevant",
+      "reason": "Builds and sends request, passing cookies onward untouched.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "plausible",
+      "reason": "Thin public wrapper delegating to cookiejar_from_dict.",
+      "unit_id": "utils::add_dict_to_cookiejar"
+    },
+    {
+      "case_id": "requests-003-dict-to-cookiejar",
+      "label": "plausible",
+      "reason": "Inverse helper converting jar to dict.",
+      "unit_id": "utils::dict_from_cookiejar"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Builds urllib3 pool key and TLS attributes.",
+      "unit_id": "adapters::HTTPAdapter.build_connection_pool_key_attributes"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Top-level API wrapper opening a Session; nothing about cookies.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Looks up a cookie value by name/domain/path.",
+      "unit_id": "cookies::RequestsCookieJar._find"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Lookup raising on conflicting cookies; unrelated to construction.",
+      "unit_id": "cookies::RequestsCookieJar._find_no_duplicates"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Returns filtered name-value dict from the jar.",
+      "unit_id": "cookies::RequestsCookieJar.get_dict"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "plausible",
+      "reason": "Dict-like setter that delegates to create_cookie; a call site, not the builder.",
+      "unit_id": "cookies::RequestsCookieJar.set"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "plausible",
+      "reason": "Stores an already-built Cookie, stripping quotes; does not construct one.",
+      "unit_id": "cookies::RequestsCookieJar.set_cookie"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Copies an existing jar and its cookies; no construction from name/value.",
+      "unit_id": "cookies::_copy_cookie_jar"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "plausible",
+      "reason": "Builds a jar by calling create_cookie per name/value pair.",
+      "unit_id": "cookies::cookiejar_from_dict"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "relevant",
+      "reason": "Builds a Cookie from name, value, and optional attribute kwargs.",
+      "unit_id": "cookies::create_cookie"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Pulls cookies from an HTTP response into a jar.",
+      "unit_id": "cookies::extract_cookies_to_jar"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "plausible",
+      "reason": "Merges dict or jar into a cookiejar; adjacent construction helper.",
+      "unit_id": "cookies::merge_cookies"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Full request dispatch method; no cookie construction.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-004-create-cookie",
+      "label": "irrelevant",
+      "reason": "Extracts a dict from a cookiejar; opposite direction.",
+      "unit_id": "utils::dict_from_cookiejar"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Typing subclass narrowing url and method attributes.",
+      "unit_id": "_types::_ValidatedRequest"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Builds urllib3 pool key and TLS attributes.",
+      "unit_id": "adapters::HTTPAdapter.build_connection_pool_key_attributes"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Configures TLS CA bundle and client certificate paths.",
+      "unit_id": "adapters::HTTPAdapter.cert_verify"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Builds Proxy-Authorization header from proxy URL credentials.",
+      "unit_id": "adapters::HTTPAdapter.proxy_headers"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Creates proxy managers using URL-embedded proxy credentials.",
+      "unit_id": "adapters::HTTPAdapter.proxy_manager_for"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Encodes a Basic auth header string from given credentials.",
+      "unit_id": "auth::_basic_auth_str"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Cookie value lookup by name, domain, path.",
+      "unit_id": "cookies::RequestsCookieJar._find"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "plausible",
+      "reason": "Prepares requests including auth application; no netrc lookup itself.",
+      "unit_id": "models::PreparedRequest"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "User-facing Request container holding an auth argument only.",
+      "unit_id": "models::Request"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "plausible",
+      "reason": "Session class containing trust_env and the prepare_request netrc call site.",
+      "unit_id": "sessions::Session"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "plausible",
+      "reason": "Calls get_netrc_auth when trust_env and no explicit auth.",
+      "unit_id": "sessions::Session.prepare_request"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Request dispatch signature and docstring; no credential lookup.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "irrelevant",
+      "reason": "Recomputes proxies and proxy auth header across redirects.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_proxies"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "plausible",
+      "reason": "Extracts username/password from a URL, a different credential source.",
+      "unit_id": "utils::get_auth_from_url"
+    },
+    {
+      "case_id": "requests-005-netrc-auth",
+      "label": "relevant",
+      "reason": "Locates netrc file and returns login/password tuple for the URL host.",
+      "unit_id": "utils::get_netrc_auth"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "Top-level API wrapper opening a Session.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "Stores a header into the mock's new-headers dict.",
+      "unit_id": "cookies::MockRequest.add_unredirected_header"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "Reads a header value from the wrapped request.",
+      "unit_id": "cookies::MockRequest.get_header"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "Returns cookie name-value tuples from the jar.",
+      "unit_id": "cookies::RequestsCookieJar.items"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "plausible",
+      "reason": "Calls check_header_validity per header while building the dict.",
+      "unit_id": "models::PreparedRequest.prepare_headers"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "URL preparation, IDNA encoding, and query merging.",
+      "unit_id": "models::PreparedRequest.prepare_url"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "Initializes session defaults including headers; no validation.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "relevant",
+      "reason": "Implements the regex check and raises on whitespace, reserved, return characters.",
+      "unit_id": "utils::_validate_header_part"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "relevant",
+      "reason": "Public validator checking header name and value parts.",
+      "unit_id": "utils::check_header_validity"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "irrelevant",
+      "reason": "Parses RFC 2068 key-value header lists into a dict.",
+      "unit_id": "utils::parse_dict_header"
+    },
+    {
+      "case_id": "requests-006-header-validation",
+      "label": "plausible",
+      "reason": "Header value processing helper, but unquoting rather than validating.",
+      "unit_id": "utils::unquote_header_value"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Typing subclass asserting url/method are set; no URL logic.",
+      "unit_id": "_types::_ValidatedRequest"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Abstract send stub raising NotImplementedError.",
+      "unit_id": "adapters::BaseAdapter.send"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Deprecated: parses URL and proxy to obtain urllib3 connection.",
+      "unit_id": "adapters::HTTPAdapter.get_connection"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Parses proxy URL to pick a pool; not request URL preparation.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Top-level wrapper passing url and params into a Session.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Reconstructs request URL for cookie policy, not outgoing URL preparation.",
+      "unit_id": "cookies::MockRequest.get_full_url"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Builds Cookie header string from a jar.",
+      "unit_id": "cookies::get_cookie_header"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Orchestrator that calls prepare_url among other preparation steps.",
+      "unit_id": "models::PreparedRequest.prepare"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "relevant",
+      "reason": "Parses, validates, IDNA-encodes, appends params, and requotes the URL.",
+      "unit_id": "models::PreparedRequest.prepare_url"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Character-encoding detection on response content.",
+      "unit_id": "models::Response.apparent_encoding"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Initializes session defaults; no URL handling.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Builds Request with url and params, delegating preparation elsewhere.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Resolves relative redirect URLs; reuses prepared URL, not preparation.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Compares URL host/scheme for auth stripping on redirects.",
+      "unit_id": "sessions::SessionRedirectMixin.should_strip_auth"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "irrelevant",
+      "reason": "Parses key/value header lists; unrelated to URL preparation.",
+      "unit_id": "utils::parse_dict_header"
+    },
+    {
+      "case_id": "requests-007-prepare-url",
+      "label": "plausible",
+      "reason": "Helper unescaping unreserved percent-escapes, used by requote_uri.",
+      "unit_id": "utils::unquote_unreserved"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "irrelevant",
+      "reason": "Typing subclass narrowing url/method attributes.",
+      "unit_id": "_types::_ValidatedRequest"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "irrelevant",
+      "reason": "Computes urllib3 pool key attributes for connections.",
+      "unit_id": "adapters::HTTPAdapter.build_connection_pool_key_attributes"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "irrelevant",
+      "reason": "Selects a urllib3 connection pool; unrelated to request preparation.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "irrelevant",
+      "reason": "Creates a session and forwards arguments; no merging logic.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Class being constructed; holds all prepare_* implementations.",
+      "unit_id": "models::PreparedRequest"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Runs the prepare_* steps once settings are already merged.",
+      "unit_id": "models::PreparedRequest.prepare"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Builds PreparedRequest from Request alone, without session merging.",
+      "unit_id": "models::Request.prepare"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "irrelevant",
+      "reason": "Property returning the next redirect PreparedRequest.",
+      "unit_id": "models::Response.next"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Defines the session settings that later get merged.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Merges env/session proxies, verify, cert; separate from request preparation.",
+      "unit_id": "sessions::Session.merge_environment_settings"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "relevant",
+      "reason": "Merges session cookies, headers, params, auth, hooks and builds PreparedRequest.",
+      "unit_id": "sessions::Session.prepare_request"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Constructs Request and calls prepare_request; caller, not merger.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-008-session-prepare-request",
+      "label": "plausible",
+      "reason": "Merges request and session hooks; helper used during preparation.",
+      "unit_id": "sessions::merge_hooks"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "plausible",
+      "reason": "The adapter implementation that gets selected; no prefix matching.",
+      "unit_id": "adapters::HTTPAdapter"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Builds urllib3 pool key attributes, not adapter selection.",
+      "unit_id": "adapters::HTTPAdapter.build_connection_pool_key_attributes"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Deprecated urllib3 connection lookup, unrelated to prefix matching.",
+      "unit_id": "adapters::HTTPAdapter.get_connection"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Chooses a urllib3 connection pool, not a session adapter.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Initializes urllib3 PoolManager.",
+      "unit_id": "adapters::HTTPAdapter.init_poolmanager"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Returns urllib3 ProxyManager for a proxy URL.",
+      "unit_id": "adapters::HTTPAdapter.proxy_manager_for"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Exception class for connection timeouts.",
+      "unit_id": "exceptions::ConnectTimeout"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Removes a hook from the hooks dict.",
+      "unit_id": "models::RequestHooksMixin.deregister_hook"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "plausible",
+      "reason": "Creates adapters dict and mounts default http/https adapters.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "relevant",
+      "reason": "Iterates registered prefixes matching the URL, else raises InvalidSchema.",
+      "unit_id": "sessions::Session.get_adapter"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "plausible",
+      "reason": "Registers adapter prefixes and keeps them sorted by length.",
+      "unit_id": "sessions::Session.mount"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "plausible",
+      "reason": "Calls get_adapter per redirect URL to send requests.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-009-select-adapter",
+      "label": "irrelevant",
+      "reason": "Deprecated factory returning a Session.",
+      "unit_id": "sessions::session"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "plausible",
+      "reason": "Selects proxy and builds connection pool; not redirect rebuilding.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "irrelevant",
+      "reason": "Sends one request with redirect=False; no chain following.",
+      "unit_id": "adapters::HTTPAdapter.send"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "irrelevant",
+      "reason": "Builds TLS/pool kwargs; unrelated to redirects.",
+      "unit_id": "adapters::_urllib3_request_context"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "irrelevant",
+      "reason": "Module-level convenience wrapper creating a session; no redirect logic.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "irrelevant",
+      "reason": "Generic dict-like cookie setter; no redirect involvement.",
+      "unit_id": "cookies::RequestsCookieJar.set"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "plausible",
+      "reason": "Property detecting redirect status used by the redirect loop.",
+      "unit_id": "models::Response.is_redirect"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "irrelevant",
+      "reason": "Initializes session attributes and adapters only.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "plausible",
+      "reason": "Merges cookies, auth, headers into PreparedRequest for initial request.",
+      "unit_id": "sessions::Session.prepare_request"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "plausible",
+      "reason": "Entry point passing allow_redirects into send; delegates redirect work.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "plausible",
+      "reason": "Drives resolve_redirects generator and assembles history; delegates the rebuilding.",
+      "unit_id": "sessions::Session.send"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "relevant",
+      "reason": "Strips and re-applies authentication when redirect crosses hosts.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_auth"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "relevant",
+      "reason": "Rebuilds proxy settings for the redirected request.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_proxies"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "relevant",
+      "reason": "Implements the redirect loop, stripping body/headers and calling rebuild helpers.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-010-follow-redirect-chain",
+      "label": "irrelevant",
+      "reason": "Tiny env-var lookup helper; unrelated to redirect handling.",
+      "unit_id": "utils::should_bypass_proxies.get_proxy"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "Populates Response fields from urllib3 response; no status raising.",
+      "unit_id": "adapters::HTTPAdapter.build_response"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "plausible",
+      "reason": "Maps urllib3 transport exceptions to requests exceptions, not status errors.",
+      "unit_id": "adapters::HTTPAdapter.send"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "Cookie extraction; unrelated.",
+      "unit_id": "cookies::extract_cookies_to_jar"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "plausible",
+      "reason": "Declares the HTTPError class raised for bad statuses.",
+      "unit_id": "exceptions::HTTPError"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "relevant",
+      "reason": "Response class body containing the raise_for_status implementation.",
+      "unit_id": "models::Response"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "plausible",
+      "reason": "Truthiness delegating to ok, which wraps raise_for_status.",
+      "unit_id": "models::Response.__bool__"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "Attribute initialization for Response.",
+      "unit_id": "models::Response.__init__"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "plausible",
+      "reason": "Legacy truthiness delegating to ok.",
+      "unit_id": "models::Response.__nonzero__"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "301/308 status property; unrelated to error raising.",
+      "unit_id": "models::Response.is_permanent_redirect"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "Streaming iterator raising decoding errors, not HTTPError.",
+      "unit_id": "models::Response.iter_content"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "plausible",
+      "reason": "Calls raise_for_status and converts HTTPError into a boolean.",
+      "unit_id": "models::Response.ok"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "relevant",
+      "reason": "Builds message for 4xx/5xx and raises HTTPError with response attached.",
+      "unit_id": "models::Response.raise_for_status"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "Redirect loop; does not raise status errors.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-011-raise-http-status-error",
+      "label": "irrelevant",
+      "reason": "Encoding decode helper; unrelated.",
+      "unit_id": "utils::get_unicode_from_response"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "String encoding helper; unrelated.",
+      "unit_id": "_internal_utils::to_native_string"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "plausible",
+      "reason": "Passes preload_content=False so the body can be streamed later.",
+      "unit_id": "adapters::HTTPAdapter.send"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Thin PATCH wrapper.",
+      "unit_id": "api::patch"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Thin POST wrapper.",
+      "unit_id": "api::post"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Thin PUT wrapper.",
+      "unit_id": "api::put"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Convenience wrapper; only documents the stream keyword.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Sets request Content-Length header.",
+      "unit_id": "models::PreparedRequest.prepare_content_length"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Charset detection property.",
+      "unit_id": "models::Response.apparent_encoding"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "relevant",
+      "reason": "Yields response data in chunks from raw stream without loading whole body.",
+      "unit_id": "models::Response.iter_content"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Decodes full body as JSON; opposite of streaming.",
+      "unit_id": "models::Response.json"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "plausible",
+      "reason": "Threads the stream flag through to send.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Redirect method rewriting; unrelated to streaming.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_method"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Redirect loop; consumes content only to free connection.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-012-stream-response-chunks",
+      "label": "irrelevant",
+      "reason": "Generic dict merge helper for session settings.",
+      "unit_id": "sessions::merge_setting"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Builds Proxy-Authorization basic header; no digest logic.",
+      "unit_id": "adapters::HTTPAdapter.proxy_headers"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Top-level request() convenience API; nothing about digest header computation.",
+      "unit_id": "api::request"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "relevant",
+      "reason": "Full digest auth class containing the header construction and 401 handling.",
+      "unit_id": "auth::HTTPDigestAuth"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "plausible",
+      "reason": "Attaches Authorization by calling build_digest_header; does not compute it.",
+      "unit_id": "auth::HTTPDigestAuth.__call__"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "relevant",
+      "reason": "Computes digest response from challenge, method, URL, nonce, algorithm.",
+      "unit_id": "auth::HTTPDigestAuth.build_digest_header"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "plausible",
+      "reason": "Parses the challenge and retries, delegating header construction elsewhere.",
+      "unit_id": "auth::HTTPDigestAuth.handle_401"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Cookiejar shim header setter; unrelated to digest auth.",
+      "unit_id": "cookies::MockRequest.add_unredirected_header"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Cookiejar shim header getter; unrelated to auth.",
+      "unit_id": "cookies::MockRequest.get_header"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Builds Cookie header via cookiejar; unrelated to digest auth.",
+      "unit_id": "cookies::get_cookie_header"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Generic request orchestration; only passes an auth object through.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Recomputes proxies on redirect; no digest computation.",
+      "unit_id": "sessions::SessionRedirectMixin.rebuild_proxies"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Decides Authorization stripping across redirects; no header calculation.",
+      "unit_id": "sessions::SessionRedirectMixin.should_strip_auth"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Validates header string characters; no digest computation.",
+      "unit_id": "utils::_validate_header_part"
+    },
+    {
+      "case_id": "requests-013-build-digest-auth-header",
+      "label": "irrelevant",
+      "reason": "Parses Content-Type charset; unrelated to authorization headers.",
+      "unit_id": "utils::get_encoding_from_headers"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "relevant",
+      "reason": "Documented API building PoolKey attributes from request, verify, cert.",
+      "unit_id": "adapters::HTTPAdapter.build_connection_pool_key_attributes"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "plausible",
+      "reason": "Sets cert_reqs, ca_certs, cert_file on a connection from verify/cert.",
+      "unit_id": "adapters::HTTPAdapter.cert_verify"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "plausible",
+      "reason": "Deprecated connection lookup by URL and proxy; no TLS key attributes.",
+      "unit_id": "adapters::HTTPAdapter.get_connection"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "plausible",
+      "reason": "Consumes the pool key attributes to fetch a connection; delegates derivation.",
+      "unit_id": "adapters::HTTPAdapter.get_connection_with_tls_context"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "plausible",
+      "reason": "Creates the PoolManager whose keys these attributes select against.",
+      "unit_id": "adapters::HTTPAdapter.init_poolmanager"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "plausible",
+      "reason": "Sends request, calling the connection lookup with verify and cert.",
+      "unit_id": "adapters::HTTPAdapter.send"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "relevant",
+      "reason": "Derives host params and SSL pool kwargs from request, verify, cert.",
+      "unit_id": "adapters::_urllib3_request_context"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "irrelevant",
+      "reason": "Request preparation class; no connection pool or TLS handling.",
+      "unit_id": "models::PreparedRequest"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "irrelevant",
+      "reason": "Prepares request fields; nothing about connection pools or TLS.",
+      "unit_id": "models::PreparedRequest.prepare"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "irrelevant",
+      "reason": "Session attribute defaults and adapter mounting; no pool key derivation.",
+      "unit_id": "sessions::Session.__init__"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "irrelevant",
+      "reason": "Merges session settings into a PreparedRequest; no pool key logic.",
+      "unit_id": "sessions::Session.prepare_request"
+    },
+    {
+      "case_id": "requests-014-build-tls-pool-key",
+      "label": "irrelevant",
+      "reason": "High-level request flow; passes verify/cert onward only.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "plausible",
+      "reason": "Records body tell position for digest retries; does not rewind.",
+      "unit_id": "auth::HTTPDigestAuth.__call__"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "plausible",
+      "reason": "Exception type raised when a body cannot be rewound.",
+      "unit_id": "exceptions::UnrewindableBodyError"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "plausible",
+      "reason": "Declares the _body_position attribute used when rewinding.",
+      "unit_id": "models::PreparedRequest.__init__"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "Orchestrates prepare_* calls; no body position logic.",
+      "unit_id": "models::PreparedRequest.prepare"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "plausible",
+      "reason": "Records _body_position that the rewind helper later seeks back to.",
+      "unit_id": "models::PreparedRequest.prepare_body"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "Initializes response attributes; unrelated to request body rewinding.",
+      "unit_id": "models::Response.__init__"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "Status code property; no body handling.",
+      "unit_id": "models::Response.is_permanent_redirect"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "Merges proxy/verify/cert environment settings; unrelated to body rewind.",
+      "unit_id": "sessions::Session.merge_environment_settings"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "Builds PreparedRequest from Request; no body rewinding.",
+      "unit_id": "sessions::Session.prepare_request"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "General request dispatch; no body position handling.",
+      "unit_id": "sessions::Session.request"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "plausible",
+      "reason": "Redirect loop that calls the rewind helper; does not implement it.",
+      "unit_id": "sessions::SessionRedirectMixin.resolve_redirects"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "irrelevant",
+      "reason": "Dict merging utility for session settings; unrelated.",
+      "unit_id": "sessions::merge_setting"
+    },
+    {
+      "case_id": "requests-015-rewind-request-body",
+      "label": "relevant",
+      "reason": "Seeks prepared body back to recorded _body_position, raising UnrewindableBodyError.",
+      "unit_id": "utils::rewind_body"
+    }
+  ],
+  "labels": [
+    "relevant",
+    "plausible",
+    "irrelevant"
+  ],
+  "protocol": "blind",
+  "schema_version": 1
+}

@@ -22,6 +22,8 @@ The workflow then evaluates the unchanged production `retrieve_units()` pipeline
 
 `grep_baseline.py` is the control arm. It answers whether Code Steward's ranking beats plain text search on the same cases, using no Code Steward scoring code. It currently does not: see the "text-search control arm" section in `docs/retrieval.md`.
 
+`label_sheet.py` and `precision.py` measure packet precision and noise, which Hit@K cannot. `label_sheet.py` emits blind labeling sheets: candidates pooled across arms, with the producing arm, the rank, and the gold unit all stripped, ordered by a hash of the (case, unit) pair. `precision.py` scores any arm against the resulting labels in `requests_candidate_labels.json`. See the "Packet precision and noise" section in `docs/retrieval.md`.
+
 `calls_reachability.py` is a separate structural opportunity probe. It starts from the unchanged production candidate packet and asks whether missed gold units are one resolved `CALLS` hop away in the outgoing, incoming, or union graph. It does not alter retrieval ranking or relationship extraction.
 
 The generated JSON, Markdown summaries, and SQLite database are uploaded as a workflow artifact. The upstream source itself is not vendored into Code Steward.

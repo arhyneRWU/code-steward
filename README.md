@@ -8,7 +8,7 @@ Instead of repeatedly searching large files, rediscovering callers and tests, or
 
 > **Project status:** early development. The architecture is being implemented and tested first against Python and FastAPI codebases. The public API, plugin behavior, and storage format may change.
 
-> **What is measured today:** on `psf/requests`, Code Steward's retrieval is **worse than plain text search** on every ranking metric (see [Measured position](#measured-position)). Its demonstrated value is **compression** — 4,104 bytes of packet against 21,107 bytes of source for the same candidates — not better recall. Read the roadmap as a set of open questions, not a set of delivered features.
+> **What is measured today:** on `psf/requests`, Code Steward's retrieval is **worse than plain text search** on every ranking metric (see [Measured position](#measured-position)). Its demonstrated value is **compression** — 4,104 bytes of packet against 21,107 bytes of source for the same candidates, and 3.6x fewer wasted bytes per query — not better recall or a cleaner packet. Read the roadmap as a set of open questions, not a set of delivered features.
 
 ## Goals
 
@@ -17,7 +17,7 @@ Code Steward is being designed around two forms of stewardship:
 1. **Steward the context window.** Keep broad repository exploration, graph traversal, history inspection, and duplicate analysis out of the main coding context whenever they can be handled deterministically or inside a disposable subagent context.
 2. **Steward the codebase.** Search before implementation, reuse existing behavior where appropriate, understand the impact of changes, and avoid unnecessary duplication or parallel abstractions.
 
-Both goals reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and they have very different evidence behind them. The first — fewer bytes — is measured and holds. The second — a higher share of what the agent sees being relevant — is not yet measurable, because the benchmark labels one correct unit per query and leaves most returned candidates unlabeled. Treat it as the project's central open question rather than a property it has.
+Both goals reduce to one operational claim: **an agent should read less code, and less irrelevant code, to make the same decision.** Those are two separate claims and the evidence splits between them. Fewer bytes: measured, holds, by a wide margin. A higher *share* of what the agent sees being relevant: measured, and currently false — Code Steward's packets are proportionally noisier than plain keyword search, they are simply much cheaper per unit of noise. See [Measured position](#measured-position).
 
 The intended workflow is:
 
@@ -71,13 +71,27 @@ Two things follow.
 
 **What does not survive is the premise that fuzzy field scoring is the differentiator.** It is not. The fix is to adopt lexical body matching and fuse it with field scoring, not to keep tuning the weights. Fusing the two candidate lists already reaches Hit@K 100% on all 15 cases, which says the methods are complementary rather than competing.
 
-### The noise question is open
+### Noise: measured, and the answer is split
 
-The project's goal is to reduce what an agent has to read *and* how much of it is irrelevant. Only the first half is currently measurable.
+The project's goal is to reduce what an agent has to read *and* how much of it is irrelevant. Both halves are now measured.
 
-Each benchmark case labels one correct unit and a small number of named traps. The remaining candidates in an 8-unit packet are unlabeled, so a packet of seven plausible near-misses and a packet of seven unrelated functions score identically. Precision@K cannot be computed, and the noise-reduction claim therefore has no evidence behind it in either direction — except the trap rate, which currently runs against us.
+Every candidate either arm returned — 204 across the 15 cases — carries a relevance label. Labels were assigned blind: the labeler saw the query and the unit's source, never which arm produced the candidate, its rank, or the recorded gold unit. As a check on the labels themselves, they independently reproduced the gold key on 15 of 15 cases.
 
-Closing this requires labeling every returned candidate as relevant, plausible, or irrelevant, not only the gold one. Until that exists, this README does not claim Code Steward reduces noise.
+| Arm | Precision (strict) | Precision (lenient) | Noise rate | Wasted bytes per query |
+| --- | --- | --- | --- | --- |
+| Code Steward | **14.91%** | 43.86% | 56.14% | **2,288** |
+| Text-search control | 12.50% | **57.50%** | **42.50%** | 8,124 |
+
+The answer splits cleanly, and neither half should be quoted without the other:
+
+- **By share of the packet, Code Steward is noisier.** 56% of what it returns is judged not worth reading, against 42% for keyword search. It shows the agent a *higher proportion* of junk.
+- **By bytes, Code Steward wastes 3.6x less.** 2,288 wasted bytes per query against 8,124. The junk it shows is far cheaper to skip.
+
+So the packet format is doing real work and the ranking is not. Code Steward is currently a good compressor wrapped around a poor selector. That is a fixable shape — the fix is roadmap item 2, and it is why item 1 was to build this measurement first.
+
+One incidental finding: all four units the benchmark had declared "traps" were judged *plausible*, not irrelevant. They are reasonable near-misses, not noise, so the trap rate reported elsewhere in this project was never a noise metric and should not be read as one.
+
+Reproduce with `benchmarks/real_repo/label_sheet.py` (emits blind sheets) and `benchmarks/real_repo/precision.py` (scores them). Labels live in `benchmarks/real_repo/requests_candidate_labels.json`.
 
 ### Validity threats on record
 
@@ -195,15 +209,15 @@ The architecture is intentionally broader than FastAPI so that support for other
 - read-only reuse reviewer agent and the search-before-implement skill
 - conservative `CALLS` and `TESTED_BY` relationship extraction
 - Frozen Benchmark v1, a validity matrix, real-repository validation on `psf/requests`, and a text-search control arm
+- blind candidate labeling and packet precision/noise measurement
 - documentation coverage enforcement in CI
 
 ### Next, in priority order
 
-1. **Make noise measurable.** Label every candidate in each benchmark packet, not only the gold unit, so precision@K exists. Nothing else on this list can be evaluated as noise reduction until this lands.
-2. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
-3. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
-4. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
-5. **Post-change DRY and blast-radius review.**
+1. **Adopt lexical matching.** Score body text, then fuse lexical and field scoring with tuned weights. Equal-weight rank fusion already reaches Hit@K 100% but dilutes MRR below the control, so equal weights are the wrong answer to the right idea.
+2. **Write a second query set from documentation rather than source**, to size the vocabulary-overlap bias in every number above.
+3. **Fix `_module_key` for src-layout projects**, which currently caps `TESTED_BY` at 13 edges and degrades call resolution.
+4. **Post-change DRY and blast-radius review.**
 
 ### Deliberately not doing
 
