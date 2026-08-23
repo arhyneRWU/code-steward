@@ -27,11 +27,21 @@ the time:
 
 ## What the measurements did to that
 
-**A task sentence is not enough.** On 250 held-out functions the
-packet ranker surfaced the labelled duplicate 0.459 of the time.
-Comparing a *drafted body* against the repository surfaced it 0.994
-of the time, at fewer bytes. That is not a close call, and it is the
-single largest effect the project has measured. See
+**A task sentence is not enough — but the margin was overstated.** On
+250 held-out functions the packet ranker surfaced the labelled
+duplicate 0.459 of the time, against 0.994 for comparing a drafted
+body. That 0.994 compared the *real removed body*, and has since been
+remeasured with bodies an agent actually wrote from a name, signature
+and docstring: **0.460** end to end, floor applied, counting drafts
+too small to compare as the failures they are.
+
+So the 2:1 margin this page was originally built on is not there. What
+remains is a precision difference rather than a recall one: the draft
+path reaches 0.460 while returning nothing on most non-matches, and
+the packet path reaches 0.459 by returning eight candidates every
+time. The reviewer measurement says precision is what costs verdicts,
+so this is still a real difference — it is just a much smaller and
+less certain claim than the one that motivated the reframe. See
 [`verdict.md`](verdict.md).
 
 **More evidence did not produce better decisions.** Attaching
@@ -55,7 +65,9 @@ job.
 
 ## Where it is going
 
-**The entry point is a draft, not a sentence.**
+**The entry point is a draft, not a sentence** — held with less
+confidence than when this page was written, and for a different
+reason. See the remeasurement above.
 
 > Decide REUSE / EXTEND / REFACTOR / NEW **on a drafted change,
 > before it is kept.**
@@ -65,8 +77,8 @@ compared against the index, and the verdict comes back with the
 existing units it overlaps. "Before it is written" was the
 aspiration; "before it is kept" is what the numbers support and what
 is honestly deliverable. The draft is cheap -- the agent was going to
-write the code anyway -- and it carries far more signal than any
-sentence about it.
+write the code anyway -- and it can support an answer the sentence
+path cannot: that nothing in the repository fits.
 
 **Declining is a first-class answer.** The reviewer agent already has
 a declining verdict, `NO_CANDIDATE`, so the gap is not a missing

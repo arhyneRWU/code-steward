@@ -227,3 +227,17 @@ bench-reviewer-score: guard-venv ## Score reviewer verdicts (PROMPTS=, ANSWERS= 
 bench-floor: guard-venv ## Choose the relevance floor on held-out data (CHECKOUTS= required)
 	@$(PY) -m benchmarks.similarity.floor \
 	  --checkouts $(CHECKOUTS) --output benchmarks/similarity/floor.json
+
+.PHONY: bench-draft-prompts
+bench-draft-prompts: guard-venv ## Build drafting prompts (CHECKOUTS=, OUT= required)
+	@test -n "$(OUT)" || { echo 'usage: make bench-draft-prompts CHECKOUTS=<dir> OUT=<file>'; exit 2; }
+	@$(PY) -m benchmarks.verdict.draft_prompts \
+	  --checkouts $(CHECKOUTS) --output $(OUT)
+
+.PHONY: bench-draft-score
+bench-draft-score: guard-venv ## Score realistic drafts (CHECKOUTS=, PROMPTS=, DRAFTS= required)
+	@test -n "$(PROMPTS)" && test -n "$(DRAFTS)" || \
+	  { echo 'usage: make bench-draft-score CHECKOUTS=<dir> PROMPTS=<file> DRAFTS=<dir>'; exit 2; }
+	@$(PY) -m benchmarks.verdict.draft_score \
+	  --checkouts $(CHECKOUTS) --prompts $(PROMPTS) --drafts $(DRAFTS) \
+	  --output benchmarks/verdict/realistic_draft.json
