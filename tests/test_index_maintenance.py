@@ -144,3 +144,68 @@ def test_incremental_delete_removes_stale_file(tmp_path: Path) -> None:
 
     assert stats.removed_paths == ("a.py",)
     assert _indexed_units(database) == []
+
+
+def _write_malformed_unit(path: Path, unit_id: str) -> None:
+    path.write_text(
+        f"# code-steward: unit {unit_id}\n\nx = 1\n",
+        encoding="utf-8",
+    )
+
+
+def test_rebuild_error_names_offending_file(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    (root / "pkg").mkdir(parents=True)
+    database = root / ".code-steward" / "index.sqlite3"
+
+    _write_unit(root / "a.py", "stable.one", "one")
+    _write_unit(root / "pkg" / "b.py", "stable.two", "two")
+    _write_malformed_unit(root / "pkg" / "bad.py", "taxonomy.normalize")
+
+    with pytest.raises(ValueError, match=r"pkg/bad\.py"):
+        rebuild_index(root, database)
+
+    assert not database.exists()
+    assert list(database.parent.glob(f".{database.name}.*.tmp")) == []
+
+
+def test_rebuild_syntax_error_names_offending_file(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    (root / "pkg").mkdir(parents=True)
+    database = root / ".code-steward" / "index.sqlite3"
+
+    _write_unit(root / "a.py", "stable.one", "one")
+    (root / "pkg" / "broken.py").write_text("def broken(:\n", encoding="utf-8")
+
+    with pytest.raises(SyntaxError, match=r"pkg/broken\.py"):
+        rebuild_index(root, database)
+
+
+def test_rebuild_error_preserves_original_cause(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    root.mkdir()
+    database = root / ".code-steward" / "index.sqlite3"
+    _write_malformed_unit(root / "bad.py", "taxonomy.normalize")
+
+    with pytest.raises(ValueError) as info:
+        rebuild_index(root, database)
+
+    assert info.value.__cause__ is not None
+
+
+def test_update_error_names_offending_file(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    (root / "pkg").mkdir(parents=True)
+    database = root / ".code-steward" / "index.sqlite3"
+    _write_unit(root / "a.py", "stable.one", "one")
+    rebuild_index(root, database)
+
+    bad = root / "pkg" / "bad.py"
+    _write_malformed_unit(bad, "taxonomy.normalize")
+
+    conn = connect(database)
+    try:
+        with pytest.raises(ValueError, match=r"pkg/bad\.py"):
+            update_index_file(conn, root, bad)
+    finally:
+        conn.close()

@@ -33,6 +33,22 @@ class UpdateStats:
     removed_paths: tuple[str, ...]
 
 
+INDEXING_ERRORS = (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError)
+
+
+def _located(rel: str, exc: BaseException) -> BaseException:
+    """Rebuild an indexing failure with its source path.
+
+    The path is prefixed onto the message so callers can tell which
+    file aborted the build.
+    """
+    message = f"{rel}: {exc}"
+    try:
+        return type(exc)(message)
+    except Exception:
+        return ValueError(message)
+
+
 def rebuild_index(
     project_root: Path,
     destination: Path,
@@ -53,9 +69,11 @@ def rebuild_index(
         conn = connect(temporary)
         file_count = unit_count = endpoint_count = 0
         for path in iter_python_files(project_root, excludes):
-            units, endpoints = index_python_file(project_root, path)
-            rel = path.relative_to(project_root).as_posix()
-            replace_file(conn, rel, units, endpoints)
+            rel, units, endpoints = _index_replacement(project_root, path)
+            try:
+                replace_file(conn, rel, units, endpoints)
+            except INDEXING_ERRORS as exc:
+                raise _located(rel, exc) from exc
             file_count += 1
             unit_count += len(units)
             endpoint_count += len(endpoints)
@@ -73,8 +91,11 @@ def rebuild_index(
 
 
 def _index_replacement(project_root: Path, path: Path) -> FileReplacement:
-    units, endpoints = index_python_file(project_root, path)
     rel = path.relative_to(project_root).as_posix()
+    try:
+        units, endpoints = index_python_file(project_root, path)
+    except INDEXING_ERRORS as exc:
+        raise _located(rel, exc) from exc
     return rel, units, endpoints
 
 
