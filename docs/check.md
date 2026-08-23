@@ -37,7 +37,7 @@ code-steward check --json               # structured output
 ```
 
 By default only overlaps **your change introduced** are reported --
-see [below](#only-overlaps-your-change-introduced), it is a 3.1x
+see [below](#only-overlaps-your-change-introduced), it is a 3x to 16x
 difference in how much the command says.
 
 It reports the changed function, what it overlaps, and where:
@@ -148,21 +148,30 @@ against **its own previous version at `--base`** and reports only the
 overlaps that are new. A function with no previous version -- newly
 written, or renamed -- has introduced all of them.
 
-Measured by replaying 32 real commits of this repository, indexing
-each commit's parent and checking the commit against it:
+Measured by replaying real commits: index each commit's parent, check
+the commit against it, count the findings twice.
 
-| | Findings | Per commit | Share of changed functions |
-| --- | --- | --- | --- |
-| Every overlap | 223 | 7.0 | 20.2% |
-| **Only introduced** | **72** | **2.2** | **6.5%** |
+| Repository | Commits | Changed fns | Every overlap | Only introduced | |
+| --- | --- | --- | --- | --- | --- |
+| Django | 13 | 1,107 | 261 (20.1/commit) | **16 (1.2/commit)** | **16.3x** |
+| Code Steward | 32 | 1,105 | 223 (7.0/commit) | **72 (2.2/commit)** | **3.1x** |
 
-**3.1x fewer findings.** Two per commit is a report someone reads;
-seven is one they skim. The share of changed functions that trigger
-anything drops from a fifth to a fifteenth.
+**The filter is worth between 3x and 16x**, and the spread is the
+interesting part. Django is mature: the functions its commits touch
+had already accumulated whatever overlap they have, so almost none of
+it is newly introduced and the filter removes almost all of it. Code
+Steward is young and being actively written, so a much larger share
+of its changed functions are genuinely new code with genuinely new
+overlap. Expect a mature codebase to land nearer the Django figure.
 
-What moves less: 27 of 32 commits had at least one finding before,
-22 of 32 after. The filter mostly thins each report rather than
-removing it, which is the honest way to describe it.
+Commits reporting *anything at all*: Django 11 of 13 down to 5 of 13,
+Code Steward 27 of 32 down to 22 of 32. On the younger repository the
+filter mostly thins each report rather than removing it, which is the
+honest way to describe that end of the range.
+
+Both runs are small -- 13 and 32 commits -- and neither is labelled,
+so this measures how much the command says, not how often it is
+right.
 
 `--all-overlaps` restores the unfiltered behaviour. It is the right
 flag when you are auditing an existing codebase rather than reviewing
