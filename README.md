@@ -5,7 +5,7 @@
 Code Steward assembles a small, complete slice of a repository so a cheap model can act on it — and tells you when the function you just wrote is one the repository already has.
 
 ```bash
-code-steward trace "pkg.mod::fn"   # the function, its callers, callees, tests, and where each call happens
+code-steward trace app.py:42       # the function at that line, its callers, callees, tests, and every call site
 code-steward trace --undocumented --base HEAD   # a bundle per function that needs a docstring written
 code-steward trace "pkg.mod::fn" --dry          # the path, plus duplication across every unit on it
 code-steward trace --endpoints --dry            # every FastAPI route, its whole path, and the DRY pass

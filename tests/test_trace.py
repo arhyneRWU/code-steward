@@ -152,8 +152,15 @@ def test_cli_trace_emits_the_body_and_json_carries_roles(project, capsys):
 
 
 def test_cli_trace_rejects_an_unknown_unit(project, capsys):
+    """Still exit 2, but the message now says what a target can be.
+
+    A target is a unit ID, a bare name, or path:line, and a caller
+    who got the form wrong needs to be told which forms exist.
+    """
     assert main(["--root", str(project), "trace", "chain::nope"]) == 2
-    assert "unknown unit" in capsys.readouterr().err
+    err = capsys.readouterr().err
+    assert "no unit matches" in err
+    assert "path:line" in err
 
 
 def test_a_caller_reports_the_line_where_it_calls(graph):

@@ -26,6 +26,7 @@ from .trace import (
     path_duplication,
     render_duplication,
     render_markdown,
+    resolve_target,
     slice_to_dict,
     undocumented_units,
 )
@@ -394,7 +395,25 @@ def cmd_trace(args: argparse.Namespace) -> int:
         print("trace needs a unit ID, or --undocumented", file=sys.stderr)
         return 2
 
-    sliced = slice_for(args.unit)
+    targets = resolve_target(args.unit, units)
+    if not targets:
+        print(
+            f"no unit matches {args.unit!r}. Give a unit ID, a bare function name, or path:line.",
+            file=sys.stderr,
+        )
+        return 2
+    if len(targets) > 1:
+        # Choosing between them would be ranking a shortlist, and a
+        # caller who wants a guess can ask `search` for one.
+        print(f"{args.unit!r} is ambiguous. Name one of:", file=sys.stderr)
+        for candidate in targets:
+            print(
+                f"  {candidate.unit_id}  ({candidate.path}:{candidate.start_line})",
+                file=sys.stderr,
+            )
+        return 2
+
+    sliced = slice_for(targets[0].unit_id)
     if sliced is None:
         print(f"unknown unit: {args.unit}", file=sys.stderr)
         return 2
@@ -583,7 +602,11 @@ def build_parser() -> argparse.ArgumentParser:
     trace = sub.add_parser(
         "trace", help="bundle one function with its callers, callees, and tests"
     )
-    trace.add_argument("unit", nargs="?", help="an indexed unit ID")
+    trace.add_argument(
+        "unit",
+        nargs="?",
+        help="a unit ID, a bare function name, or path:line",
+    )
     trace.add_argument(
         "--undocumented",
         action="store_true",
