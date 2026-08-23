@@ -117,6 +117,50 @@ worse than no path.
   slice gets large fast.
 - **Python only.**
 
+## Writing the docstrings that are missing
+
+    code-steward trace --undocumented --base HEAD
+
+Emits one bundle per function with no docstring, so the agent already
+in the loop can write one against the callers that show how the
+function is actually used. Code Steward assembles; it does not call a
+model, and nothing leaves the machine.
+
+This is the surviving half of a larger design that was measured and
+abandoned the same day -- see
+[`../docs/superpowers/specs/2026-08-23-context-aware-docstrings-design.md`](superpowers/specs/2026-08-23-context-aware-docstrings-design.md).
+The other half looked for docstrings that had *drifted* from their
+code. Every heuristic for that failed: the best of them nominated 0
+true positives in 57 hand-read cases, and the next was already
+shipped as `docvet freshness --mode drift`. This half survived
+because it needs no heuristic at all. `doc_text` is empty exactly
+when there is no docstring.
+
+**Use `--base`.** Without it the command selects every undocumented
+function in the repository -- 419 here, about 1.7 MB of bundles.
+
+**What is skipped, and why.** Dunders, property accessors, and
+one-line bodies. Undocumented-and-trivial is a legitimate state; this
+repository defers the missing-docstring lint rules on purpose (see
+[`code-quality.md`](code-quality.md)), because blanket coverage that
+emits "Return the name." buries the docstrings that carry something.
+The size cut is *not* `similarity.MIN_LINES`, which answers "too
+small to compare for duplication" -- a different question that at
+five lines would skip four-line functions with entirely non-obvious
+contracts.
+
+**Untracked files are invisible with `--base`.** The changed-file set
+unions the committed diff with the staged and unstaged ones, and a
+brand-new file is in none of the three. Stage it, or run without
+`--base`. This is `check`'s behaviour, shared rather than forked.
+
+**A defect this fixed, which affected every bundle.** The renderer
+printed `unit.purpose`, and `purpose` falls back to the declaration
+name with its underscores taken out. An undocumented `resolve_target`
+therefore rendered the summary "resolve target" in the position a
+docstring goes, telling the reader the function was documented when
+it was not. Purpose is now printed only when a docstring exists.
+
 Reproduce with `make bench-trace ROOT=<indexed repo> LABEL=<name>`.
 Committed at
 [`trace_bundle_django.json`](../benchmarks/trace_bundle_django.json)
