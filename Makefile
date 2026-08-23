@@ -158,3 +158,20 @@ bench-grep: guard-venv ## Run the text-search control arm (ROOT=, DB=, OUT= requ
 	@$(PY) benchmarks/real_repo/grep_baseline.py \
 	  --project-root $(ROOT) --database $(DB) \
 	  --cases benchmarks/real_repo/requests_retrieval.json --output-dir $(OUT)
+
+.PHONY: bench-labels
+bench-labels: guard-venv ## Emit blind labeling sheets (ROOT=, DB=, OUT= required)
+	@$(PY) benchmarks/real_repo/label_sheet.py \
+	  --project-root $(ROOT) --database $(DB) \
+	  --cases benchmarks/real_repo/requests_retrieval.json \
+	  --arm code-steward=$(OUT)/retrieval-baseline.json \
+	  --arm text-search=$(OUT)/grep-baseline.json \
+	  --output $(OUT)/label-sheet.json
+
+.PHONY: bench-precision
+bench-precision: guard-venv ## Score packet precision and noise (OUT= required)
+	@$(PY) benchmarks/real_repo/precision.py \
+	  --labels benchmarks/real_repo/requests_candidate_labels.json \
+	  --arm code-steward=$(OUT)/retrieval-baseline.json \
+	  --arm text-search=$(OUT)/grep-baseline.json \
+	  --output-dir $(OUT)

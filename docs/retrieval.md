@@ -262,3 +262,70 @@ rather than the source would test this.
 The control arm is also handed unit boundaries for free. An agent with
 only text search would pay to segment matches itself, so the
 21107-byte cost above understates the real cost of that workflow.
+
+## Packet precision and noise
+
+Every metric above the control-arm section answers "was the right unit
+present". None answers "how much of the packet was worth reading",
+which is the question the project's noise-reduction goal actually
+poses. Hit@K cannot distinguish a packet of seven near-misses from a
+packet of seven unrelated functions.
+
+### Protocol
+
+All 204 candidates returned by either arm across the 15 Requests cases
+were labeled `relevant`, `plausible`, or `irrelevant`. The labeling was
+blind by construction: `benchmarks/real_repo/label_sheet.py` pools the
+arms' candidates, strips which arm produced each one, removes the
+recorded gold unit and traps, orders candidates by a hash of the
+(case, unit) pair so the sequence carries no ranking signal, and
+attaches each unit's real source. A labeler who can see that a
+candidate was ranked first by the system under evaluation is not an
+independent judge of relevance.
+
+The label vocabulary is deliberately three-valued. A forced binary
+choice pushes every defensible near-miss into whichever bucket the
+labeler favours, and near-misses are exactly the population this
+measurement exists to size.
+
+As a check on the labels rather than on either arm, the blind labels
+reproduced the recorded gold key on 15 of 15 cases without having seen
+it.
+
+### Result
+
+| Arm | Precision (strict) | Precision (lenient) | Noise rate | Wasted bytes/query |
+| --- | --- | --- | --- | --- |
+| Code Steward | **14.91%** | 43.86% | 56.14% | **2,288** |
+| Text-search control | 12.50% | **57.50%** | **42.50%** | 8,124 |
+
+Strict precision counts only `relevant`. Lenient also counts
+`plausible`. Wasted bytes applies each arm's noise rate to its byte
+cost, assuming candidates within one packet cost about the same --
+sound for Code Steward's uniform summary entries, rougher for raw
+source, and nowhere near rough enough to close a 3.6x gap.
+
+### Reading
+
+The result splits, and neither half is quotable alone.
+
+By share of the packet, **Code Steward is the noisier of the two**: 56%
+of what it returns is judged not worth reading against 42% for keyword
+search. Lenient precision says the same thing more sharply -- 43.86%
+against 57.50%. The ranking selects worse.
+
+By bytes, **Code Steward wastes 3.6x less**: 2,288 against 8,124. The
+packet format is doing real work.
+
+Together these say Code Steward is a good compressor wrapped around a
+poor selector. That is the most precise statement of the project's
+current position, and it points at exactly one fix: replace the
+selector, keep the packet.
+
+### The trap label was never a noise metric
+
+All four units the case set declares as `traps` were independently
+judged `plausible`, not `irrelevant`. They are reasonable near-misses.
+Every trap-rate number recorded in this document therefore measures
+"returned a near-miss", not "returned noise", and must not be cited as
+evidence about noise in either direction.
