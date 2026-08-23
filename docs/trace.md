@@ -47,7 +47,7 @@ file the slice touches.
 | Repository | Functions | With resolved neighbours | Compression | Mean bundle |
 | --- | --- | --- | --- | --- |
 | Django | 9,345 | 54.7% | **10.3x** | 4,170 bytes |
-| Code Steward | 157 | 90.4% | **4.7x** | 4,441 bytes |
+| Code Steward | 158 | 90.5% | **4.2x** | 6,236 bytes |
 
 **The comparison is deliberately generous to the baseline.** "Reading
 the files" counts the whole content of every file involved, because
@@ -95,12 +95,14 @@ worse than no path.
 
 ## Other limits
 
-- **Absolute imports into a `src/` layout do not resolve.** The index
-  keys a module by its path, so `src/pkg/mod.py` becomes
-  `src.pkg.mod` while the import says `pkg.mod`. Relative imports
-  inside the package are fine; the cost falls mostly on test files,
-  which import absolutely. This is a known defect, not a design
-  choice.
+- **Resolution is conservative, but no longer blind to `src/`.**
+  Until 2026-08-23 the index keyed `src/pkg/mod.py` as `src.pkg.mod`
+  while every importer writes `pkg.mod`, so on a src-layout
+  repository no absolute import resolved and the `TESTED_BY` relation
+  was empty: 0 of 157 functions in this project's own `src/` had a
+  test edge, against 323 tests that exercise them. The root is now
+  stripped. What still does not resolve is genuine: dynamic dispatch,
+  callables passed as arguments, registry lookups, metaclasses.
 - **Breadth-first, then truncated.** With `--limit` reached, the slice
   says it was truncated rather than trimming quietly. Breadth-first
   in both directions means a widely-used function does not lose its
