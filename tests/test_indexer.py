@@ -81,6 +81,42 @@ def test_alias_attaches_to_async_function(tmp_path: Path) -> None:
     assert unit.qualname == "refresh"
 
 
+def test_typing_overload_stubs_are_not_indexed(tmp_path: Path) -> None:
+    text = (
+        "from typing import overload\n"
+        "\n"
+        "@overload\n"
+        "def encode(value: None) -> None: ...\n"
+        "@overload\n"
+        "def encode(value: str) -> str: ...\n"
+        "def encode(value: str | None) -> str | None:\n"
+        "    return value\n"
+    )
+
+    units, _ = _index_text(tmp_path, text)
+    matches = [unit for unit in units if unit.unit_id == "app::encode"]
+
+    assert len(matches) == 1
+    assert matches[0].signature == "encode(value: str | None) -> str | None"
+
+
+def test_qualified_typing_overload_async_stub_is_not_indexed(tmp_path: Path) -> None:
+    text = (
+        "import typing\n"
+        "\n"
+        "@typing.overload\n"
+        "async def fetch(value: None) -> None: ...\n"
+        "async def fetch(value: str | None) -> str | None:\n"
+        "    return value\n"
+    )
+
+    units, _ = _index_text(tmp_path, text)
+    matches = [unit for unit in units if unit.unit_id == "app::fetch"]
+
+    assert len(matches) == 1
+    assert matches[0].kind == "async_function"
+
+
 def test_unattached_unit_alias_fails(tmp_path: Path) -> None:
     text = """# code-steward: unit taxonomy.normalize\n\ndef normalize():\n    pass\n"""
 
