@@ -13,7 +13,6 @@ from .config import resolve_excludes
 from .db import all_endpoints, all_hard_relationships, all_units, connect, get_unit
 from .indexer import index_python_file, is_excluded
 from .maintenance import rebuild_index, update_index_file
-from .packet import DUPLICATE_LIMIT, build_packet
 from .retrieval import rank_units, retrieve_units
 from .similarity import (
     REUSE_FLOOR,
@@ -134,30 +133,6 @@ def cmd_search(args: argparse.Namespace) -> int:
             f"{result.score:5.1f}  {unit.unit_id}  [{unit.body_hash}]\n"
             f"       {unit.purpose}{signature}"
         )
-    return 0
-
-
-def cmd_packet(args: argparse.Namespace) -> int:
-    endpoints, results = _search(args, compact=True)
-    duplicates = None
-    if args.reuse:
-        root = root_from(args.root)
-        conn, units, _ = _load(root)
-        conn.close()
-        prepared = unit_shingles(root, units, cache=True)
-        duplicates = {}
-        for result in results:
-            near = rank_with_floor(
-                prepared.get(result.unit.unit_id, frozenset()),
-                units,
-                prepared,
-                DUPLICATE_LIMIT,
-                result.unit.unit_id,
-            )
-            if near.matches:
-                duplicates[result.unit.unit_id] = near.matches
-    packet = build_packet(args.query, results, endpoints, args.input, args.returns, duplicates)
-    print(json.dumps(packet, indent=2))
     return 0
 
 
@@ -536,15 +511,6 @@ def build_parser() -> argparse.ArgumentParser:
     add_search_args(search)
     search.add_argument("--json", action="store_true")
     search.set_defaults(func=cmd_search)
-
-    packet = sub.add_parser("packet", help="emit a compact reuse-review packet")
-    add_search_args(packet)
-    packet.add_argument(
-        "--reuse",
-        action="store_true",
-        help="attach near-duplicate evidence to each candidate",
-    )
-    packet.set_defaults(func=cmd_packet)
 
     similar = sub.add_parser(
         "similar", help="find existing units whose body a new one would duplicate"

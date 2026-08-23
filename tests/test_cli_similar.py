@@ -99,21 +99,29 @@ def test_similar_needs_a_unit_or_a_draft(project):
         _run(project, "similar")
 
 
-def test_packet_omits_duplicates_unless_asked(project, capsys):
-    assert _run(project, "packet", "rank rows by overlap") == 0
-    packet = json.loads(capsys.readouterr().out)
+# `packet` is no longer a command -- see tests/test_cli_surface.py --
+# but `build_packet` is still imported by six benchmark modules, so
+# the behaviour is tested where it now lives rather than deleted with
+# the CLI surface.
+
+
+def _packet_for(project, query, **kwargs):
+    from code_steward.db import all_endpoints, all_units, connect
+    from code_steward.packet import build_packet
+    from code_steward.search import search_units
+
+    conn = connect(project / ".code-steward" / "index.sqlite3")
+    units = all_units(conn)
+    endpoints = all_endpoints(conn)
+    conn.close()
+    results = search_units(units, query, limit=8)
+    return build_packet(query, results, endpoints, **kwargs)
+
+
+def test_packet_omits_duplicates_unless_asked(project):
+    packet = _packet_for(project, "rank rows by overlap")
     assert all("duplicates" not in row for row in packet["candidates"])
     assert "duplicates_note" not in packet["review_contract"]
-
-
-def test_packet_attaches_duplicate_evidence_when_asked(project, capsys):
-    """A candidate that already exists twice is a REFACTOR."""
-    assert _run(project, "packet", "rank rows by overlap", "--reuse") == 0
-    packet = json.loads(capsys.readouterr().out)
-    with_duplicates = [row for row in packet["candidates"] if "duplicates" in row]
-    assert with_duplicates
-    assert with_duplicates[0]["duplicates"][0]["overlap"] > 0.3
-    assert "duplicates_note" in packet["review_contract"]
 
 
 def test_similar_reports_what_the_floor_suppressed(project, capsys):
