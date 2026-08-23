@@ -313,3 +313,19 @@ That is a change to this project, not an integration with theirs.
    and C are **byte-identical** across both passes, which was checked
    rather than assumed. Both files are in the repository.
 2. Everything else ran as written.
+
+## Follow-up that qualifies this result
+
+**Added after publication.** The key above is name-based: a caller is
+any function whose body calls the target's name. A later run
+measured a name-based *resolution rule* at **0.796 precision**
+against a type-inference oracle -- see
+[`unique-name-resolution.md`](unique-name-resolution.md).
+
+A key cannot penalise the false positives of a mechanism it shares.
+If the broader graph also resolves by name, part of its +0.207
+advantage here is edges that would not survive that oracle. The
+comparison of *bytes* is unaffected. The comparison of *coverage*
+now needs redoing with their claims adjudicated the same way, and
+until that is run the +0.207 should be read as an upper bound rather
+than as a measurement.
