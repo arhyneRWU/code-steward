@@ -166,3 +166,51 @@ def test_the_calibration_matches_a_live_tiktoken_count():
     result = calibrate("probe", ["def f(x):\n    return x + 1\n"])
     assert result.total_tokens > 0
     assert result.bytes_per_token > 1.0
+
+
+# --- discipline 5: every harness entry point runs ------------------
+
+
+def test_every_benchmark_module_imports():
+    """CI ran these as scripts and one stopped importing. Guard it.
+
+    ``benchmarks`` is a package, so a module that imports a sibling
+    only resolves under ``python -m``. Running the same file as a
+    script puts its own directory on the path instead of the repository
+    root, and the import fails at load time -- after CI has already
+    spent several minutes cloning the upstream repository.
+    """
+    import importlib
+
+    modules = [
+        "benchmarks.guards",
+        "benchmarks.tokens",
+        "benchmarks.retrieval.run",
+        "benchmarks.retrieval.matrix",
+        "benchmarks.real_repo.validate",
+        "benchmarks.real_repo.retrieval_baseline",
+        "benchmarks.real_repo.calls_reachability",
+        "benchmarks.real_repo.calls_rerank",
+        "benchmarks.real_repo.grep_baseline",
+        "benchmarks.real_repo.precision",
+        "benchmarks.real_repo.label_sheet",
+        "benchmarks.similarity.make_pairs",
+        "benchmarks.similarity.score",
+    ]
+    for name in modules:
+        assert importlib.import_module(name) is not None
+
+
+def test_no_caller_invokes_a_benchmark_as_a_bare_script():
+    """A bare path invocation is the failure this test exists for."""
+    callers = [
+        ROOT / "Makefile",
+        ROOT / ".github" / "workflows" / "real-repo-validation.yml",
+        ROOT / ".github" / "workflows" / "ci.yml",
+    ]
+    for path in callers:
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        offenders = re.findall(r"\S*python\S*\)?\s+benchmarks/\S+\.py", text)
+        assert not offenders, f"{path.name} runs a benchmark as a script: {offenders}"

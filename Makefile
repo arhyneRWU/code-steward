@@ -155,13 +155,13 @@ clean: ## Remove build, cache, and index artifacts
 
 .PHONY: bench-grep
 bench-grep: guard-venv ## Run the text-search control arm (ROOT=, DB=, OUT= required)
-	@$(PY) benchmarks/real_repo/grep_baseline.py \
+	@$(PY) -m benchmarks.real_repo.grep_baseline \
 	  --project-root $(ROOT) --database $(DB) \
 	  --cases benchmarks/real_repo/requests_retrieval.json --output-dir $(OUT)
 
 .PHONY: bench-labels
 bench-labels: guard-venv ## Emit blind labeling sheets (ROOT=, DB=, OUT= required)
-	@$(PY) benchmarks/real_repo/label_sheet.py \
+	@$(PY) -m benchmarks.real_repo.label_sheet \
 	  --project-root $(ROOT) --database $(DB) \
 	  --cases benchmarks/real_repo/requests_retrieval.json \
 	  --arm code-steward=$(OUT)/retrieval-baseline.json \
@@ -170,7 +170,7 @@ bench-labels: guard-venv ## Emit blind labeling sheets (ROOT=, DB=, OUT= require
 
 .PHONY: bench-precision
 bench-precision: guard-venv ## Score packet precision and noise (OUT= required)
-	@$(PY) benchmarks/real_repo/precision.py \
+	@$(PY) -m benchmarks.real_repo.precision \
 	  --labels benchmarks/real_repo/requests_candidate_labels.json \
 	  --arm code-steward=$(OUT)/retrieval-baseline.json \
 	  --arm text-search=$(OUT)/grep-baseline.json \
