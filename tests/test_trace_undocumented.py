@@ -9,6 +9,8 @@ offered that nobody would ever want documented.
 
 from __future__ import annotations
 
+import subprocess
+
 import pytest
 
 from code_steward.cli import main
@@ -142,3 +144,53 @@ def test_undocumented_reports_when_nothing_needs_a_docstring(tmp_path, capsys):
     rebuild_index(tmp_path, tmp_path / ".code-steward" / "index.sqlite3")
     assert main(["--root", str(tmp_path), "trace", "--undocumented"]) == 0
     assert "no undocumented functions" in capsys.readouterr().out
+
+
+def _git(project, *argv):
+    subprocess.run(["git", *argv], cwd=project, check=True, capture_output=True)
+
+
+@pytest.fixture
+def repo(tmp_path):
+    (tmp_path / "app.py").write_text(CLI_SOURCE, encoding="utf-8")
+    _git(tmp_path, "init", "-q")
+    _git(tmp_path, "config", "user.email", "t@example.com")
+    _git(tmp_path, "config", "user.name", "t")
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-qm", "base")
+    rebuild_index(tmp_path, tmp_path / ".code-steward" / "index.sqlite3")
+    return tmp_path
+
+
+def test_base_scopes_the_selection_to_changed_files(repo, capsys):
+    """An unchanged file's undocumented functions are not the change.
+
+    The new file is staged because `changed_python_files` unions the
+    committed diff with the staged and unstaged ones, and an
+    untracked file appears in none of the three. That is `check`'s
+    behaviour, inherited deliberately rather than forked.
+    """
+    (repo / "other.py").write_text(
+        "def added_here(value):\n    total = value * 2\n    return total + 1\n",
+        encoding="utf-8",
+    )
+    _git(repo, "add", "other.py")
+    assert main(["--root", str(repo), "trace", "--undocumented", "--base", "HEAD"]) == 0
+    out = capsys.readouterr().out
+    assert "other::added_here" in out
+    assert "app::resolve_target" not in out
+
+
+def test_a_function_added_since_the_index_still_gets_a_bundle(repo, capsys):
+    """The certain case for this command, and the one that broke.
+
+    `build_slice` looks the target up in the indexed units and gives
+    back None when it is absent, so a function created by the very
+    change being reviewed could not be sliced at all.
+    """
+    (repo / "app.py").write_text(
+        CLI_SOURCE + "\n\ndef brand_new(value):\n    doubled = value * 2\n    return doubled\n",
+        encoding="utf-8",
+    )
+    assert main(["--root", str(repo), "trace", "--undocumented", "--base", "HEAD"]) == 0
+    assert "app::brand_new" in capsys.readouterr().out

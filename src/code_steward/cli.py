@@ -11,7 +11,7 @@ from . import __version__
 from .check import alarm_rate, changed_python_files, check_files
 from .config import resolve_excludes
 from .db import all_endpoints, all_hard_relationships, all_units, connect, get_unit
-from .indexer import is_excluded
+from .indexer import index_python_file, is_excluded
 from .maintenance import rebuild_index, update_index_file
 from .packet import DUPLICATE_LIMIT, build_packet
 from .retrieval import rank_units, retrieve_units
@@ -296,7 +296,29 @@ def cmd_trace(args: argparse.Namespace) -> int:
         )
 
     if args.undocumented:
-        targets = undocumented_units(units)
+        if args.base:
+            # A changed file's indexed units carry line numbers from
+            # a prior revision, and a function *added* by the change
+            # is not in the index at all -- which is the certain case
+            # for this command. Re-parse, exactly as `check` does,
+            # and let the fresh units win.
+            changed = changed_python_files(root, args.base)
+            fresh: list = []
+            for path in changed:
+                try:
+                    parsed, _ = index_python_file(root, path)
+                except (SyntaxError, UnicodeDecodeError, ValueError):
+                    # A file that does not parse is the author's
+                    # problem, not this command's.
+                    continue
+                fresh.extend(parsed)
+            changed_paths = {path.resolve() for path in changed}
+            units = [
+                unit for unit in units if (root / unit.path).resolve() not in changed_paths
+            ] + fresh
+            targets = undocumented_units(fresh)
+        else:
+            targets = undocumented_units(units)
         if not targets:
             print("no undocumented functions in scope")
             return 0
@@ -505,6 +527,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--undocumented",
         action="store_true",
         help="bundle every function that has no docstring, instead of one unit",
+    )
+    trace.add_argument(
+        "--base",
+        default="",
+        help="with --undocumented, only functions in files changed since this ref",
     )
     trace.add_argument("--callers", type=int, default=1, help="how far to walk up (default 1)")
     trace.add_argument("--callees", type=int, default=1, help="how far to walk down (default 1)")
