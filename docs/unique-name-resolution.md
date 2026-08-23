@@ -151,3 +151,108 @@ key.
 Run once, all 200. No re-sampling, no threshold adjustment after
 seeing precision, no reclassifying a contradiction as unverified
 because the disagreement looks defensible on inspection.
+
+---
+
+# Result: rejected
+
+Run once, 200 call sites, Django. Everything above this line was
+written before the run.
+
+| Class | n |
+| --- | --- |
+| confirmed | 109 |
+| contradicted | 28 |
+| unverified | 63 |
+
+**Precision 0.796** on the 137 sites the oracle could adjudicate, with
+a one-sided 95% Wilson lower bound of **0.734**. The floor was 0.95
+with a bound of 0.90. **The rule is rejected.**
+
+## It fails in exactly the way the design predicted
+
+The pre-registration named the failure mode before the run: *"a call
+to `x.close()` on a file handle, where `close` happens to be unique
+among our own units, would have the rule confidently invent an edge
+into our own code."*
+
+Twenty-six of the 28 contradictions are that, verbatim:
+
+```text
+django/db/models/sql/compiler.py:631   extend   -> builtins.pyi
+django/utils/text.py:482               lower    -> builtins.pyi
+django/core/handlers/wsgi.py:67        replace  -> builtins.pyi
+django/forms/widgets.py:1238           insert   -> builtins.pyi
+django/contrib/sessions/middleware.py:54  time  -> time.pyi
+```
+
+Django contains exactly one indexed unit named `extend`, so
+`some_list.extend(...)` would have become an edge into it. The rule
+does not know that `some_list` is a list, and that is the entire
+problem: **uniqueness in our index says nothing about what the
+receiver is.**
+
+## Why the pre-registered hand pass was not run
+
+The unverified rate is 0.315, which by the amended rule sends the
+decision to the hand pass. It was not run, and the reason is
+arithmetic rather than judgement.
+
+The verifiable stratum is 68.5% of the sample at precision 0.796.
+**Even if every one of the 63 unverified sites were correct**, whole
+population precision could not exceed
+
+```text
+0.685 x 0.796  +  0.315 x 1.000  =  0.860
+```
+
+which is below the 0.95 floor. No outcome of the hand pass could
+change the decision, so running 25 hand judgements whose result
+cannot matter would have been ceremony, not rigour.
+
+**This is a deviation from the pre-registration and is recorded as
+one.** It also exposes a flaw in that document: the decision table
+has two rows that both fire on this data -- "precision < 0.95" and
+"unverified > 25%" -- and they point to different next steps. A
+future table needs to say which condition is evaluated first.
+
+## The restriction that suggests itself, and why it is not adopted here
+
+Excluding builtin method names from the population gives 109/118 =
+**0.924** on 169 sites.
+
+**That is a post-hoc number and is not a result.** It was computed by
+looking at which cases failed and removing them, which is how a
+false positive is manufactured. It is recorded only because it points
+at a v2 worth pre-registering separately: resolve only where the
+unique name is not an attribute of any builtin type.
+
+Even that would not clear the bar as measured. The nine
+contradictions surviving the exclusion are stdlib and third-party
+methods -- `inspect.getfullargspec`, `sqlite3.register_converter`,
+`os.makedirs`, `time`, `email.message.attach` -- and 0.924 is still
+short of 0.95 before any correction for its post-hoc selection. A v2
+would need a real exclusion mechanism and a fresh sample, and these
+200 sites are now spent.
+
+## The corollary that matters more than the rejected rule
+
+The [context-cost](context-cost.md) answer key is **name-based**: a
+caller is any function whose body calls the target's name. This run
+measured a name-based resolution rule at **0.796 precision** against
+a type-inference oracle.
+
+Those two facts together mean the context-cost key **cannot penalise
+name-based false positives**, because it shares their mechanism. If
+the broader graph in that comparison also resolves by name -- and its
+edge counts are consistent with that -- then part of its +0.207
+recall advantage is edges that would not survive the oracle used
+here.
+
+That does not overturn the context-cost result, and
+`trace --members-from` remains the right seam: a caller list from a
+better selector is still better, and the bundle is assembled from
+whatever list it is given. But the size of that advantage is now in
+question, it was not in question when it was published, and the next
+measurement should be adjudicating **their** caller claims with the
+oracle used here rather than with a key built the same way they work.

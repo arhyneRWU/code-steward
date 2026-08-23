@@ -65,6 +65,8 @@ def attribute_call_sites(root: Path, files: list[Path], names: set[str]) -> list
             func = node.func
             if not isinstance(func, ast.Attribute) or func.attr not in names:
                 continue
+            if func.end_col_offset is None:
+                continue
             found.append(
                 Candidate(
                     path=str(relative),

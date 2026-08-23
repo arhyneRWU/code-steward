@@ -1,0 +1,1408 @@
+{
+  "excluded_targets": 200,
+  "population": 5174,
+  "results": [
+    {
+      "attribute": "db_manager",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.manager::BaseManager.db_manager",
+      "site": "django/db/models/fields/related_descriptors.py:920",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_get_default",
+      "detail": "django/db/models/fields/__init__.py:1066",
+      "rule_would_pick": "django.db.models.fields.__init__::Field._get_default",
+      "site": "django/db/models/fields/__init__.py:1063",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "forwards_plan",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.migrations.graph::MigrationGraph.forwards_plan",
+      "site": "django/core/management/commands/squashmigrations.py:89",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "compile_json_path",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.backends.base.operations::BaseDatabaseOperations.compile_json_path",
+      "site": "django/db/models/fields/json.py:291",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "allow_migrate",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.utils::ConnectionRouter.allow_migrate",
+      "site": "django/db/migrations/operations/special.py:208",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "lists",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.utils.datastructures::MultiValueDict.lists",
+      "site": "django/utils/datastructures.py:207",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "resolve_model_init_order",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.query::RawQuerySet.resolve_model_init_order",
+      "site": "django/db/models/query.py:184",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_initial_alias",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.sql.query::Query.get_initial_alias",
+      "site": "django/db/models/sql/compiler.py:1976",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "check_consistent_history",
+      "detail": "django/db/migrations/loader.py:344",
+      "rule_would_pick": "django.db.migrations.loader::MigrationLoader.check_consistent_history",
+      "site": "django/core/management/commands/makemigrations.py:160",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "atomic",
+      "detail": "django/db/transaction.py:327",
+      "rule_would_pick": "django.db.transaction::atomic",
+      "site": "django/core/management/commands/loaddata.py:102",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "check_alias",
+      "detail": "django/db/models/sql/query.py:1221",
+      "rule_would_pick": "django.db.models.sql.query::Query.check_alias",
+      "site": "django/db/models/sql/query.py:470",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "order_by",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.query::QuerySet.order_by",
+      "site": "django/views/generic/dates.py:799",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "extend",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/contrib/messages/storage/base.py:70",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_handle_param",
+      "detail": "django/contrib/gis/db/models/functions.py:102",
+      "rule_would_pick": "django.contrib.gis.db.models.functions::GeoFuncMixin._handle_param",
+      "site": "django/contrib/gis/db/models/functions.py:255",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_check_managers",
+      "detail": "django/db/models/base.py:1936",
+      "rule_would_pick": "django.db.models.base::Model._check_managers",
+      "site": "django/db/models/base.py:1780",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "replace",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.utils.copy::replace",
+      "site": "django/utils/http.py:395",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "clear_restricted_objects_from_set",
+      "detail": "django/db/models/deletion.py:185",
+      "rule_would_pick": "django.db.models.deletion::Collector.clear_restricted_objects_from_set",
+      "site": "django/db/models/deletion.py:411",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_register_type",
+      "detail": "django/contrib/gis/db/backends/postgis/base.py:133",
+      "rule_would_pick": "django.contrib.gis.db.backends.postgis.base::DatabaseWrapper._register_type",
+      "site": "django/contrib/gis/db/backends/postgis/base.py:153",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/db/models/expressions.py:838",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "get_model_admin",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.admin.sites::AdminSite.get_model_admin",
+      "site": "django/contrib/admin/utils.py:155",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "split_contents",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.base::Token.split_contents",
+      "site": "django/template/defaulttags.py:796",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_make_single_date_lookup",
+      "detail": "django/views/generic/dates.py:282",
+      "rule_would_pick": "django.views.generic.dates::DateMixin._make_single_date_lookup",
+      "site": "django/views/generic/dates.py:612",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "has_limit_one",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.sql.query::Query.has_limit_one",
+      "site": "django/db/models/lookups.py:377",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "check_raster_lookup_value",
+      "detail": "django/contrib/gis/gdal/raster/source.py:248",
+      "rule_would_pick": "django.contrib.gis.gdal.raster.source::GDALRaster.check_raster_lookup_value",
+      "site": "django/contrib/gis/db/models/fields.py:183",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "has_db_default",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.__init__::Field.has_db_default",
+      "site": "django/db/backends/base/schema.py:819",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "lower",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/contrib/admin/utils.py:80",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "bulk_create",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.query::QuerySet.bulk_create",
+      "site": "django/contrib/admin/models.py:54",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "delete_first_token",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.base::Parser.delete_first_token",
+      "site": "django/templatetags/tz.py:177",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_changeform_view",
+      "detail": "django/contrib/admin/options.py:2051",
+      "rule_would_pick": "django.contrib.admin.options::ModelAdmin._changeform_view",
+      "site": "django/contrib/admin/options.py:2049",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "date",
+      "detail": "oracle gave no module path",
+      "rule_would_pick": "django.template.defaultfilters::date",
+      "site": "django/db/models/fields/__init__.py:1497",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "execute_sql_flush",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.backends.base.operations::BaseDatabaseOperations.execute_sql_flush",
+      "site": "django/core/management/commands/flush.py:71",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "fetch_command",
+      "detail": "django/core/management/__init__.py:247",
+      "rule_would_pick": "django.core.management.__init__::ManagementUtility.fetch_command",
+      "site": "django/core/management/__init__.py:427",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_bound_items",
+      "detail": "django/forms/forms.py:170",
+      "rule_would_pick": "django.forms.forms::BaseForm._bound_items",
+      "site": "django/forms/forms.py:235",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "feature_kwargs",
+      "detail": "django/contrib/gis/utils/layermapping.py:345",
+      "rule_would_pick": "django.contrib.gis.utils.layermapping::LayerMapping.feature_kwargs",
+      "site": "django/contrib/gis/utils/layermapping.py:630",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "parse_args",
+      "detail": "django/core/management/base.py:68",
+      "rule_would_pick": "django.core.management.base::CommandParser.parse_args",
+      "site": "django/core/management/__init__.py:173",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lists",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.utils.datastructures::MultiValueDict.lists",
+      "site": "django/contrib/admin/views/main.py:130",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "clean_name",
+      "detail": "django/contrib/staticfiles/storage.py:493",
+      "rule_would_pick": "django.contrib.staticfiles.storage::HashedFilesMixin.clean_name",
+      "site": "django/contrib/staticfiles/storage.py:508",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "related_query_name",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.related::RelatedField.related_query_name",
+      "site": "django/db/models/sql/compiler.py:1293",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_app_config",
+      "detail": "django/apps/registry.py:150",
+      "rule_would_pick": "django.apps.registry::Apps.get_app_config",
+      "site": "django/core/management/commands/squashmigrations.py:72",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "partition",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.utils.functional::partition",
+      "site": "django/template/engine.py:179",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_get_concrete_models_mapping_and_proxy_models",
+      "detail": "django/db/migrations/state.py:546",
+      "rule_would_pick": "django.db.migrations.state::ProjectState._get_concrete_models_mapping_and_proxy_models",
+      "site": "django/db/migrations/state.py:530",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_handle_param",
+      "detail": "django/contrib/gis/db/models/functions.py:102",
+      "rule_would_pick": "django.contrib.gis.db.models.functions::GeoFuncMixin._handle_param",
+      "site": "django/contrib/gis/db/models/functions.py:606",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "getfullargspec",
+      "detail": "outside the corpus: inspect.py",
+      "rule_would_pick": "django.utils.inspect::getfullargspec",
+      "site": "django/utils/inspect.py:140",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "register_converter",
+      "detail": "outside the corpus: _sqlite3.pyi",
+      "rule_would_pick": "django.urls.converters::register_converter",
+      "site": "django/db/backends/sqlite3/base.py:49",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "watched_roots",
+      "detail": "django/utils/autoreload.py:556",
+      "rule_would_pick": "django.utils.autoreload::WatchmanReloader.watched_roots",
+      "site": "django/utils/autoreload.py:564",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "rjust",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.template.defaultfilters::rjust",
+      "site": "django/utils/numberformat.py:47",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "generate_deleted_proxies",
+      "detail": "django/db/migrations/autodetector.py:1035",
+      "rule_would_pick": "django.db.migrations.autodetector::MigrationAutodetector.generate_deleted_proxies",
+      "site": "django/db/migrations/autodetector.py:192",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "characters",
+      "detail": "django/utils/xmlutils.py:27",
+      "rule_would_pick": "django.utils.xmlutils::SimplerXMLGenerator.characters",
+      "site": "django/core/serializers/xml_serializer.py:164",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lower",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/contrib/gis/utils/ogrinspect.py:48",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "auth_code",
+      "detail": "django/contrib/gis/gdal/srs.py:166",
+      "rule_would_pick": "django.contrib.gis.gdal.srs::SpatialReference.auth_code",
+      "site": "django/contrib/gis/gdal/srs.py:212",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_ignored_blocks",
+      "detail": "django/contrib/staticfiles/storage.py:237",
+      "rule_would_pick": "django.contrib.staticfiles.storage::HashedFilesMixin.get_ignored_blocks",
+      "site": "django/contrib/staticfiles/storage.py:452",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_aget_new_session_key",
+      "detail": "django/contrib/sessions/backends/base.py:204",
+      "rule_would_pick": "django.contrib.sessions.backends.base::SessionBase._aget_new_session_key",
+      "site": "django/contrib/sessions/backends/base.py:217",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_week",
+      "detail": "django/views/generic/dates.py:184",
+      "rule_would_pick": "django.views.generic.dates::WeekMixin.get_week",
+      "site": "django/views/generic/dates.py:531",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "insert",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.insert",
+      "site": "django/contrib/admin/templatetags/admin_list.py:167",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "replace",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.utils.copy::replace",
+      "site": "django/core/handlers/wsgi.py:67",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "get_facet_queryset",
+      "detail": "django/contrib/admin/filters.py:83",
+      "rule_would_pick": "django.contrib.admin.filters::FacetsMixin.get_facet_queryset",
+      "site": "django/contrib/admin/filters.py:543",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "normalize_table_name",
+      "detail": "django/core/management/commands/inspectdb.py:335",
+      "rule_would_pick": "django.core.management.commands.inspectdb::Command.normalize_table_name",
+      "site": "django/core/management/commands/inspectdb.py:130",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_chain",
+      "detail": "django/db/models/query.py:2199",
+      "rule_would_pick": "django.db.models.query::QuerySet._chain",
+      "site": "django/db/models/query.py:1967",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "make_and_validate_key",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.core.cache.backends.base::BaseCache.make_and_validate_key",
+      "site": "django/core/cache/backends/locmem.py:81",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/db/models/sql/compiler.py:631",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "target_filename",
+      "detail": "django/utils/archive.py:145",
+      "rule_would_pick": "django.utils.archive::BaseArchive.target_filename",
+      "site": "django/utils/archive.py:227",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "complex_filter",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.query::QuerySet.complex_filter",
+      "site": "django/db/models/fields/related.py:1218",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "has_db_default",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.__init__::Field.has_db_default",
+      "site": "django/db/backends/base/schema.py:1184",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "postgis_version_tuple",
+      "detail": "django/contrib/gis/db/backends/postgis/operations.py:366",
+      "rule_would_pick": "django.contrib.gis.db.backends.postgis.operations::PostGISOperations.postgis_version_tuple",
+      "site": "django/contrib/gis/db/backends/postgis/operations.py:209",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "names_to_path",
+      "detail": "django/db/models/sql/query.py:1774",
+      "rule_would_pick": "django.db.models.sql.query::Query.names_to_path",
+      "site": "django/db/models/sql/query.py:2630",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_ensure_not_in_transaction",
+      "detail": "django/contrib/postgres/operations.py:115",
+      "rule_would_pick": "django.contrib.postgres.operations::NotInTransactionMixin._ensure_not_in_transaction",
+      "site": "django/contrib/postgres/operations.py:159",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_datetime_ambiguous_or_imaginary",
+      "detail": "django/utils/timezone.py:258",
+      "rule_would_pick": "django.utils.timezone::_datetime_ambiguous_or_imaginary",
+      "site": "django/forms/utils.py:223",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_expiry_age",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.sessions.backends.base::SessionBase.get_expiry_age",
+      "site": "django/contrib/sessions/middleware.py:53",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "register_converter",
+      "detail": "outside the corpus: _sqlite3.pyi",
+      "rule_would_pick": "django.urls.converters::register_converter",
+      "site": "django/db/backends/sqlite3/base.py:51",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/forms/fields.py:1148",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "upper",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::upper",
+      "site": "django/db/backends/mysql/operations.py:344",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_query_string",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.admin.views.main::ChangeList.get_query_string",
+      "site": "django/contrib/admin/filters.py:551",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "add_base_argument",
+      "detail": "django/core/management/base.py:386",
+      "rule_would_pick": "django.core.management.base::BaseCommand.add_base_argument",
+      "site": "django/core/management/base.py:359",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_set_csrf_cookie",
+      "detail": "django/middleware/csrf.py:253",
+      "rule_would_pick": "django.middleware.csrf::CsrfViewMiddleware._set_csrf_cookie",
+      "site": "django/middleware/csrf.py:474",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lower",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/contrib/gis/utils/ogrinspect.py:169",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "serialize_result",
+      "detail": "django/contrib/admin/views/autocomplete.py:45",
+      "rule_would_pick": "django.contrib.admin.views.autocomplete::AutocompleteJsonView.serialize_result",
+      "site": "django/contrib/admin/views/autocomplete.py:38",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_test_database_tblspace_maxsize",
+      "detail": "django/db/backends/oracle/creation.py:434",
+      "rule_would_pick": "django.db.backends.oracle.creation::DatabaseCreation._test_database_tblspace_maxsize",
+      "site": "django/db/backends/oracle/creation.py:378",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_model_admin",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.admin.sites::AdminSite.get_model_admin",
+      "site": "django/contrib/admin/checks.py:242",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "check_alias",
+      "detail": "django/db/models/sql/query.py:1221",
+      "rule_would_pick": "django.db.models.sql.query::Query.check_alias",
+      "site": "django/db/models/sql/query.py:1738",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "split_contents",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.base::Token.split_contents",
+      "site": "django/template/defaulttags.py:1193",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_accessor_name",
+      "detail": "django/db/models/fields/reverse_related.py:214",
+      "rule_would_pick": "django.db.models.fields.reverse_related::ForeignObjectRel.get_accessor_name",
+      "site": "django/db/models/fields/reverse_related.py:212",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_assert_form_error",
+      "detail": "django/test/testcases.py:665",
+      "rule_would_pick": "django.test.testcases::SimpleTestCase._assert_form_error",
+      "site": "django/test/testcases.py:743",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "find_migration",
+      "detail": "django/core/management/commands/squashmigrations.py:241",
+      "rule_would_pick": "django.core.management.commands.squashmigrations::Command.find_migration",
+      "site": "django/core/management/commands/squashmigrations.py:96",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "addQuickElement",
+      "detail": "django/utils/xmlutils.py:18",
+      "rule_would_pick": "django.utils.xmlutils::SimplerXMLGenerator.addQuickElement",
+      "site": "django/utils/feedgenerator.py:440",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_compiler",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.sql.query::Query.get_compiler",
+      "site": "django/db/models/sql/compiler.py:584",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_check_on_delete",
+      "detail": "django/db/models/fields/related.py:1073",
+      "rule_would_pick": "django.db.models.fields.related::ForeignKey._check_on_delete",
+      "site": "django/db/models/fields/related.py:1052",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_load_post_and_files",
+      "detail": "outside the corpus: request.pyi",
+      "rule_would_pick": "django.http.request::HttpRequest._load_post_and_files",
+      "site": "django/core/handlers/asgi.py:135",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "lower",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/db/migrations/autodetector.py:574",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_find_boundary",
+      "detail": "django/http/multipartparser.py:655",
+      "rule_would_pick": "django.http.multipartparser::BoundaryIter._find_boundary",
+      "site": "django/http/multipartparser.py:637",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_set_creation_counter",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.manager::BaseManager._set_creation_counter",
+      "site": "django/db/migrations/state.py:907",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "create_option",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.forms.widgets::ChoiceWidget.create_option",
+      "site": "django/contrib/admin/widgets.py:597",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "serializable_value",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.base::Model.serializable_value",
+      "site": "django/forms/models.py:1578",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "clear_select_fields",
+      "detail": "django/db/models/sql/query.py:2241",
+      "rule_would_pick": "django.db.models.sql.query::Query.clear_select_fields",
+      "site": "django/db/models/sql/query.py:2590",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "date",
+      "detail": "oracle gave no module path",
+      "rule_would_pick": "django.template.defaultfilters::date",
+      "site": "django/views/generic/dates.py:812",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "check_rhs_length_equals_lhs_length",
+      "detail": "django/db/models/fields/tuple_lookups.py:68",
+      "rule_would_pick": "django.db.models.fields.tuple_lookups::TupleLookupMixin.check_rhs_length_equals_lhs_length",
+      "site": "django/db/models/fields/tuple_lookups.py:55",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lazy_model_operation",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.apps.registry::Apps.lazy_model_operation",
+      "site": "django/db/models/signals.py:22",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "mark_expected_failures_and_skips",
+      "detail": "django/db/backends/base/creation.py:356",
+      "rule_would_pick": "django.db.backends.base.creation::BaseDatabaseCreation.mark_expected_failures_and_skips",
+      "site": "django/db/backends/base/creation.py:127",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_check_list_display",
+      "detail": "django/contrib/admin/checks.py:936",
+      "rule_would_pick": "django.contrib.admin.checks::ModelAdminChecks._check_list_display",
+      "site": "django/contrib/admin/checks.py:855",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "replace",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.utils.copy::replace",
+      "site": "django/http/request.py:555",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "add_q",
+      "detail": "django/db/models/sql/query.py:1662",
+      "rule_would_pick": "django.db.models.sql.query::Query.add_q",
+      "site": "django/db/models/query.py:1695",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "add_to_class",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.base::ModelBase.add_to_class",
+      "site": "django/db/models/options.py:312",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "rhs_is_direct_value",
+      "detail": "django/db/models/lookups.py:140",
+      "rule_would_pick": "django.db.models.lookups::Lookup.rhs_is_direct_value",
+      "site": "django/db/models/lookups.py:619",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/contrib/admindocs/views.py:494",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "atomic",
+      "detail": "django/db/transaction.py:327",
+      "rule_would_pick": "django.db.transaction::atomic",
+      "site": "django/contrib/contenttypes/fields.py:808",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "hashed_name",
+      "detail": "django/contrib/staticfiles/storage.py:166",
+      "rule_would_pick": "django.contrib.staticfiles.storage::HashedFilesMixin.hashed_name",
+      "site": "django/contrib/staticfiles/storage.py:425",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_app_config",
+      "detail": "django/apps/registry.py:150",
+      "rule_would_pick": "django.apps.registry::Apps.get_app_config",
+      "site": "django/contrib/admindocs/views.py:238",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "addQuickElement",
+      "detail": "django/utils/xmlutils.py:18",
+      "rule_would_pick": "django.utils.xmlutils::SimplerXMLGenerator.addQuickElement",
+      "site": "django/core/serializers/xml_serializer.py:162",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_test_runner_kwargs",
+      "detail": "django/test/runner.py:1041",
+      "rule_would_pick": "django.test.runner::DiscoverRunner.get_test_runner_kwargs",
+      "site": "django/test/runner.py:1057",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_get_dynamic_attr",
+      "detail": "django/contrib/syndication/views.py:78",
+      "rule_would_pick": "django.contrib.syndication.views::Feed._get_dynamic_attr",
+      "site": "django/contrib/syndication/views.py:188",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "set_cached_value",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.mixins::FieldCacheMixin.set_cached_value",
+      "site": "django/db/models/fields/related_descriptors.py:286",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/db/backends/base/validation.py:31",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "normalize_name",
+      "detail": "django/db/backends/oracle/schema.py:186",
+      "rule_would_pick": "django.db.backends.oracle.schema::DatabaseSchemaEditor.normalize_name",
+      "site": "django/db/backends/oracle/schema.py:226",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_nodes_and_edges",
+      "detail": "django/db/migrations/graph.py:303",
+      "rule_would_pick": "django.db.migrations.graph::MigrationGraph._nodes_and_edges",
+      "site": "django/db/migrations/graph.py:300",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "connection_class",
+      "detail": "django/core/mail/backends/smtp.py:102",
+      "rule_would_pick": "django.core.mail.backends.smtp::EmailBackend.connection_class",
+      "site": "django/core/mail/backends/smtp.py:137",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "characters",
+      "detail": "django/utils/xmlutils.py:27",
+      "rule_would_pick": "django.utils.xmlutils::SimplerXMLGenerator.characters",
+      "site": "django/core/serializers/xml_serializer.py:137",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lower",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/contrib/auth/base_user.py:33",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_create_index_name",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.backends.base.schema::BaseDatabaseSchemaEditor._create_index_name",
+      "site": "django/contrib/gis/db/backends/postgis/schema.py:96",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_save_table",
+      "detail": "django/db/models/base.py:1069",
+      "rule_would_pick": "django.db.models.base::Model._save_table",
+      "site": "django/db/models/base.py:996",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "set_group_by",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.sql.query::Query.set_group_by",
+      "site": "django/db/models/sql/query.py:670",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/core/management/commands/inspectdb.py:155",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "rhs_is_direct_value",
+      "detail": "django/db/models/lookups.py:140",
+      "rule_would_pick": "django.db.models.lookups::Lookup.rhs_is_direct_value",
+      "site": "django/db/models/lookups.py:730",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "insert",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.insert",
+      "site": "django/forms/widgets.py:1238",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "parse_rst",
+      "detail": "django/contrib/admindocs/utils.py:60",
+      "rule_would_pick": "django.contrib.admindocs.utils::parse_rst",
+      "site": "django/contrib/admindocs/views.py:130",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_require_file",
+      "detail": "django/db/models/fields/files.py:44",
+      "rule_would_pick": "django.db.models.fields.files::FieldFile._require_file",
+      "site": "django/db/models/fields/files.py:76",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "identify_epsg",
+      "detail": "django/contrib/gis/gdal/prototypes/srs.py:60 not django/contrib/gis/gdal/srs.py:180",
+      "rule_would_pick": "django.contrib.gis.gdal.srs::SpatialReference.identify_epsg",
+      "site": "django/contrib/gis/gdal/srs.py:185",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "show_list",
+      "detail": "django/core/management/commands/showmigrations.py:80",
+      "rule_would_pick": "django.core.management.commands.showmigrations::Command.show_list",
+      "site": "django/core/management/commands/showmigrations.py:67",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "order_by",
+      "detail": "django/db/models/base.py:1353 not django/db/models/query.py:1886",
+      "rule_would_pick": "django.db.models.query::QuerySet.order_by",
+      "site": "django/db/models/base.py:1362",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/db/models/base.py:1950",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "_get_defer_select_mask",
+      "detail": "django/db/models/sql/query.py:816",
+      "rule_would_pick": "django.db.models.sql.query::Query._get_defer_select_mask",
+      "site": "django/db/models/sql/query.py:896",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "formfield_for_foreignkey",
+      "detail": "django/contrib/admin/options.py:322",
+      "rule_would_pick": "django.contrib.admin.options::BaseModelAdmin.formfield_for_foreignkey",
+      "site": "django/contrib/admin/options.py:236",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "ljust",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::ljust",
+      "site": "django/utils/dateparse.py:100",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_get_new_session_key",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.sessions.backends.base::SessionBase._get_new_session_key",
+      "site": "django/contrib/sessions/backends/cache.py:55",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_chain",
+      "detail": "django/db/models/query.py:2199",
+      "rule_would_pick": "django.db.models.query::QuerySet._chain",
+      "site": "django/db/models/query.py:1929",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "related_query_name",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.related::RelatedField.related_query_name",
+      "site": "django/db/models/base.py:2375",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "title",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::title",
+      "site": "django/utils/translation/__init__.py:241",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "has_db_default",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.__init__::Field.has_db_default",
+      "site": "django/db/backends/base/schema.py:1162",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_chain",
+      "detail": "django/db/models/query.py:2199",
+      "rule_would_pick": "django.db.models.query::QuerySet._chain",
+      "site": "django/db/models/query.py:1943",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "wait_until",
+      "detail": "django/contrib/admin/tests.py:39",
+      "rule_would_pick": "django.contrib.admin.tests::AdminSeleniumTestCase.wait_until",
+      "site": "django/contrib/admin/tests.py:78",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_boolean_input",
+      "detail": "django/db/migrations/questioner.py:99",
+      "rule_would_pick": "django.db.migrations.questioner::InteractiveMigrationQuestioner._boolean_input",
+      "site": "django/db/migrations/questioner.py:241",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_get_y",
+      "detail": "django/contrib/gis/geos/coordseq.py:91",
+      "rule_would_pick": "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_y",
+      "site": "django/contrib/gis/geos/coordseq.py:123",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_app_config",
+      "detail": "django/apps/registry.py:150",
+      "rule_would_pick": "django.apps.registry::Apps.get_app_config",
+      "site": "django/contrib/admin/sites.py:528",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_delete_view",
+      "detail": "django/contrib/admin/options.py:2494",
+      "rule_would_pick": "django.contrib.admin.options::ModelAdmin._delete_view",
+      "site": "django/contrib/admin/options.py:2492",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lower",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/core/validators.py:355",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "add_field_update",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.deletion::Collector.add_field_update",
+      "site": "django/db/models/deletion.py:61",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "message",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.core.mail.message::EmailMessage.message",
+      "site": "django/core/mail/message.py:537",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_app_config",
+      "detail": "django/apps/registry.py:150",
+      "rule_would_pick": "django.apps.registry::Apps.get_app_config",
+      "site": "django/contrib/staticfiles/management/commands/collectstatic.py:105",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "latest_post_date",
+      "detail": "django/utils/feedgenerator.py:268",
+      "rule_would_pick": "django.utils.feedgenerator::SyndicationFeed.latest_post_date",
+      "site": "django/contrib/syndication/views.py:46",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "cursor",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.backends.base.base::BaseDatabaseWrapper.cursor",
+      "site": "django/db/migrations/recorder.py:63",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_query_string",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.admin.views.main::ChangeList.get_query_string",
+      "site": "django/contrib/admin/templatetags/admin_list.py:399",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "write_hex",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.contrib.gis.geos.prototypes.io::WKBWriter.write_hex",
+      "site": "django/contrib/gis/geos/geometry.py:420",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "check_unique",
+      "detail": "django/contrib/gis/utils/layermapping.py:328",
+      "rule_would_pick": "django.contrib.gis.utils.layermapping::LayerMapping.check_unique",
+      "site": "django/contrib/gis/utils/layermapping.py:163",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "clear_restricted_objects_from_queryset",
+      "detail": "django/db/models/deletion.py:192",
+      "rule_would_pick": "django.db.models.deletion::Collector.clear_restricted_objects_from_queryset",
+      "site": "django/db/models/deletion.py:413",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_watch_glob",
+      "detail": "django/utils/autoreload.py:530",
+      "rule_would_pick": "django.utils.autoreload::WatchmanReloader._watch_glob",
+      "site": "django/utils/autoreload.py:571",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_check_readonly_fields_item",
+      "detail": "django/contrib/admin/checks.py:800",
+      "rule_would_pick": "django.contrib.admin.checks::BaseModelAdminChecks._check_readonly_fields_item",
+      "site": "django/contrib/admin/checks.py:793",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "accepted_type",
+      "detail": "django/http/request.py:121",
+      "rule_would_pick": "django.http.request::HttpRequest.accepted_type",
+      "site": "django/http/request.py:154",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_allow_future",
+      "detail": "django/views/generic/dates.py:249",
+      "rule_would_pick": "django.views.generic.dates::DateMixin.get_allow_future",
+      "site": "django/views/generic/dates.py:677",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lower",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/utils/cache.py:338",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_chain",
+      "detail": "django/db/models/query.py:2199",
+      "rule_would_pick": "django.db.models.query::QuerySet._chain",
+      "site": "django/db/models/query.py:1645",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/test/client.py:758",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "alter_index_together",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.backends.base.schema::BaseDatabaseSchemaEditor.alter_index_together",
+      "site": "django/db/migrations/operations/models.py:107",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "annotate",
+      "detail": "django/db/models/query.py:1813",
+      "rule_would_pick": "django.db.models.query::QuerySet.annotate",
+      "site": "django/db/models/query.py:1506",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_cols",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.expressions::ColPairs.get_cols",
+      "site": "django/db/models/aggregates.py:322",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "postgis_proj_version",
+      "detail": "django/contrib/gis/db/backends/postgis/operations.py:354",
+      "rule_would_pick": "django.contrib.gis.db.backends.postgis.operations::PostGISOperations.postgis_proj_version",
+      "site": "django/contrib/gis/db/backends/postgis/operations.py:380",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_createdir",
+      "detail": "django/core/cache/backends/filebased.py:118",
+      "rule_would_pick": "django.core.cache.backends.filebased::FileBasedCache._createdir",
+      "site": "django/core/cache/backends/filebased.py:25",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "is_internal_request",
+      "detail": "django/middleware/common.py:160",
+      "rule_would_pick": "django.middleware.common::BrokenLinkEmailsMiddleware.is_internal_request",
+      "site": "django/middleware/common.py:184",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/db/models/base.py:1940",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "_check_sql",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.backends.base.schema::BaseDatabaseSchemaEditor._check_sql",
+      "site": "django/db/models/constraints.py:203",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "lower",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/utils/text.py:482",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "lower",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/db/migrations/state.py:364",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "reset_refcounts",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.sql.query::Query.reset_refcounts",
+      "site": "django/db/models/sql/compiler.py:981",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_check_list_display_links",
+      "detail": "django/contrib/admin/checks.py:989",
+      "rule_would_pick": "django.contrib.admin.checks::ModelAdminChecks._check_list_display_links",
+      "site": "django/contrib/admin/checks.py:856",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_get_from_cache",
+      "detail": "django/contrib/contenttypes/models.py:31",
+      "rule_would_pick": "django.contrib.contenttypes.models::ContentTypeManager._get_from_cache",
+      "site": "django/contrib/contenttypes/models.py:75",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "generate_removed_fields",
+      "detail": "django/db/migrations/autodetector.py:1210",
+      "rule_would_pick": "django.db.migrations.autodetector::MigrationAutodetector.generate_removed_fields",
+      "site": "django/db/migrations/autodetector.py:217",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_get_action_choices_with_action_location",
+      "detail": "django/contrib/admin/options.py:1166",
+      "rule_would_pick": "django.contrib.admin.options::ModelAdmin._get_action_choices_with_action_location",
+      "site": "django/contrib/admin/options.py:2094",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "time",
+      "detail": "outside the corpus: time.pyi",
+      "rule_would_pick": "django.template.defaultfilters::time",
+      "site": "django/contrib/sessions/middleware.py:54",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "_alter_column_default_sql",
+      "detail": "django/db/backends/base/schema.py:1384",
+      "rule_would_pick": "django.db.backends.base.schema::BaseDatabaseSchemaEditor._alter_column_default_sql",
+      "site": "django/db/backends/base/schema.py:1194",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_encode_json",
+      "detail": "django/test/client.py:450",
+      "rule_would_pick": "django.test.client::RequestFactory._encode_json",
+      "site": "django/test/client.py:573",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "makedirs",
+      "detail": "outside the corpus: os.py",
+      "rule_would_pick": "django.utils._os::makedirs",
+      "site": "django/core/mail/backends/filebased.py:56",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "_load_library",
+      "detail": "django/contrib/auth/hashers.py:223",
+      "rule_would_pick": "django.contrib.auth.hashers::BasePasswordHasher._load_library",
+      "site": "django/contrib/auth/hashers.py:507",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_values",
+      "detail": "django/db/models/query.py:1498",
+      "rule_would_pick": "django.db.models.query::QuerySet._values",
+      "site": "django/db/models/query.py:1513",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "db_manager",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.manager::BaseManager.db_manager",
+      "site": "django/core/serializers/xml_serializer.py:413",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_close_connection",
+      "detail": "django/core/mail/backends/smtp.py:157",
+      "rule_would_pick": "django.core.mail.backends.smtp::EmailBackend._close_connection",
+      "site": "django/core/mail/backends/smtp.py:174",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "preprocess_lhs",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.fields.json::KeyTransform.preprocess_lhs",
+      "site": "django/db/models/fields/json.py:206",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "as_view",
+      "detail": "django/views/generic/base.py:82",
+      "rule_would_pick": "django.views.generic.base::View.as_view",
+      "site": "django/contrib/admin/sites.py:367",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_parse_column_or_constraint_definition",
+      "detail": "django/db/backends/sqlite3/introspection.py:185",
+      "rule_would_pick": "django.db.backends.sqlite3.introspection::DatabaseIntrospection._parse_column_or_constraint_definition",
+      "site": "django/db/backends/sqlite3/introspection.py:303",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "_new_gnu_trans",
+      "detail": "django/utils/translation/trans_real.py:193",
+      "rule_would_pick": "django.utils.translation.trans_real::DjangoTranslation._new_gnu_trans",
+      "site": "django/utils/translation/trans_real.py:228",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_client",
+      "detail": "django/core/cache/backends/redis.py:93",
+      "rule_would_pick": "django.core.cache.backends.redis::RedisCacheClient.get_client",
+      "site": "django/core/cache/backends/redis.py:117",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_preserved_filters",
+      "detail": "django/contrib/admin/options.py:1393",
+      "rule_would_pick": "django.contrib.admin.options::ModelAdmin.get_preserved_filters",
+      "site": "django/contrib/admin/views/main.py:103",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_paginate_by",
+      "detail": "django/views/generic/list.py:81",
+      "rule_would_pick": "django.views.generic.list::MultipleObjectMixin.get_paginate_by",
+      "site": "django/views/generic/list.py:125",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "attach",
+      "detail": "outside the corpus: message.py",
+      "rule_would_pick": "django.core.mail.message::EmailMessage.attach",
+      "site": "django/core/mail/message.py:506",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "run_and_clear_commit_hooks",
+      "detail": "django/db/backends/base/base.py:749",
+      "rule_would_pick": "django.db.backends.base.base::BaseDatabaseWrapper.run_and_clear_commit_hooks",
+      "site": "django/db/backends/base/base.py:491",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "get_day",
+      "detail": "django/views/generic/dates.py:137",
+      "rule_would_pick": "django.views.generic.dates::DayMixin.get_day",
+      "site": "django/views/generic/dates.py:594",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "extend",
+      "detail": "outside the corpus: builtins.pyi",
+      "rule_would_pick": "django.contrib.gis.geos.mutable_list::ListMixin.extend",
+      "site": "django/core/management/commands/loaddata.py:382",
+      "verdict": "contradicted"
+    },
+    {
+      "attribute": "_disable_cloning",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.db.models.query::QuerySet._disable_cloning",
+      "site": "django/contrib/contenttypes/fields.py:685",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "clear_checkbox_name",
+      "detail": "django/forms/widgets.py:580",
+      "rule_would_pick": "django.forms.widgets::ClearableFileInput.clear_checkbox_name",
+      "site": "django/forms/widgets.py:608",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "lower",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.defaultfilters::lower",
+      "site": "django/views/generic/base.py:138",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "_load_library",
+      "detail": "django/contrib/auth/hashers.py:223",
+      "rule_would_pick": "django.contrib.auth.hashers::BasePasswordHasher._load_library",
+      "site": "django/contrib/auth/hashers.py:503",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "compile_filter",
+      "detail": "oracle resolved nothing",
+      "rule_would_pick": "django.template.base::Parser.compile_filter",
+      "site": "django/template/defaulttags.py:929",
+      "verdict": "unverified"
+    },
+    {
+      "attribute": "get_date_field",
+      "detail": "django/views/generic/dates.py:241",
+      "rule_would_pick": "django.views.generic.dates::DateMixin.get_date_field",
+      "site": "django/views/generic/dates.py:330",
+      "verdict": "confirmed"
+    },
+    {
+      "attribute": "normalize_table_name",
+      "detail": "django/core/management/commands/inspectdb.py:335",
+      "rule_would_pick": "django.core.management.commands.inspectdb::Command.normalize_table_name",
+      "site": "django/core/management/commands/inspectdb.py:186",
+      "verdict": "confirmed"
+    }
+  ],
+  "sampled": 200,
+  "schema_version": 1
+}
