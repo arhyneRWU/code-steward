@@ -10,7 +10,7 @@ The main coding session should receive **decisions and selected code units, not 
 
 > **What is measured today.** Both halves of the project have been compared against a simple control on real repositories.
 >
-> - **Reuse detection** works and ships. Five-token shingle comparison measured macro precision 0.978 and F1 0.571 across three pinned public repositories, ahead of jscpd (0.521) and of this project's own metadata comparison (0.431). Those figures are **being remeasured**: the population they came from excluded decorated functions, which is now fixed. See [Reuse similarity](#reuse-similarity).
+> - **Reuse detection** works and ships. Five-token shingle comparison measures macro precision **1.000** and F1 **0.577** across three pinned public repositories, ahead of jscpd (0.506) and of this project's own metadata comparison (0.385), at 2.3× to 3.6× fewer bytes. See [Reuse similarity](#reuse-similarity).
 > - **Retrieval ranking** does not beat plain text search on `psf/requests`, on any ranking metric. What it contributes is compression: 4,039 bytes of packet against 21,107 bytes of source for the same candidates. See [Measured position](#measured-position).
 >
 > Treat the roadmap as open questions rather than delivered features.
@@ -101,29 +101,28 @@ Reproduce with `benchmarks/real_repo/label_sheet.py` (emits blind sheets) and `b
 
 ### Reuse similarity
 
-Answering *does this already exist* before an agent writes it again. Three public repositories pinned to full commit SHAs (`home-assistant/core`, `apache/airflow`, `django/django`), sampled by a stated hash rule rather than by hand. Candidate pairs pooled from three independent generators, provenance stripped, 298 pairs labelled blind. Four arms scored from one label file at depth 30.
+Answering *does this already exist* before an agent writes it again. Three public repositories pinned to full commit SHAs (`home-assistant/core`, `apache/airflow`, `django/django`), sampled by a stated hash rule rather than by hand. Candidate pairs pooled from three independent generators, provenance stripped, 308 pairs labelled blind. Four arms scored from one label file at depth 30.
 
 | Arm | Precision | Recall (in pool) | F1 | Bytes |
 | --- | --- | --- | --- | --- |
-| **token-shingle** | **0.978** | **0.404** | **0.571** | **55,642** |
-| jscpd | 0.899 | 0.367 | 0.521 | 127,401 |
-| `metadata_similarity` | 0.744 | 0.304 | 0.431 | 102,457 |
-| body-rapidfuzz | unevaluated | 0.180 | 0.276 | 193,159 |
-
-**These numbers are superseded and are being remeasured.** The unit population they were drawn from silently excluded every decorated function — 53.3% of comparable units in Home Assistant. The defect is fixed and the comparison itself is unchanged, but the gold set was labelled against the smaller population and cannot be re-scored on the corrected one: 28 of 30 returned pairs now fall outside the labels. A v2 gold set is in progress. See [`docs/similarity.md`](docs/similarity.md).
+| **token-shingle** | **1.000** | **0.406** | **0.577** | **37,342** |
+| jscpd | 0.878 | 0.356 | 0.506 | 135,934 |
+| `metadata_similarity` | 0.667 | 0.271 | 0.385 | 85,145 |
+| body-rapidfuzz | unevaluated | 0.210 | 0.321 | 89,400 |
 
 Macro means over the three corpora. Five-token shingle comparison came first and now ships as `code_steward.similarity`; see [Finding reuse before the code exists](#finding-reuse-before-the-code-exists). The benchmark imports that module rather than keeping its own copy, so the measured code and the shipped code are the same code.
 
-`metadata_similarity`, which this project already had, came third. It stays where it is — deduplicating a result set — and is not used for reuse detection.
+`metadata_similarity`, which this project already had, came last of the three evaluable arms. It stays where it is — deduplicating a result set — and is not used for reuse detection.
 
-`body-rapidfuzz` returned 52 of 90 pairs that nobody labelled, and 29 of 30 on Django. Its precision is a bracket of 0.033 to 1.000, so it is reported as unevaluated rather than as the 1.000 its labelled subset suggests.
+`body-rapidfuzz` returned 44 of 90 pairs that nobody labelled, and 29 of 30 on Django. Its precision is a bracket, so it is reported as unevaluated rather than as the 1.000 its labelled subset suggests.
 
 Two results that bear on how much to trust the rest:
 
-- A generator-free random sample of 45 pairs contained **0 positives**, in all three corpora. That is the base rate the pooled 86.6% sits above.
-- Django was chosen as the hard-negative corpus and did not behave like one: 83.7% pooled positive rate against Airflow's 81.7%. It has real intra-file duplication. The selection rule was published beforehand and was not changed afterwards.
+- A generator-free random sample of 45 pairs contained **0 positives**, in all three corpora. That is the base rate the pooled 84.4% sits above.
+- Django was chosen as the hard-negative corpus and did not behave like one: 85.2% pooled positive rate, higher than Airflow's 82.4%. It has real intra-file duplication. The selection rule was published beforehand and was not changed afterwards.
+- This is the **second** gold set. The first excluded every decorated function, because unit lookup keyed on the `def` line while the indexer records a decorated function's start as its first decorator. Fixing that grew the corpora 27–133% and invalidated the first set, so it was rebuilt rather than patched. The result went the same way and further: the shipped arm rose from 0.571 to 0.577 F1 and `metadata_similarity` fell from 0.431 to 0.385.
 
-Depth 30 is both the pool depth and the measurement ceiling. Reading the same ranking deeper looks better and is not interpretable: at depth 480 the arm returns 1,440 pairs of which 88% are unlabelled, so its apparent precision of 0.970 covers a ninth of its own output. Recall past depth 30 is unknown rather than probably-higher.
+Depth 30 is both the pool depth and the measurement ceiling. Reading the same ranking deeper looks better and is not interpretable: at depth 480 the arm returns 1,440 pairs of which 90% are unlabelled, so its apparent precision of 0.993 covers a tenth of its own output. Recall past depth 30 is unknown rather than probably-higher.
 
 Full numbers, method, and the validity threats are in [`docs/similarity.md`](docs/similarity.md). Reproduce with `make bench-similarity-corpora` then `make bench-similarity`.
 
@@ -207,7 +206,7 @@ Structural relationships are still stored and still useful for impact analysis a
 
 Duplicate findings are evidence for a decision, not an instruction to abstract every repeated block. A candidate carrying duplicates points at REFACTOR rather than REUSE; it does not settle the question, and the reviewer still has to.
 
-[jscpd](https://github.com/kucherenko/jscpd) is benchmarked as one of the four arms and reaches F1 0.521, second of four. It is not a dependency: it needs Node, and it returned 2.3x the bytes for slightly worse F1.
+[jscpd](https://github.com/kucherenko/jscpd) is benchmarked as one of the four arms and reaches F1 0.506, second of four. It is not a dependency: it needs Node, and it returned 2.3x the bytes for slightly worse F1.
 
 ## Code Steward and Graph Code Review
 
@@ -335,8 +334,8 @@ The architecture is intentionally broader than FastAPI so that support for other
 
 - **External structural graph integration for ranking.** Tested, no metric moved. See [Structural graph integration](#structural-graph-integration-tested-not-adopted).
 - **Further tuning of the existing five-field fuzzy weights.** The control arm shows the ceiling of that approach is below plain keyword search.
-- **`metadata_similarity` as a reuse ranker.** Measured at macro F1 0.431 against 0.571, at 1.8x the bytes. It stays where it is, deduplicating a result set.
-- **jscpd as a dependency.** Second of four arms, but it needs Node and returns 2.3x the bytes.
+- **`metadata_similarity` as a reuse ranker.** Measured at macro F1 0.385 against 0.577, at 2.3x the bytes. It stays where it is, deduplicating a result set.
+- **jscpd as a dependency.** Second of four arms, but it needs Node and returns 3.6x the bytes.
 - **Tuning any arm against the similarity gold set.** The set was built, frozen, and measured once. Tuning against it would convert a benchmark into a target.
 
 ## Claude Code plugin surface
@@ -351,7 +350,7 @@ skills/searching-before-implementing/references/retrieval-limits.md
 agents/reuse-reviewer.md                        # read-only reviewer subagent
 ```
 
-Both are written around the accuracy gap between the two tools: `similar` measured precision 0.978, the packet ranker measured Hit@1 46.67%. The skill and the agent are told to draft and compare first where that is possible, and to fall back to the ranker when it is not.
+Both are written around the accuracy gap between the two tools: `similar` measured precision 1.000, the packet ranker measured Hit@1 46.67%. The skill and the agent are told to draft and compare first where that is possible, and to fall back to the ranker when it is not.
 
 - **`searching-before-implementing`** teaches the workflow: run `code-steward packet` before
   broad exploration, treat candidates as evidence rather than answers, read the minimum number

@@ -31,7 +31,7 @@ Use it for compression, not for confidence.
 ## The other tool is much better, and works earlier
 
 `code-steward similar` compares code to code rather than an intent to code. Measured across
-three pinned public repositories and 298 blind-labelled pairs: **precision 0.978**.
+three pinned public repositories and 308 blind-labelled pairs: **precision 1.000**.
 
 If you can sketch the function the task calls for, compare it before you reach for a packet:
 

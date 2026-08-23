@@ -5,14 +5,38 @@
     "overlapping",
     "unrelated"
   ],
-  "pair_count": 298,
+  "pair_count": 308,
   "pairs": [
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.hooks.elasticsearch::ElasticsearchSQLHook.get_conn",
+      "pair_id": "005a9253bcadb41c",
+      "right": "airflow:providers.informatica.src.airflow.providers.informatica.plugins.listener::InformaticaListener._cache_key",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.utils.mixins::DatabricksSQLStatementsMixin.execute_complete",
+      "pair_id": "00d60fecc625fbef",
+      "right": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::HitMeta.__init__",
+      "stratum": "probe"
+    },
     {
       "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.rfxtrx.siren::RfxtrxChime.__init__",
-      "pair_id": "000a810d7a012c27",
-      "right": "home-assistant:homeassistant.components.rfxtrx.siren::RfxtrxSecurityPanic.__init__",
+      "left": "home-assistant:homeassistant.components.letpot.select::_get_brightness_low_high_value",
+      "pair_id": "0202b743cb9ae426",
+      "right": "home-assistant:homeassistant.components.open_meteo.weather::OpenMeteoWeatherEntity._async_forecast_hourly",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.postgres.fields.array::ArrayField.__init__",
+      "pair_id": "0254b0e91b7f06f7",
+      "right": "django:django.contrib.postgres.fields.ranges::RangeField.__init__",
       "stratum": "pooled"
     },
     {
@@ -24,46 +48,6 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.selective_enable::enable_lineage",
-      "pair_id": "029607eb5338557a",
-      "right": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_task_handler::_format_url",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.core.management.commands.flush::Command.handle",
-      "pair_id": "02c9619c3bfa05cf",
-      "right": "django:django.core.management.commands.sqlflush::Command.handle",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.inkbird.sensor::sensor_update_to_bluetooth_data_update",
-      "pair_id": "02e34063b44e526b",
-      "right": "home-assistant:homeassistant.components.thermopro.sensor::sensor_update_to_bluetooth_data_update",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.rfxtrx.binary_sensor::RfxtrxBinarySensor.__init__",
-      "pair_id": "02ec1fd5949ee29d",
-      "right": "home-assistant:homeassistant.components.rfxtrx.switch::RfxtrxSwitch.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "overlapping",
-      "left": "django:django.db.backends.base.operations::BaseDatabaseOperations.year_lookup_bounds_for_date_field",
-      "pair_id": "03fff7eb92fa7801",
-      "right": "django:django.db.backends.base.operations::BaseDatabaseOperations.year_lookup_bounds_for_datetime_field",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "django",
       "label": "overlapping",
       "left": "django:django.contrib.gis.measure::MeasureBase.__isub__",
@@ -72,27 +56,27 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.meteo_france.sensor::MeteoFranceSensor.device_info",
+      "pair_id": "04a5172ce626e271",
+      "right": "home-assistant:homeassistant.components.meteo_france.weather::MeteoFranceWeather.device_info",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.views.decorators.http::require_http_methods.decorator",
+      "pair_id": "060e3f4b4251e5a6",
+      "right": "django:django.views.decorators.http::require_http_methods.decorator.inner#2",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "airflow",
       "label": "same-behaviour",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.utils::get_parent_information_from_dagrun_conf",
-      "pair_id": "05a08cdb0ecd0560",
-      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.utils::get_root_information_from_dagrun_conf",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.frontend.storage::SystemStore.__init__",
-      "pair_id": "05dd263bdbba0da3",
-      "right": "home-assistant:homeassistant.components.frontend.storage::UserStore.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.tradfri.fan::TradfriAirPurifierFan.__init__",
-      "pair_id": "061ef891dd6368b0",
-      "right": "home-assistant:homeassistant.components.tradfri.switch::TradfriSwitch.__init__",
+      "left": "airflow:providers.edge3.src.airflow.providers.edge3.example_dags.integration_test::long_running",
+      "pair_id": "066f188411e8ed68",
+      "right": "airflow:providers.edge3.src.airflow.providers.edge3.example_dags.win_test::long_running",
       "stratum": "pooled"
     },
     {
@@ -121,10 +105,26 @@
     },
     {
       "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.mysql.src.airflow.providers.mysql.hooks.mysql::MySqlHook.bulk_load",
+      "pair_id": "07c5b1ded48561f3",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.spark::inject_transport_information_into_spark_properties",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
       "label": "same-behaviour",
       "left": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb3::InfluxDB3Hook.__init__",
       "pair_id": "09281812881087a7",
       "right": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb::InfluxDBHook.__init__",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.mqtt.binary_sensor::MqttBinarySensor._value_is_expired",
+      "pair_id": "09a4a804542d5f84",
+      "right": "home-assistant:homeassistant.components.mqtt.sensor::MqttSensor._value_is_expired",
       "stratum": "pooled"
     },
     {
@@ -152,6 +152,14 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "django",
+      "label": "overlapping",
+      "left": "django:django.core.serializers.xml_serializer::Serializer.handle_m2m_field.queryset_iterator",
+      "pair_id": "0f28b6ac33070521",
+      "right": "django:django.core.serializers.xml_serializer::Serializer.handle_m2m_field.queryset_iterator#2",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "home-assistant",
       "label": "same-behaviour",
       "left": "home-assistant:homeassistant.components.demo.weather::DemoWeather.__init__",
@@ -160,19 +168,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
+      "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "django:django.db.migrations.operations.fields::AddField.database_backwards",
-      "pair_id": "101dead196fef03a",
-      "right": "django:django.db.migrations.operations.fields::RemoveField.database_forwards",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.template.base::PartialTemplate.render",
-      "pair_id": "1057024a0b6f3aa0",
-      "right": "django:django.template.base::Template.render",
+      "left": "home-assistant:homeassistant.components.lg_thinq.binary_sensor::ThinQBinarySensorEntity._update_status",
+      "pair_id": "0fd7cbb3a333e91d",
+      "right": "home-assistant:homeassistant.components.lg_thinq.switch::ThinQSwitchEntity._update_status",
       "stratum": "pooled"
     },
     {
@@ -185,26 +185,18 @@
     },
     {
       "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.openevse.binary_sensor::OpenEVSEBinarySensor.__init__",
-      "pair_id": "121f4f8d13e97366",
-      "right": "home-assistant:homeassistant.components.openevse.number::OpenEVSENumber.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.inkbird.sensor::_device_key_to_bluetooth_entity_key",
-      "pair_id": "12b60ebfb690cb2b",
-      "right": "home-assistant:homeassistant.components.victron_ble.sensor::_device_key_to_bluetooth_entity_key",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
       "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.light::async_setup_entry.async_setup_device_entities",
-      "pair_id": "13864f4f047868c3",
-      "right": "home-assistant:homeassistant.components.eheimdigital.select::async_setup_entry.async_setup_device_entities",
+      "left": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgbw_received",
+      "pair_id": "12f8b8563e291425",
+      "right": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgbww_received",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.rgb_color",
+      "pair_id": "135f6fd7766ed632",
+      "right": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.rgbw_color",
       "stratum": "pooled"
     },
     {
@@ -225,42 +217,10 @@
     },
     {
       "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.jellyfin.media_player::JellyfinMediaPlayer.play_media_shuffle",
-      "pair_id": "15b67407b9264fad",
-      "right": "home-assistant:homeassistant.components.verisure.lock::VerisureDoorlock.enable_autolock",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.epic_games_store.calendar::_are_date_range_overlapping",
-      "pair_id": "16685c1692d0468a",
-      "right": "home-assistant:homeassistant.components.nrgkick.device_tracker::NRGkickDeviceTracker.__init__",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.victron_gx.binary_sensor::async_setup_entry.on_new_metric",
-      "pair_id": "179e974091b3f09b",
-      "right": "home-assistant:homeassistant.components.victron_gx.sensor::async_setup_entry.on_new_metric",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "overlapping",
-      "left": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks_workflow::DatabricksWorkflowTaskGroup.__init__",
-      "pair_id": "199a140f1e1bd894",
-      "right": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks_workflow::_CreateDatabricksWorkflowOperator.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.pagerduty.src.airflow.providers.pagerduty.hooks.pagerduty_events::PagerdutyEventsAsyncHook.__init__",
-      "pair_id": "1a25919ebc524718",
-      "right": "airflow:providers.pagerduty.src.airflow.providers.pagerduty.hooks.pagerduty_events::PagerdutyEventsHook.__init__",
+      "left": "home-assistant:homeassistant.components.demo.lock::DemoLock.is_locked",
+      "pair_id": "19b1b79c58610c0e",
+      "right": "home-assistant:homeassistant.components.kitchen_sink.lock::DemoLock.is_locked",
       "stratum": "pooled"
     },
     {
@@ -288,6 +248,22 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "home-assistant",
+      "label": "overlapping",
+      "left": "home-assistant:homeassistant.components.mqtt.datetime::MqttDateTime._setup_from_config",
+      "pair_id": "1a85e2d7c44fcff1",
+      "right": "home-assistant:homeassistant.components.mqtt.text::MqttTextEntity._setup_from_config",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.demo.fan::AsyncDemoPercentageFan.preset_modes",
+      "pair_id": "1aee553fb785e376",
+      "right": "home-assistant:homeassistant.components.demo.fan::DemoPercentageFan.preset_modes",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "airflow",
       "label": "unrelated",
       "left": "airflow:providers.teradata.src.airflow.providers.teradata.hooks.bteq::BteqHook.execute_bteq_script",
@@ -305,11 +281,27 @@
     },
     {
       "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.gis.gdal.raster.source::GDALRaster.__del__",
+      "pair_id": "1be383ce189ef493",
+      "right": "django:django.forms.utils::from_current_timezone",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "django",
       "label": "overlapping",
       "left": "django:django.views.generic.dates::BaseDateDetailView.get_object",
       "pair_id": "1ceacae129d15f9a",
       "right": "django:django.views.generic.dates::BaseDayArchiveView.get_dated_items",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_task_handler::OpensearchTaskHandler._group_logs_by_host",
+      "pair_id": "1d997ecca8ca7be9",
+      "right": "airflow:providers.postgres.src.airflow.providers.postgres.hooks.postgres::PostgresHook.copy_expert",
+      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -320,12 +312,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.gis.db.backends.oracle.operations::OracleOperations.convert_extent",
-      "pair_id": "1ebd5b6d22ac43d2",
-      "right": "django:django.core.cache.backends.base::get_key_func",
-      "stratum": "probe"
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.envertech_evt800.sensor::EnvertechEVT800Sensor.available",
+      "pair_id": "1f5098a596166ac8",
+      "right": "home-assistant:homeassistant.components.togrill.sensor::ToGrillSensor.available",
+      "stratum": "pooled"
     },
     {
       "corpus": "django",
@@ -341,6 +333,14 @@
       "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.adapter::OpenLineageAdapter.dag_failed",
       "pair_id": "1fc2a6b66baca9c2",
       "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.adapter::OpenLineageAdapter.dag_success",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.hue.v1.light::HueLight.min_color_temp_kelvin",
+      "pair_id": "1fe5618c8ab78d54",
+      "right": "home-assistant:homeassistant.components.hue.v2.light::HueLight.min_color_temp_kelvin",
       "stratum": "pooled"
     },
     {
@@ -369,18 +369,18 @@
     },
     {
       "corpus": "django",
-      "label": "overlapping",
-      "left": "django:django.db.models.fields.generated::GeneratedField.check",
-      "pair_id": "25f74e04939e00c5",
-      "right": "django:django.db.models.fields.json::JSONField.check",
+      "label": "unrelated",
+      "left": "django:django.contrib.auth.admin::UserAdmin._add_view",
+      "pair_id": "24a403dcb73b1c3a",
+      "right": "django:django.contrib.auth.admin::UserAdmin.add_view",
       "stratum": "pooled"
     },
     {
       "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.backends.mysql.introspection::DatabaseIntrospection.get_field_type",
-      "pair_id": "2610af0da1bf1931",
-      "right": "django:django.db.backends.sqlite3.introspection::DatabaseIntrospection.get_field_type",
+      "label": "overlapping",
+      "left": "django:django.db.models.fields.generated::GeneratedField.check",
+      "pair_id": "25f74e04939e00c5",
+      "right": "django:django.db.models.fields.json::JSONField.check",
       "stratum": "pooled"
     },
     {
@@ -389,6 +389,22 @@
       "left": "airflow:providers.pagerduty.src.airflow.providers.pagerduty.hooks.pagerduty_events::PagerdutyEventsHook.send_event",
       "pair_id": "26d86cc9ca4b5596",
       "right": "airflow:providers.pagerduty.src.airflow.providers.pagerduty.notifications.pagerduty::PagerdutyNotifier.__init__",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.postgres.fields.array::ArrayField._from_db_value",
+      "pair_id": "2742bf2fc0b71173",
+      "right": "django:django.utils.feedgenerator::Stylesheet.mimetype",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
+      "label": "same-behaviour",
+      "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.maxcompute::MaxComputeHook.get_ui_field_behaviour",
+      "pair_id": "28e7cb1918769b77",
+      "right": "airflow:providers.yandex.src.airflow.providers.yandex.hooks.yandex::YandexCloudBaseHook.get_ui_field_behaviour",
       "stratum": "pooled"
     },
     {
@@ -416,14 +432,6 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.linode.binary_sensor::setup_platform",
-      "pair_id": "2b1be95a4c995ba6",
-      "right": "home-assistant:homeassistant.components.linode.switch::setup_platform",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "airflow",
       "label": "unrelated",
       "left": "airflow:providers.teradata.src.airflow.providers.teradata.operators.teradata_compute_cluster::TeradataComputeClusterResumeOperator._compute_cluster_execute",
@@ -432,12 +440,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.oralb.config_flow::OralBConfigFlow.__init__",
-      "pair_id": "2ba3c76fc90e79bc",
-      "right": "home-assistant:homeassistant.components.thermopro.config_flow::ThermoProConfigFlow.__init__",
-      "stratum": "pooled"
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.db.backends.oracle.base::FormatStylePlaceholderCursor._guess_input_sizes",
+      "pair_id": "2bd82a130ceb8567",
+      "right": "django:django.db.models.expressions::Func.copy",
+      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -496,19 +504,19 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.core.files.storage.filesystem::FileSystemStorage.directory_permissions_mode",
+      "pair_id": "324c61f5c3db9936",
+      "right": "django:django.core.files.storage.memory::InMemoryStorage.directory_permissions_mode",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "home-assistant",
       "label": "same-behaviour",
       "left": "home-assistant:homeassistant.components.openevse.number::OpenEVSENumber.__init__",
       "pair_id": "32b9ae27ca899b92",
       "right": "home-assistant:homeassistant.components.openevse.sensor::OpenEVSESensor.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.number::async_setup_entry.async_setup_device_entities",
-      "pair_id": "333ec490cd47e2b5",
-      "right": "home-assistant:homeassistant.components.eheimdigital.select::async_setup_entry.async_setup_device_entities",
       "stratum": "pooled"
     },
     {
@@ -521,10 +529,10 @@
     },
     {
       "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.verisure.binary_sensor::VerisureDoorWindowSensor.__init__",
-      "pair_id": "3409c4164f9d9248",
-      "right": "home-assistant:homeassistant.components.verisure.switch::VerisureSmartplug.__init__",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.esphome.event::EsphomeEvent._on_device_update",
+      "pair_id": "3488bc39c7b3de17",
+      "right": "home-assistant:homeassistant.components.esphome.radio_frequency::EsphomeRadioFrequencyEntity._on_device_update",
       "stratum": "pooled"
     },
     {
@@ -545,19 +553,11 @@
     },
     {
       "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.tedee.binary_sensor::async_setup_entry._async_add_new_lock",
-      "pair_id": "36b40d7a22df4295",
-      "right": "home-assistant:homeassistant.components.tedee.sensor::async_setup_entry._async_add_new_lock",
+      "label": "overlapping",
+      "left": "home-assistant:homeassistant.components.mqtt.fan::MqttFan._setup_from_config",
+      "pair_id": "36092f0c39aed5b9",
+      "right": "home-assistant:homeassistant.components.mqtt.humidifier::MqttHumidifier._setup_from_config",
       "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks::DatabricksSQLStatementsOperator._get_hook",
-      "pair_id": "3724b863ffff7050",
-      "right": "airflow:providers.influxdb.src.airflow.providers.influxdb.version_compat::get_base_airflow_version_tuple",
-      "stratum": "probe"
     },
     {
       "corpus": "home-assistant",
@@ -569,11 +569,19 @@
     },
     {
       "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.select::async_setup_entry.async_setup_device_entities",
-      "pair_id": "388503fc6c1904bb",
-      "right": "home-assistant:homeassistant.components.eheimdigital.time::async_setup_entry.async_setup_device_entities",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedBase.open_position",
+      "pair_id": "3818ed1aa780f075",
+      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedRear.open_position",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks::DatabricksSQLStatementsOperator.__init__",
+      "pair_id": "3821d823adf1c6b1",
+      "right": "airflow:providers.teradata.src.airflow.providers.teradata.version_compat::get_base_airflow_version_tuple",
+      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -592,12 +600,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.backends.sqlite3.introspection::DatabaseIntrospection.get_table_list",
-      "pair_id": "3a400f2d1c3e673f",
-      "right": "django:django.template.base::DebugLexer._tag_re_split_positions",
-      "stratum": "probe"
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.acaia.sensor::AcaiaRestoreSensor.available",
+      "pair_id": "3983dd5244e319c3",
+      "right": "home-assistant:homeassistant.components.lg_thinq.sensor::ThinQEnergySensorEntity.available",
+      "stratum": "pooled"
     },
     {
       "corpus": "airflow",
@@ -608,27 +616,35 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
+      "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "django:django.db.utils::ConnectionRouter._router_func",
-      "pair_id": "3be4472763bef1db",
-      "right": "django:django.db.utils::ConnectionRouter._router_func._route_db",
+      "left": "home-assistant:homeassistant.components.hue.v1.light::HueLight.max_color_temp_kelvin",
+      "pair_id": "3bed3542fcc0d495",
+      "right": "home-assistant:homeassistant.components.hue.v2.light::HueLight.max_color_temp_kelvin",
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "overlapping",
-      "left": "django:django.db.migrations.operations.special::RunPython.deconstruct",
-      "pair_id": "3e09dc979960aaee",
-      "right": "django:django.db.migrations.operations.special::RunSQL.deconstruct",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
+      "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "django:django.db.models.expressions::OrderBy.get_group_by_cols",
-      "pair_id": "3f0b8598bd2646fc",
-      "right": "django:django.db.models.lookups::Lookup.get_group_by_cols",
+      "left": "home-assistant:homeassistant.components.esphome.fan::EsphomeFan.is_on",
+      "pair_id": "3c3464a7765271b5",
+      "right": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.is_on",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.rest.sensor::RestSensor.__init__",
+      "pair_id": "3c3e67e80c36ecf0",
+      "right": "home-assistant:homeassistant.components.utility_meter.__init__::max_28_days",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.elgato.switch::ElgatoSwitchEntity.is_on",
+      "pair_id": "3f8e6452ba4f42c3",
+      "right": "home-assistant:homeassistant.components.fumis.binary_sensor::FumisBinarySensorEntity.is_on",
       "stratum": "pooled"
     },
     {
@@ -640,12 +656,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.miele.light::async_setup_entry._async_add_new_devices",
-      "pair_id": "4113fa765b729297",
-      "right": "home-assistant:homeassistant.components.miele.select::async_setup_entry._async_add_new_devices",
-      "stratum": "pooled"
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.get_run_state_lifecycle",
+      "pair_id": "43708f28818f22f4",
+      "right": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb3::InfluxDB3Hook.get_connection_form_widgets",
+      "stratum": "probe"
     },
     {
       "corpus": "home-assistant",
@@ -657,18 +673,26 @@
     },
     {
       "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.auth.handlers.modwsgi::check_password",
-      "pair_id": "43780530414105dd",
-      "right": "django:django.views.i18n::set_language",
-      "stratum": "probe"
+      "label": "same-behaviour",
+      "left": "django:django.core.files.storage.filesystem::FileSystemStorage.base_url",
+      "pair_id": "458b48a68eac155b",
+      "right": "django:django.core.files.storage.memory::InMemoryStorage.base_url",
+      "stratum": "pooled"
     },
     {
       "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.gis.db.backends.mysql.introspection::MySQLIntrospection.get_geometry_type",
+      "pair_id": "468c8ffdc807e855",
+      "right": "django:django.db.models.expressions::Func.copy",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "django:django.db.models.lookups::Lookup.select_format",
-      "pair_id": "463731634a4f4702",
-      "right": "django:django.db.models.sql.where::WhereNode.select_format",
+      "left": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.is_on",
+      "pair_id": "4793cdf8728ba114",
+      "right": "home-assistant:homeassistant.components.esphome.switch::EsphomeSwitch.is_on",
       "stratum": "pooled"
     },
     {
@@ -681,26 +705,10 @@
     },
     {
       "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_task_handler::OpensearchTaskHandler._group_logs_by_host",
-      "pair_id": "47d801d744ccdfb3",
-      "right": "airflow:providers.slack.src.airflow.providers.slack.operators.slack_webhook::SlackWebhookOperator.execute",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "airflow",
       "label": "same-behaviour",
       "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.operators.oss::OSSDeleteBatchObjectOperator.__init__",
       "pair_id": "48878df7ea5f2826",
       "right": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.operators.oss::OSSDeleteObjectOperator.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedCombined.__init__",
-      "pair_id": "48a0fdbc1f44fae8",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUTop.__init__",
       "stratum": "pooled"
     },
     {
@@ -713,10 +721,18 @@
     },
     {
       "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.utility_meter.__init__::max_28_days",
+      "pair_id": "48d0a6785438de09",
+      "right": "home-assistant:homeassistant.components.vesync.fan::VeSyncFanHA.extra_state_attributes",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedFront.__init__",
-      "pair_id": "4970cf327d32fa02",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUTop.__init__",
+      "left": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_response::ElasticSearchResponse.hits",
+      "pair_id": "498779a3bcd9dc12",
+      "right": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::OpensearchResponse.hits",
       "stratum": "pooled"
     },
     {
@@ -726,6 +742,14 @@
       "pair_id": "4a59ba3e85953941",
       "right": "django:django.db.migrations.operations.fields::AlterField.deconstruct",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.esphome.cover::EsphomeCover.is_closing",
+      "pair_id": "4a6c2075abd7b9a0",
+      "right": "home-assistant:homeassistant.components.script.__init__::UnavailableScriptEntity.referenced_labels",
+      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -746,18 +770,34 @@
     {
       "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.litejet.light::LiteJetLight.__init__",
-      "pair_id": "4bf09ac60cafe995",
-      "right": "home-assistant:homeassistant.components.systemmonitor.sensor::check_legacy_resource",
+      "left": "home-assistant:homeassistant.components.harmony.subscriber::HarmonySubscriberMixin.__init__",
+      "pair_id": "4bb79aea105e5b7c",
+      "right": "home-assistant:homeassistant.components.vesync.light::VeSyncBaseLightHA.is_on",
       "stratum": "probe"
+    },
+    {
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.core.serializers.python::Serializer.handle_m2m_field.queryset_iterator#2",
+      "pair_id": "4c4659a85688f7e6",
+      "right": "django:django.core.serializers.xml_serializer::Serializer.handle_m2m_field.queryset_iterator#2",
+      "stratum": "pooled"
     },
     {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.sensirion_ble.sensor::_device_key_to_bluetooth_entity_key",
-      "pair_id": "4c1a4ad073a22511",
-      "right": "home-assistant:homeassistant.components.thermopro.sensor::_device_key_to_bluetooth_entity_key",
+      "left": "home-assistant:homeassistant.components.nexia.sensor::NexiaThermostatSensor.native_value",
+      "pair_id": "4c5aefb53cd769e5",
+      "right": "home-assistant:homeassistant.components.nexia.sensor::NexiaThermostatZoneSensor.native_value",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.mqtt.discovery::async_log_discovery_origin_info",
+      "pair_id": "4ca8cce3469d969a",
+      "right": "home-assistant:homeassistant.components.transmission.coordinator::TransmissionDataUpdateCoordinator.update",
+      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -765,6 +805,14 @@
       "left": "django:django.core.validators::validate_ipv46_address",
       "pair_id": "4d632a5e4bb57975",
       "right": "django:django.core.validators::validate_ipv4_address",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "overlapping",
+      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_running",
+      "pair_id": "4e17a073c278c495",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_running#2",
       "stratum": "pooled"
     },
     {
@@ -785,50 +833,18 @@
     },
     {
       "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.token_provider::resolve_airflow_connection_auth",
-      "pair_id": "4f26e21571a5f5a5",
-      "right": "airflow:providers.ssh.src.airflow.providers.ssh.hooks.ssh::SSHHook._pkey_from_private_key",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.fitbit.sensor::_water_unit",
-      "pair_id": "4f80ebffd6c36f11",
-      "right": "home-assistant:homeassistant.components.letpot.time::LetPotTimeEntity.__init__",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.mqtt.climate::valid_preset_mode_configuration",
-      "pair_id": "502039b6b748a3af",
-      "right": "home-assistant:homeassistant.components.mqtt.fan::valid_preset_mode_configuration",
+      "label": "same-behaviour",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks_repos::DatabricksReposCreateOperator._hook",
+      "pair_id": "4f5f9e3887d01fe0",
+      "right": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks_repos::DatabricksReposDeleteOperator._hook",
       "stratum": "pooled"
     },
     {
       "corpus": "home-assistant",
       "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.light::async_setup_entry.async_setup_device_entities",
-      "pair_id": "50290b64cbbd73b7",
-      "right": "home-assistant:homeassistant.components.eheimdigital.sensor::async_setup_entry.async_setup_device_entities",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.migrations.state::ModelState.__eq__",
-      "pair_id": "511bc7590445e305",
-      "right": "django:django.db.models.lookups::Exact.as_sql",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.openweathermap.coordinator::WeatherUpdateCoordinator._get_daily_forecast_weather_data",
-      "pair_id": "53fb5aa3189a437b",
-      "right": "home-assistant:homeassistant.components.openweathermap.coordinator::WeatherUpdateCoordinator._get_hourly_forecast_weather_data",
+      "left": "home-assistant:homeassistant.components.fitbit.config_flow::OAuth2FlowHandler.extra_authorize_data",
+      "pair_id": "524dd8bbc2ab47b8",
+      "right": "home-assistant:homeassistant.components.youtube.config_flow::OAuth2FlowHandler.extra_authorize_data",
       "stratum": "pooled"
     },
     {
@@ -856,43 +872,19 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.rainmachine.switch::RainMachineActivitySwitch.__init__",
-      "pair_id": "552e742f2325b5f8",
-      "right": "home-assistant:homeassistant.components.rainmachine.switch::RainMachineEnabledSwitch.__init__",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "django",
       "label": "overlapping",
-      "left": "django:django.contrib.auth.hashers::Argon2PasswordHasher.safe_summary",
-      "pair_id": "55a0ea0452d4e220",
-      "right": "django:django.contrib.auth.hashers::ScryptPasswordHasher.safe_summary",
+      "left": "django:django.db.models.fields.__init__::DateField._check_fix_default_value",
+      "pair_id": "5782a899c88509d7",
+      "right": "django:django.db.models.fields.__init__::DateTimeField._check_fix_default_value",
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.migrations.operations.fields::RemoveField.database_forwards",
-      "pair_id": "5632a0f7d113dbb1",
-      "right": "django:django.db.migrations.operations.fields::RenameField.database_forwards",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
+      "corpus": "airflow",
       "label": "same-behaviour",
-      "left": "django:django.contrib.postgres.aggregates.general::BitOr.__init__",
-      "pair_id": "56ea1977253abcbb",
-      "right": "django:django.contrib.postgres.aggregates.general::BitXor.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.verisure.sensor::VerisureThermometer.__init__",
-      "pair_id": "574297765d56b584",
-      "right": "home-assistant:homeassistant.components.verisure.switch::VerisureSmartplug.__init__",
+      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_failed",
+      "pair_id": "579b23c09c6aa4bd",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_failed#2",
       "stratum": "pooled"
     },
     {
@@ -913,14 +905,6 @@
     },
     {
       "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.auth.mixins::PermissionRequiredMixin.has_permission",
-      "pair_id": "585fbe6558eb70c6",
-      "right": "django:django.db.migrations.executor::MigrationExecutor.detect_soft_applied.should_skip_detecting_model",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "django",
       "label": "same-behaviour",
       "left": "django:django.contrib.gis.db.backends.oracle.schema::OracleGISSchemaEditor._alter_field",
       "pair_id": "5862537a381e6f22",
@@ -928,44 +912,28 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.schlage.lock::async_setup_entry._add_new_locks",
-      "pair_id": "58932d0aeec43724",
-      "right": "home-assistant:homeassistant.components.schlage.select::async_setup_entry._add_new_locks",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.teradata.src.airflow.providers.teradata.operators.teradata_compute_cluster::TeradataComputeClusterDecommissionOperator._compute_cluster_execute",
-      "pair_id": "5b3698780c780077",
-      "right": "airflow:providers.teradata.src.airflow.providers.teradata.operators.teradata_compute_cluster::TeradataComputeClusterProvisionOperator._compute_cluster_execute",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.core.handlers.wsgi::LimitedStream.read",
-      "pair_id": "5dc0e32fbd713098",
-      "right": "django:django.core.handlers.wsgi::LimitedStream.readline",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.db.models.expressions::When.get_group_by_cols",
-      "pair_id": "5f1fd65a88dd5e8a",
-      "right": "django:django.db.models.lookups::Lookup.get_group_by_cols",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
       "label": "unrelated",
-      "left": "airflow:providers.databricks.src.airflow.providers.databricks.plugins.databricks_workflow::get_launch_task_id",
-      "pair_id": "5fca833773e591f6",
-      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.utils::get_airflow_state_run_facet.get_task_duration",
+      "left": "django:django.core.cache.backends.base::BaseCache.incr_version",
+      "pair_id": "5bd0f7d14f380820",
+      "right": "django:django.db.models.options::Options.get_field",
       "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.demo.climate::DemoClimate.preset_modes",
+      "pair_id": "5c1f4cd02634334b",
+      "right": "home-assistant:homeassistant.components.demo.fan::DemoPercentageFan.preset_modes",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.demo.lock::DemoLock.is_open",
+      "pair_id": "5db829c7f5955eed",
+      "right": "home-assistant:homeassistant.components.kitchen_sink.lock::DemoLock.is_open",
+      "stratum": "pooled"
     },
     {
       "corpus": "airflow",
@@ -976,35 +944,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.history.websocket_api::_history_compressed_state",
-      "pair_id": "61208a94ef9c6b13",
-      "right": "home-assistant:homeassistant.components.ibeacon.coordinator::IBeaconCoordinator.__init__",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedCombined.__init__",
-      "pair_id": "61eee3f8cf368e33",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedRear.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.octoprint.button::OctoprintPrinterButton.__init__",
-      "pair_id": "640de3a3e05544d1",
-      "right": "home-assistant:homeassistant.components.octoprint.button::OctoprintSystemButton.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.thermopro.sensor::_device_key_to_bluetooth_entity_key",
-      "pair_id": "647c7b8dd5c7dd5e",
-      "right": "home-assistant:homeassistant.components.victron_ble.sensor::_device_key_to_bluetooth_entity_key",
+      "corpus": "django",
+      "label": "overlapping",
+      "left": "django:django.db.backends.postgresql.operations::DatabaseOperations.on_conflict_suffix_sql",
+      "pair_id": "636201728f7d3225",
+      "right": "django:django.db.backends.sqlite3.operations::DatabaseOperations.on_conflict_suffix_sql",
       "stratum": "pooled"
     },
     {
@@ -1024,11 +968,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
+      "corpus": "django",
       "label": "unrelated",
-      "left": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::HitMeta.__init__",
-      "pair_id": "65c405213a11bf40",
-      "right": "airflow:providers.oracle.src.airflow.providers.oracle.hooks.handlers::fetch_one_handler",
+      "left": "django:django.core.handlers.wsgi::LimitedStream.readline",
+      "pair_id": "65594d1e9f832f24",
+      "right": "django:django.template.context::BaseContext.__copy__",
       "stratum": "probe"
     },
     {
@@ -1041,6 +985,30 @@
     },
     {
       "corpus": "django",
+      "label": "overlapping",
+      "left": "django:django.db.backends.postgresql.operations::DatabaseOperations.last_executed_query",
+      "pair_id": "683d8ddbe3a0ce3d",
+      "right": "django:django.db.backends.postgresql.operations::DatabaseOperations.last_executed_query#2",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.mqtt.text::MqttTextEntity._setup_from_config",
+      "pair_id": "68484c1f721f519f",
+      "right": "home-assistant:homeassistant.components.mqtt.time::MqttTimeEntity._setup_from_config",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.admin.sites::AdminSite.__init__",
+      "pair_id": "68a07ccf5513294c",
+      "right": "django:django.db.backends.sqlite3.operations::DatabaseOperations.sequence_reset_by_name_sql",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "django",
       "label": "same-behaviour",
       "left": "django:django.contrib.postgres.operations::ValidateConstraint.deconstruct",
       "pair_id": "68f1d04f79099281",
@@ -1048,19 +1016,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.sensirion_ble.sensor::_device_key_to_bluetooth_entity_key",
-      "pair_id": "6af20f73f614939e",
-      "right": "home-assistant:homeassistant.components.victron_ble.sensor::_device_key_to_bluetooth_entity_key",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "django",
       "label": "overlapping",
-      "left": "django:django.db.models.functions.uuid::UUID4.as_mysql",
-      "pair_id": "6b42e3d3df449b3d",
-      "right": "django:django.db.models.functions.uuid::UUID7.as_mysql",
+      "left": "django:django.core.mail.__init__::send_mail",
+      "pair_id": "694a73bb487b6cd5",
+      "right": "django:django.core.mail.__init__::send_mass_mail",
       "stratum": "pooled"
     },
     {
@@ -1069,14 +1029,6 @@
       "left": "django:django.db.backends.mysql.client::DatabaseClient.runshell",
       "pair_id": "6bd45a8c903668cc",
       "right": "django:django.db.backends.postgresql.client::DatabaseClient.runshell",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedCombined.__init__",
-      "pair_id": "6be9a0e637e8cf3d",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUBottom.__init__",
       "stratum": "pooled"
     },
     {
@@ -1089,11 +1041,59 @@
     },
     {
       "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.db.backends.oracle.base::DatabaseWrapper.close_if_health_check_failed",
+      "pair_id": "6cf536001f7c9ef3",
+      "right": "django:django.db.backends.postgresql.base::DatabaseWrapper.close_if_health_check_failed",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
       "label": "unrelated",
-      "left": "django:django.db.backends.base.operations::BaseDatabaseOperations.datetime_cast_time_sql",
-      "pair_id": "6ded394991862bf4",
-      "right": "django:django.db.migrations.state::ProjectState._get_concrete_models_mapping_and_proxy_models",
+      "left": "django:django.contrib.admin.checks::BaseModelAdminChecks._check_prepopulated_fields_value",
+      "pair_id": "6d3f863445b62dba",
+      "right": "django:django.core.cache.backends.base::get_key_func",
       "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.rgb_color",
+      "pair_id": "6e0903b240461991",
+      "right": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.rgbww_color",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.hue.v1.light::HueLight.color_temp_kelvin",
+      "pair_id": "6e0aff0d39bc93d8",
+      "right": "home-assistant:homeassistant.components.hue.v2.light::HueLight.color_temp_kelvin",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "overlapping",
+      "left": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.rgbw_color",
+      "pair_id": "6ef47da5a7eab722",
+      "right": "home-assistant:homeassistant.components.esphome.light::EsphomeLight.rgbww_color",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.hue.v1.light::HueLight.effect",
+      "pair_id": "6f2632689896e340",
+      "right": "home-assistant:homeassistant.components.hue.v2.light::HueLight.effect",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.bosch_shc.cover::ShutterControlCover.is_closed",
+      "pair_id": "6fd57eaa80398eeb",
+      "right": "home-assistant:homeassistant.components.idasen_desk.cover::IdasenDeskCover.is_closed",
+      "stratum": "pooled"
     },
     {
       "corpus": "django",
@@ -1105,26 +1105,42 @@
     },
     {
       "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.demo.weather::DemoWeather.condition",
+      "pair_id": "70300f124da40af3",
+      "right": "home-assistant:homeassistant.components.kitchen_sink.weather::DemoWeather.condition",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.meteo_france.sensor::MeteoFranceRainSensor.native_value",
+      "pair_id": "74038b3eaceef729",
+      "right": "home-assistant:homeassistant.components.meteo_france.sensor::MeteoFranceSensor.native_value",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.contrib.gis.gdal.geometries::GeometryCollection.point_count",
+      "pair_id": "749c900e667e9155",
+      "right": "django:django.contrib.gis.gdal.geometries::Polygon.point_count",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.mqtt.lawn_mower::MqttLawnMower._prepare_subscribe_topics",
+      "pair_id": "7705577bfd5a7edf",
+      "right": "home-assistant:homeassistant.components.mqtt.select::MqttSelect._prepare_subscribe_topics",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
       "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.climate::async_setup_entry.async_setup_device_entities",
-      "pair_id": "708424fab6fd0914",
-      "right": "home-assistant:homeassistant.components.eheimdigital.light::async_setup_entry.async_setup_device_entities",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.schlage.binary_sensor::async_setup_entry._add_new_locks",
-      "pair_id": "7250f87e6b0bf14e",
-      "right": "home-assistant:homeassistant.components.schlage.sensor::async_setup_entry._add_new_locks",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.inkbird.sensor::_device_key_to_bluetooth_entity_key",
-      "pair_id": "75ed7c8d2a367208",
-      "right": "home-assistant:homeassistant.components.thermopro.sensor::_device_key_to_bluetooth_entity_key",
+      "left": "django:django.contrib.postgres.signals::register_type_handlers",
+      "pair_id": "77341f3f9ab259f7",
+      "right": "django:django.contrib.postgres.signals::register_type_handlers#2",
       "stratum": "pooled"
     },
     {
@@ -1134,6 +1150,14 @@
       "pair_id": "7795986d79d85706",
       "right": "airflow:providers.pagerduty.src.airflow.providers.pagerduty.version_compat::get_base_airflow_version_tuple",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.db.migrations.autodetector::MigrationAutodetector.generate_renamed_indexes",
+      "pair_id": "77b09938c0b23fac",
+      "right": "django:django.db.migrations.graph::MigrationGraph.iterative_dfs",
+      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -1154,17 +1178,9 @@
     {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.inkbird.sensor::_device_key_to_bluetooth_entity_key",
-      "pair_id": "7b286f84f7707401",
-      "right": "home-assistant:homeassistant.components.sensirion_ble.sensor::_device_key_to_bluetooth_entity_key",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.intent.__init__::SetPositionIntentHandler.__init__",
-      "pair_id": "7b5e39a69b0060b3",
-      "right": "home-assistant:homeassistant.components.intent.__init__::StopMovingIntentHandler.__init__",
+      "left": "home-assistant:homeassistant.components.mqtt.datetime::MqttDateTime._prepare_subscribe_topics",
+      "pair_id": "7b159a981be487ba",
+      "right": "home-assistant:homeassistant.components.mqtt.time::MqttTimeEntity._prepare_subscribe_topics",
       "stratum": "pooled"
     },
     {
@@ -1176,27 +1192,27 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.lg_netcast.trigger::_get_trigger_platform",
-      "pair_id": "7cb4d0c32bcb0ae7",
-      "right": "home-assistant:homeassistant.components.rituals_perfume_genie.switch::RitualsSwitchEntity.__init__",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.uptimerobot.binary_sensor::async_setup_entry._add_new_entities",
-      "pair_id": "7d679cd4ded9c2a0",
-      "right": "home-assistant:homeassistant.components.uptimerobot.sensor::async_setup_entry._add_new_entities",
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.contrib.postgres.fields.array::ArrayField.get_placeholder_sql",
+      "pair_id": "7d959d1ca45d1920",
+      "right": "django:django.contrib.postgres.fields.ranges::RangeField.get_placeholder_sql",
       "stratum": "pooled"
     },
     {
       "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.core.files.storage.filesystem::FileSystemStorage.file_permissions_mode",
+      "pair_id": "7ec78917d6d3d0d4",
+      "right": "django:django.core.files.storage.memory::InMemoryStorage.file_permissions_mode",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
       "label": "unrelated",
-      "left": "django:django.contrib.contenttypes.fields::GenericForeignKey.get_forward_related_filter",
-      "pair_id": "7f6a984f906b59d7",
-      "right": "django:django.forms.models::BaseModelFormSet.save_new_objects",
+      "left": "airflow:providers.openai.src.airflow.providers.openai.version_compat::get_base_airflow_version_tuple",
+      "pair_id": "7fb78b6c6d38c122",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.sqlparser::SQLParser.get_metadata_from_parser",
       "stratum": "probe"
     },
     {
@@ -1208,20 +1224,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.teradata.src.airflow.providers.teradata.operators.teradata_compute_cluster::TeradataComputeClusterSuspendOperator.__init__",
-      "pair_id": "8100d5fb55c998e5",
-      "right": "airflow:providers.teradata.src.airflow.providers.teradata.operators.teradata_compute_cluster::_TeradataComputeClusterOperator.__init__",
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.baf.binary_sensor::BAFBinarySensor._async_update_attrs",
+      "pair_id": "80b1c66dc24fe4e8",
+      "right": "home-assistant:homeassistant.components.baf.switch::BAFSwitch._async_update_attrs",
       "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.admin.helpers::Fieldline.__init__",
-      "pair_id": "8213c391cbb9fa54",
-      "right": "django:django.db.migrations.executor::MigrationExecutor.detect_soft_applied.should_skip_detecting_model",
-      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -1229,6 +1237,22 @@
       "left": "airflow:providers.airbyte.src.airflow.providers.airbyte.version_compat::get_base_airflow_version_tuple",
       "pair_id": "8242b4b528c7d6fa",
       "right": "airflow:providers.ssh.src.airflow.providers.ssh.version_compat::get_base_airflow_version_tuple",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "same-behaviour",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks_repos::DatabricksReposCreateOperator._hook",
+      "pair_id": "82aeed352105f26d",
+      "right": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks_repos::DatabricksReposUpdateOperator._hook",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.eufylife_ble.sensor::EufyLifeHeartRateSensorEntity._handle_state_update",
+      "pair_id": "83204e4942c63f93",
+      "right": "home-assistant:homeassistant.components.eufylife_ble.sensor::EufyLifeWeightSensorEntity._handle_state_update",
       "stratum": "pooled"
     },
     {
@@ -1248,6 +1272,22 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.hue.v1.light::HueLight.brightness",
+      "pair_id": "853f976a32119f22",
+      "right": "home-assistant:homeassistant.components.hue.v2.light::HueLight.brightness",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "overlapping",
+      "left": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgb_received",
+      "pair_id": "86849a21d09c8de7",
+      "right": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgbww_received",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "airflow",
       "label": "same-behaviour",
       "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.operators.oss::OSSCreateBucketOperator.__init__",
@@ -1264,6 +1304,14 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.aranet.sensor::Aranet4BluetoothSensorEntity.native_value",
+      "pair_id": "88b06f735ea8e43b",
+      "right": "home-assistant:homeassistant.components.sensirion_ble.sensor::SensirionBluetoothSensorEntity.native_value",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "django",
       "label": "same-behaviour",
       "left": "django:django.contrib.gis.db.backends.mysql.operations::MySQLOperations.get_geometry_converter",
@@ -1272,11 +1320,19 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.postgres.src.airflow.providers.postgres.hooks.postgres::PostgresHook._serialize_cell_ppg2",
+      "pair_id": "8a0058f4f0ce25b2",
+      "right": "airflow:providers.postgres.src.airflow.providers.postgres.hooks.postgres::PostgresHook._serialize_cell_ppg3",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedFront.__init__",
-      "pair_id": "8b1700ebaa737720",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedRear.__init__",
+      "left": "home-assistant:homeassistant.components.mqtt.date::MqttDateEntity._handle_state_message_received",
+      "pair_id": "8b6aac70e5af2337",
+      "right": "home-assistant:homeassistant.components.mqtt.time::MqttTimeEntity._handle_state_message_received",
       "stratum": "pooled"
     },
     {
@@ -1288,6 +1344,14 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.esphome.update::ESPHomeDashboardUpdateEntity._handle_coordinator_update",
+      "pair_id": "8d2989f4d5fb32ca",
+      "right": "home-assistant:homeassistant.components.openuv.binary_sensor::OpenUvBinarySensor._handle_coordinator_update",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "airflow",
       "label": "unrelated",
       "left": "airflow:providers.teradata.src.airflow.providers.teradata.operators.teradata_compute_cluster::TeradataComputeClusterResumeOperator.__init__",
@@ -1296,11 +1360,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
+      "corpus": "django",
       "label": "unrelated",
-      "left": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_task_handler::ElasticsearchTaskHandler._format_msg",
-      "pair_id": "8eea322862be7022",
-      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.token_provider::AirflowConnectionTokenProvider.get_api_key",
+      "left": "django:django.template.defaultfilters::truncatewords",
+      "pair_id": "8e8bbd81da820353",
+      "right": "django:django.utils.translation.trans_real::ngettext",
       "stratum": "probe"
     },
     {
@@ -1312,19 +1376,19 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.spark::inject_parent_job_information_into_spark_properties",
-      "pair_id": "8f0aaa1235adc186",
-      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.utils::get_airflow_dag_run_facet",
-      "stratum": "probe"
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.mqtt.text::MqttTextEntity._prepare_subscribe_topics",
+      "pair_id": "8f0b5987f261ab41",
+      "right": "home-assistant:homeassistant.components.mqtt.time::MqttTimeEntity._prepare_subscribe_topics",
+      "stratum": "pooled"
     },
     {
       "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.sensor::async_setup_entry.async_setup_device_entities",
-      "pair_id": "919dedb6bd46d5ec",
-      "right": "home-assistant:homeassistant.components.eheimdigital.time::async_setup_entry.async_setup_device_entities",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.elgato.switch::ElgatoSwitchEntity.is_on",
+      "pair_id": "9074421a136eb040",
+      "right": "home-assistant:homeassistant.components.nrgkick.binary_sensor::NRGkickBinarySensor.is_on",
       "stratum": "pooled"
     },
     {
@@ -1341,14 +1405,6 @@
       "left": "django:django.contrib.gis.db.models.functions::AsGML.__init__",
       "pair_id": "92913151e65ceb2b",
       "right": "django:django.contrib.gis.db.models.functions::AsKML.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedRear.__init__",
-      "pair_id": "92beb24d6be81730",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUBottom.__init__",
       "stratum": "pooled"
     },
     {
@@ -1376,6 +1432,14 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "airflow",
+      "label": "same-behaviour",
+      "left": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb3::InfluxDB3Hook.get_connection_form_widgets",
+      "pair_id": "9412cf8e8cf174a9",
+      "right": "airflow:providers.influxdb.src.airflow.providers.influxdb.hooks.influxdb::InfluxDBHook.get_connection_form_widgets",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "django",
       "label": "same-behaviour",
       "left": "django:django.contrib.postgres.fields.hstore::HStoreField.get_transform",
@@ -1400,12 +1464,28 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.gis.db.backends.oracle.operations::OracleOperations.convert_extent",
+      "pair_id": "966304b8b5fe1d26",
+      "right": "django:django.db.migrations.graph::MigrationGraph.iterative_dfs",
+      "stratum": "probe"
+    },
+    {
       "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.eheimdigital.sensor::async_setup_entry.async_setup_device_entities",
-      "pair_id": "97ceb34e56c0062a",
-      "right": "home-assistant:homeassistant.components.openweathermap.coordinator::WeatherUpdateCoordinator._get_daily_forecast_weather_data",
+      "left": "home-assistant:homeassistant.components.ntfy.update::NtfyUpdateEntity.available",
+      "pair_id": "96ceed85ac1095ee",
+      "right": "home-assistant:homeassistant.components.rest.notify::RestNotificationService.__init__",
       "stratum": "probe"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.db.backends.oracle.base::DatabaseWrapper._savepoint_commit",
+      "pair_id": "99178813f83acd39",
+      "right": "django:django.db.backends.postgresql.base::DatabaseWrapper.chunked_cursor",
+      "stratum": "pooled"
     },
     {
       "corpus": "airflow",
@@ -1424,11 +1504,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.harmony.subscriber::HarmonySubscriberMixin._connected",
-      "pair_id": "9abfe8b757981321",
-      "right": "home-assistant:homeassistant.components.harmony.subscriber::HarmonySubscriberMixin._disconnected",
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.core.serializers.python::Serializer.handle_m2m_field.m2m_value",
+      "pair_id": "9a8b74697126fe6c",
+      "right": "django:django.core.serializers.xml_serializer::Serializer.handle_m2m_field.handle_m2m",
       "stratum": "pooled"
     },
     {
@@ -1448,19 +1528,19 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
-      "label": "same-behaviour",
-      "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.version_compat::get_base_airflow_version_tuple",
-      "pair_id": "9d7487ff29b003ec",
-      "right": "airflow:providers.edge3.src.airflow.providers.edge3.version_compat::get_base_airflow_version_tuple",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.mqtt.util::async_create_certificate_temp_files._create_temp_dir_and_files",
-      "pair_id": "9dcc09e013469fac",
-      "right": "home-assistant:homeassistant.components.rfxtrx.__init__::get_device_id",
+      "left": "home-assistant:homeassistant.components.ibeacon.coordinator::async_name",
+      "pair_id": "9ce6e083dca3ed5e",
+      "right": "home-assistant:homeassistant.components.mqtt.binary_sensor::MqttBinarySensor._value_is_expired",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.contrib.admin.options::ModelAdmin.response_change",
+      "pair_id": "9d9010d16d59a686",
+      "right": "django:django.contrib.gis.db.backends.base.operations::BaseSpatialOperations.geo_db_type",
       "stratum": "probe"
     },
     {
@@ -1472,12 +1552,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.miele.button::async_setup_entry._async_add_new_devices",
-      "pair_id": "a0b2111ef2bed9cc",
-      "right": "home-assistant:homeassistant.components.miele.fan::async_setup_entry._async_add_new_devices",
-      "stratum": "pooled"
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.postgres.src.airflow.providers.postgres.hooks.postgres::PostgresHook.__init__",
+      "pair_id": "a0643dd779b4eef5",
+      "right": "airflow:providers.yandex.src.airflow.providers.yandex.secrets.lockbox::LockboxSecretBackend._get_endpoint",
+      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -1505,11 +1585,11 @@
     },
     {
       "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.informatica.src.airflow.providers.informatica.lineage.validation::resolve_uri_to_object_id",
-      "pair_id": "a413e70b4b250408",
-      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.sqlparser::from_table_meta",
-      "stratum": "probe"
+      "label": "overlapping",
+      "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.oss::OSSHook.delete_object",
+      "pair_id": "a37dfe4c190a88cf",
+      "right": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.oss::OSSHook.delete_objects",
+      "stratum": "pooled"
     },
     {
       "corpus": "django",
@@ -1546,10 +1626,10 @@
     {
       "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.history.websocket_api::_history_compressed_state",
-      "pair_id": "a73c374f437120c5",
-      "right": "home-assistant:homeassistant.components.tradfri.coordinator::TradfriDeviceDataUpdateCoordinator.__init__",
-      "stratum": "probe"
+      "left": "home-assistant:homeassistant.components.webmin.sensor::WebminFSSensor.native_value",
+      "pair_id": "a72e60146bc4ddf0",
+      "right": "home-assistant:homeassistant.components.webmin.sensor::WebminSensor.native_value",
+      "stratum": "pooled"
     },
     {
       "corpus": "django",
@@ -1557,30 +1637,6 @@
       "left": "django:django.db.models.expressions::OrderBy.get_group_by_cols",
       "pair_id": "a79418e5d314764b",
       "right": "django:django.db.models.expressions::When.get_group_by_cols",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.bosch_shc.binary_sensor::BatterySensor.__init__",
-      "pair_id": "a865c64d4c1ebead",
-      "right": "home-assistant:homeassistant.components.bosch_shc.switch::SHCRoutingSwitch.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.backends.mysql.introspection::DatabaseIntrospection.get_relations",
-      "pair_id": "a8aa52d0de92dbea",
-      "right": "django:django.db.backends.sqlite3.introspection::DatabaseIntrospection.get_relations",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.smartthings.climate::SmartThingsAirConditioner._determine_hvac_modes",
-      "pair_id": "a916cbb38862a368",
-      "right": "home-assistant:homeassistant.components.smartthings.climate::SmartThingsHeatPumpZone._determine_hvac_modes",
       "stratum": "pooled"
     },
     {
@@ -1592,11 +1648,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
-      "label": "overlapping",
-      "left": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::PrestoHook._get_pandas_df",
-      "pair_id": "a9d84b9d996461b1",
-      "right": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::PrestoHook._get_polars_df",
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.db.backends.oracle.operations::DatabaseOperations.tablespace_sql",
+      "pair_id": "a9b841c87051a19c",
+      "right": "django:django.db.backends.postgresql.operations::DatabaseOperations.tablespace_sql",
       "stratum": "pooled"
     },
     {
@@ -1616,14 +1672,6 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.gis.db.backends.mysql.introspection::MySQLIntrospection.get_geometry_type",
-      "pair_id": "ad75164d5b251796",
-      "right": "django:django.forms.utils::from_current_timezone",
-      "stratum": "probe"
-    },
-    {
       "corpus": "airflow",
       "label": "same-behaviour",
       "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.analyticdb_spark::AnalyticDBSparkHook.get_default_region",
@@ -1632,19 +1680,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "overlapping",
-      "left": "django:django.db.models.functions.datetime::Extract.as_sql",
-      "pair_id": "aea0641629002228",
-      "right": "django:django.db.models.functions.datetime::TruncBase.as_sql",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
+      "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "django:django.contrib.gis.db.models.functions::FromWKB.__init__",
-      "pair_id": "aece57d6c18530db",
-      "right": "django:django.contrib.gis.db.models.functions::Transform.__init__",
+      "left": "home-assistant:homeassistant.components.geocaching.config_flow::GeocachingFlowHandler.logger",
+      "pair_id": "aebc3243bd0efdea",
+      "right": "home-assistant:homeassistant.components.point.config_flow::OAuth2FlowHandler.logger",
       "stratum": "pooled"
     },
     {
@@ -1656,52 +1696,36 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.backends.mysql.base::DatabaseWrapper.check_constraints",
-      "pair_id": "af92cd7178b46b7f",
-      "right": "django:django.db.backends.sqlite3.base::DatabaseWrapper.check_constraints",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.contrib.sessions.backends.cache::SessionStore.delete",
-      "pair_id": "afc8ac407004ac2c",
-      "right": "django:django.contrib.sessions.backends.cached_db::SessionStore.delete",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedRear.__init__",
-      "pair_id": "b07300aa76e93e02",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUTop.__init__",
+      "left": "home-assistant:homeassistant.components.aranet.sensor::Aranet4BluetoothSensorEntity.native_value",
+      "pair_id": "b1182e55496b5acd",
+      "right": "home-assistant:homeassistant.components.inkbird.sensor::INKBIRDBluetoothSensorEntity.native_value",
       "stratum": "pooled"
     },
     {
       "corpus": "django",
       "label": "same-behaviour",
-      "left": "django:django.db.models.constraints::UniqueConstraint.constraint_sql",
-      "pair_id": "b191e99507c50ad8",
-      "right": "django:django.db.models.constraints::UniqueConstraint.create_sql",
+      "left": "django:django.db.backends.oracle.base::DatabaseWrapper.check_constraints",
+      "pair_id": "b39011f263b3bf9a",
+      "right": "django:django.db.backends.postgresql.base::DatabaseWrapper.check_constraints",
       "stratum": "pooled"
     },
     {
       "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.db.backends.oracle.operations::DatabaseOperations.date_trunc_sql",
-      "pair_id": "b3c0d9f93145e13c",
-      "right": "django:django.db.backends.oracle.operations::DatabaseOperations.datetime_trunc_sql",
+      "label": "overlapping",
+      "left": "django:django.core.serializers.python::Serializer.handle_m2m_field.queryset_iterator",
+      "pair_id": "b5410e58df9b5396",
+      "right": "django:django.core.serializers.python::Serializer.handle_m2m_field.queryset_iterator#2",
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
+      "corpus": "django",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.ps4.__init__::save_games",
-      "pair_id": "b44cacab1f470e09",
-      "right": "home-assistant:homeassistant.components.rest.sensor::RestSensor.__init__",
-      "stratum": "probe"
+      "left": "django:django.core.files.locks::lock",
+      "pair_id": "b566e1255d916e0e",
+      "right": "django:django.core.files.locks::lock#3",
+      "stratum": "pooled"
     },
     {
       "corpus": "airflow",
@@ -1713,11 +1737,19 @@
     },
     {
       "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.db.models.fields.tuple_lookups::TupleGreaterThanOrEqual.get_fallback_sql",
-      "pair_id": "b63d835d29e47fa7",
-      "right": "django:django.db.models.fields.tuple_lookups::TupleLessThanOrEqual.get_fallback_sql",
-      "stratum": "pooled"
+      "label": "unrelated",
+      "left": "django:django.contrib.admin.checks::BaseModelAdminChecks.check",
+      "pair_id": "b5e7beff6c8bde7b",
+      "right": "django:django.utils.autoreload::BaseReloader.watched_files",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.elasticsearch.src.airflow.providers.elasticsearch.log.es_task_handler::ElasticsearchTaskHandler._format_msg",
+      "pair_id": "b6a70476436a8552",
+      "right": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::Hit.__init__",
+      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -1729,19 +1761,11 @@
     },
     {
       "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.eheimdigital.climate::async_setup_entry.async_setup_device_entities",
-      "pair_id": "b9b21725efaa99ec",
-      "right": "home-assistant:homeassistant.components.eheimdigital.time::async_setup_entry.async_setup_device_entities",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.climate.condition::ClimateTargetHumidityCondition._should_include",
+      "pair_id": "ba8c77604e24ae7d",
+      "right": "home-assistant:homeassistant.components.climate.trigger::_ClimateTargetHumidityTriggerMixin._should_include",
       "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.playstation_network.helpers::PlaystationNetwork.retrieve_psn_data",
-      "pair_id": "ba1e1af3c0e6d987",
-      "right": "home-assistant:homeassistant.components.transmission.coordinator::TransmissionDataUpdateCoordinator.update",
-      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -1753,11 +1777,35 @@
     },
     {
       "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.admin.checks::BaseModelAdminChecks._check_prepopulated_fields_value",
-      "pair_id": "bafb0681d8c3986a",
-      "right": "django:django.db.backends.postgresql.introspection::DatabaseIntrospection.get_field_type",
-      "stratum": "probe"
+      "label": "same-behaviour",
+      "left": "django:django.core.serializers.python::Serializer.handle_m2m_field.queryset_iterator",
+      "pair_id": "bba4de32cc2ce469",
+      "right": "django:django.core.serializers.xml_serializer::Serializer.handle_m2m_field.queryset_iterator",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.demo.climate::DemoClimate.preset_modes",
+      "pair_id": "bc0ae5d02a7ea789",
+      "right": "home-assistant:homeassistant.components.demo.fan::AsyncDemoPercentageFan.preset_modes",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.verisure.alarm_control_panel::VerisureAlarm.device_info",
+      "pair_id": "bc3db9520a6be2e2",
+      "right": "home-assistant:homeassistant.components.verisure.binary_sensor::VerisureEthernetStatus.device_info",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.esphome.fan::EsphomeFan.is_on",
+      "pair_id": "bc4aba5123775827",
+      "right": "home-assistant:homeassistant.components.esphome.switch::EsphomeSwitch.is_on",
+      "stratum": "pooled"
     },
     {
       "corpus": "airflow",
@@ -1768,28 +1816,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.models.fields.reverse_related::ForeignObjectRel.__init__",
-      "pair_id": "bd0dca2ffbfb861e",
-      "right": "django:django.middleware.csrf::_unmask_cipher_token",
-      "stratum": "probe"
-    },
-    {
       "corpus": "airflow",
-      "label": "overlapping",
-      "left": "airflow:providers.mysql.src.airflow.providers.mysql.transfers.vertica_to_mysql::VerticaToMySqlOperator._bulk_load_transfer",
-      "pair_id": "bdbbe779fb027d8f",
-      "right": "airflow:providers.mysql.src.airflow.providers.mysql.transfers.vertica_to_mysql::VerticaToMySqlOperator._non_bulk_load_transfer",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.cookidoo.__init__::_migrate_identifiers",
-      "pair_id": "be2375272bc79350",
-      "right": "home-assistant:homeassistant.components.unifi.light::convert_brightness_to_ha",
-      "stratum": "probe"
+      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener._on_task_instance_failed",
+      "pair_id": "bdf6d1632e0bee5e",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_failed",
+      "stratum": "pooled"
     },
     {
       "corpus": "airflow",
@@ -1816,76 +1848,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.nice_go.util::retry",
-      "pair_id": "beda5d9a5a17b15d",
-      "right": "home-assistant:homeassistant.components.verisure.lock::VerisureDoorlock.enable_autolock",
-      "stratum": "probe"
-    },
-    {
       "corpus": "django",
       "label": "same-behaviour",
       "left": "django:django.db.migrations.operations.fields::AddField.state_forwards",
       "pair_id": "bf0adbeee87a59da",
       "right": "django:django.db.migrations.operations.fields::AlterField.state_forwards",
       "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.octoprint.sensor::_is_printer_printing",
-      "pair_id": "bfe87f812581a1d1",
-      "right": "home-assistant:homeassistant.components.rest.__init__::_rest_coordinator",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "unrelated",
-      "left": "home-assistant:homeassistant.components.demo.geo_location::DemoManager._generate_random_event",
-      "pair_id": "c14d80ae332bcbb9",
-      "right": "home-assistant:homeassistant.components.smartthings.climate::SmartThingsAirConditioner._get_setpoint_range_value",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "django",
-      "label": "overlapping",
-      "left": "django:django.contrib.postgres.indexes::GinIndex.get_with_params",
-      "pair_id": "c1cf2294f270ccec",
-      "right": "django:django.contrib.postgres.indexes::GistIndex.get_with_params",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.migrations.state::ModelState.__eq__",
-      "pair_id": "c24dcfe907eb7c31",
-      "right": "django:django.urls.base::translate_url",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "django",
-      "label": "same-behaviour",
-      "left": "django:django.contrib.gis.db.backends.mysql.schema::MySQLGISSchemaEditor._alter_field",
-      "pair_id": "c40ed129cca72f3c",
-      "right": "django:django.contrib.gis.db.backends.postgis.schema::PostGISSchemaEditor._alter_field",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.sql::create_information_schema_query",
-      "pair_id": "c5b78010ccf934b6",
-      "right": "airflow:providers.postgres.src.airflow.providers.postgres.hooks.postgres::PostgresHook.copy_expert",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.selective_enable::enable_lineage",
-      "pair_id": "c693bf4f5f1f0a58",
-      "right": "airflow:providers.yandex.src.airflow.providers.yandex.secrets.lockbox::LockboxSecretBackend._get_endpoint",
-      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -1905,6 +1873,22 @@
     },
     {
       "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.edge3.src.airflow.providers.edge3.models.db::EdgeDBManager.upgradedb",
+      "pair_id": "c830795e59c6ff75",
+      "right": "airflow:providers.slack.src.airflow.providers.slack.operators.slack_webhook::SlackWebhookOperator.execute",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.geniushub.entity::GeniusZone.extra_state_attributes",
+      "pair_id": "ca679c6b84b719e4",
+      "right": "home-assistant:homeassistant.components.point.sensor::MinutPointSensor.native_value",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
       "label": "same-behaviour",
       "left": "airflow:providers.yandex.src.airflow.providers.yandex.operators.dataproc::DataprocCreateMapReduceJobOperator.__init__",
       "pair_id": "ca8fa2d72af0adf4",
@@ -1912,11 +1896,19 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.trino.src.airflow.providers.trino.hooks.trino::TrinoHook._get_pandas_df",
+      "pair_id": "caba3c3b319569c6",
+      "right": "airflow:providers.trino.src.airflow.providers.trino.hooks.trino::TrinoHook.get_pandas_df",
+      "stratum": "pooled"
+    },
+    {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedFront.__init__",
-      "pair_id": "cc68a0064b9c2dcb",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUBottom.__init__",
+      "left": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgb_received",
+      "pair_id": "cc9252b23bc599d5",
+      "right": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._rgbw_received",
       "stratum": "pooled"
     },
     {
@@ -1930,17 +1922,17 @@
     {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.inkbird.config_flow::INKBIRDConfigFlow.__init__",
-      "pair_id": "cd16fdb4803f9463",
-      "right": "home-assistant:homeassistant.components.thermopro.config_flow::ThermoProConfigFlow.__init__",
+      "left": "home-assistant:homeassistant.components.climate.condition::ClimateTargetTemperatureCondition._should_include",
+      "pair_id": "cce627b5b59c1496",
+      "right": "home-assistant:homeassistant.components.climate.trigger::_ClimateTargetTemperatureTriggerMixin._should_include",
       "stratum": "pooled"
     },
     {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.vesync.fan::_get_ha_mode",
-      "pair_id": "cd4510280eadbde8",
-      "right": "home-assistant:homeassistant.components.vesync.humidifier::_get_ha_mode",
+      "left": "home-assistant:homeassistant.components.inkbird.config_flow::INKBIRDConfigFlow.__init__",
+      "pair_id": "cd16fdb4803f9463",
+      "right": "home-assistant:homeassistant.components.thermopro.config_flow::ThermoProConfigFlow.__init__",
       "stratum": "pooled"
     },
     {
@@ -1952,12 +1944,20 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
+      "corpus": "django",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTiltOnly.__init__",
-      "pair_id": "cd8f90446c1a69b6",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeWithTiltBase.__init__",
+      "left": "django:django.contrib.gis.geos.prototypes.io::WKBWriter.outdim@setter",
+      "pair_id": "cda8c779c88cfc7c",
+      "right": "django:django.contrib.gis.geos.prototypes.io::WKTWriter.outdim@setter",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.get_run",
+      "pair_id": "ce26b2a27c7d8ce9",
+      "right": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::HitMeta.__init__",
+      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -1968,28 +1968,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedCombined.__init__",
-      "pair_id": "cffbc3e169bff872",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeDualOverlappedFront.__init__",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "django",
       "label": "overlapping",
       "left": "django:django.db.models.constraints::CheckConstraint.__repr__",
       "pair_id": "d03e7a2263f20946",
       "right": "django:django.db.models.constraints::UniqueConstraint.__repr__",
       "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.models.expressions::Func.__init__",
-      "pair_id": "d066dfc6dd8f1f71",
-      "right": "django:django.db.models.functions.mixins::FixDurationInputMixin.as_mysql",
-      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -2002,10 +1986,18 @@
     {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.eheimdigital.binary_sensor::async_setup_entry.async_setup_device_entities",
-      "pair_id": "d274cbbda6eba5a7",
-      "right": "home-assistant:homeassistant.components.eheimdigital.sensor::async_setup_entry.async_setup_device_entities",
+      "left": "home-assistant:homeassistant.components.fitbit.sensor::FitbitBatteryLevelSensor._handle_coordinator_update",
+      "pair_id": "d1d3911946010770",
+      "right": "home-assistant:homeassistant.components.fitbit.sensor::FitbitBatterySensor._handle_coordinator_update",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.baf.climate::BAFAutoComfort._async_update_attrs",
+      "pair_id": "d22d6a7945aae901",
+      "right": "home-assistant:homeassistant.components.nexia.climate::NexiaZone.target_temperature_high",
+      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -2017,10 +2009,58 @@
     },
     {
       "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.hue.v1.light::HueLight.color_mode",
+      "pair_id": "d3a77beaf23a4cbc",
+      "right": "home-assistant:homeassistant.components.hue.v2.light::HueLight.color_mode",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.openevse.binary_sensor::OpenEVSEBinarySensor.__init__",
-      "pair_id": "d66ba4e82296451d",
-      "right": "home-assistant:homeassistant.components.openevse.button::OpenEVSEButton.__init__",
+      "left": "home-assistant:homeassistant.components.smartthings.number::SmartThingsHoodNumberEntity.native_value",
+      "pair_id": "d529041d4c73ba5e",
+      "right": "home-assistant:homeassistant.components.smartthings.number::SmartThingsWasherRinseCyclesNumberEntity.native_value",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.sql_hook_lineage::_parse_query_into_datasets",
+      "pair_id": "d57d5fc075a85001",
+      "right": "airflow:providers.postgres.src.airflow.providers.postgres.hooks.postgres::PostgresHook.copy_expert",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.databricks.src.airflow.providers.databricks.utils.openlineage::_get_parent_run_facet",
+      "pair_id": "d64ec99793160a08",
+      "right": "airflow:providers.edge3.src.airflow.providers.edge3.cli.worker::EdgeWorker._launch_job",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.bosch_shc.cover::ShutterControlCover.is_closed",
+      "pair_id": "d69dd255f09344e5",
+      "right": "home-assistant:homeassistant.components.tradfri.cover::TradfriCover.is_closed",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.alarm_control_panel.condition::EntityStateRequiredFeaturesCondition.entity_filter",
+      "pair_id": "d6d5022def9ceb81",
+      "right": "home-assistant:homeassistant.components.alarm_control_panel.trigger::EntityStateTriggerRequiredFeatures.entity_filter",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.cookidoo.sensor::CookidooSensorEntity.native_value",
+      "pair_id": "d7689b887de89ef1",
+      "right": "home-assistant:homeassistant.components.starlink.sensor::StarlinkSensorEntity.native_value",
       "stratum": "pooled"
     },
     {
@@ -2038,22 +2078,6 @@
       "pair_id": "d8c4a11081bb069b",
       "right": "airflow:providers.sftp.src.airflow.providers.sftp.assets.sftp::convert_asset_to_openlineage",
       "stratum": "pooled"
-    },
-    {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.db.models.expressions::OrderBy.__init__",
-      "pair_id": "d8dda71b1b355575",
-      "right": "django:django.middleware.common::CommonMiddleware.should_redirect_with_slash",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.airbyte.src.airflow.providers.airbyte.sensors.airbyte::AirbyteJobSensor.execute",
-      "pair_id": "d968b0adace821ad",
-      "right": "airflow:providers.tableau.src.airflow.providers.tableau.hooks.tableau::TableauHook.get_all",
-      "stratum": "probe"
     },
     {
       "corpus": "airflow",
@@ -2081,6 +2105,22 @@
     },
     {
       "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.mqtt.event::MqttEvent._prepare_subscribe_topics",
+      "pair_id": "dca8be3e2d780bbb",
+      "right": "home-assistant:homeassistant.components.octoprint.button::OctoprintPrinterButton.available",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.aranet.sensor::Aranet4BluetoothSensorEntity.native_value",
+      "pair_id": "de28a73dbde017db",
+      "right": "home-assistant:homeassistant.components.thermopro.sensor::ThermoProBluetoothSensorEntity.native_value",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
       "label": "overlapping",
       "left": "home-assistant:homeassistant.components.eheimdigital.light::async_setup_entry.async_setup_device_entities",
       "pair_id": "de9dfedfc56c6cee",
@@ -2093,14 +2133,6 @@
       "left": "django:django.core.files.storage.filesystem::FileSystemStorage.__init__",
       "pair_id": "dfba5f02450eac30",
       "right": "django:django.core.files.storage.memory::InMemoryStorage.__init__",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "same-behaviour",
-      "left": "airflow:providers.ftp.src.airflow.providers.ftp.version_compat::get_base_airflow_version_tuple",
-      "pair_id": "e0322f1694c8d0b0",
-      "right": "airflow:providers.smtp.src.airflow.providers.smtp.version_compat::get_base_airflow_version_tuple",
       "stratum": "pooled"
     },
     {
@@ -2128,19 +2160,11 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.miele.light::async_setup_entry._async_add_new_devices",
-      "pair_id": "e1ea7d77c8e689d7",
-      "right": "home-assistant:homeassistant.components.miele.switch::async_setup_entry._async_add_new_devices",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.verisure.lock::VerisureDoorlock.__init__",
-      "pair_id": "e223e8d5043a67f7",
-      "right": "home-assistant:homeassistant.components.verisure.switch::VerisureSmartplug.__init__",
+      "corpus": "airflow",
+      "label": "same-behaviour",
+      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_success",
+      "pair_id": "e352ab85bfcddc32",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.on_task_instance_success#2",
       "stratum": "pooled"
     },
     {
@@ -2149,6 +2173,14 @@
       "left": "django:django.core.serializers.json::Deserializer.__init__",
       "pair_id": "e3586755e30c1e9d",
       "right": "django:django.core.serializers.pyyaml::Deserializer.__init__",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "airflow",
+      "label": "overlapping",
+      "left": "airflow:providers.edge3.src.airflow.providers.edge3.cli.edge_command::maintenance",
+      "pair_id": "e3871e026040009c",
+      "right": "airflow:providers.edge3.src.airflow.providers.edge3.cli.edge_command::status",
       "stratum": "pooled"
     },
     {
@@ -2170,9 +2202,9 @@
     {
       "corpus": "home-assistant",
       "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.tankerkoenig.config_flow::FlowHandler._show_form_reauth",
-      "pair_id": "e6d6764efb1df803",
-      "right": "home-assistant:homeassistant.components.tankerkoenig.config_flow::FlowHandler._show_form_user",
+      "left": "home-assistant:homeassistant.components.mqtt.light.schema_basic::MqttLight._setup_from_config",
+      "pair_id": "e6d15b45f237d857",
+      "right": "home-assistant:homeassistant.components.mqtt.light.schema_template::MqttLightTemplate._setup_from_config",
       "stratum": "pooled"
     },
     {
@@ -2184,11 +2216,51 @@
       "stratum": "pooled"
     },
     {
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.edge3.src.airflow.providers.edge3.models.edge_worker::EdgeWorkerModel.remove_queues",
+      "pair_id": "e6ff9281012d5c72",
+      "right": "airflow:providers.openlineage.src.airflow.providers.openlineage.plugins.listener::OpenLineageListener.executor",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.esphome.sensor::EsphomeSensor._on_static_info_update",
+      "pair_id": "e7bc0af2725c20a7",
+      "right": "home-assistant:homeassistant.components.esphome.sensor::EsphomeTextSensor._on_static_info_update",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "overlapping",
+      "left": "django:django.core.serializers.python::Serializer.handle_m2m_field",
+      "pair_id": "e7f2e8e442ab218e",
+      "right": "django:django.core.serializers.xml_serializer::Serializer.handle_m2m_field",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.mqtt.discovery::_merge_common_device_options",
+      "pair_id": "e851a212929bf125",
+      "right": "home-assistant:homeassistant.components.unifi.image::UnifiImageEntity.async_update_state",
+      "stratum": "probe"
+    },
+    {
       "corpus": "django",
       "label": "overlapping",
       "left": "django:django.contrib.admin.filters::AllValuesFieldListFilter.__init__",
       "pair_id": "e98ecb98aed4f1be",
       "right": "django:django.contrib.admin.filters::ChoicesFieldListFilter.__init__",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.sun.condition::_AscendingCondition._async_check",
+      "pair_id": "ed034603849b34f1",
+      "right": "home-assistant:homeassistant.components.sun.condition::_DescendingCondition._async_check",
       "stratum": "pooled"
     },
     {
@@ -2208,36 +2280,28 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
+      "corpus": "django",
       "label": "unrelated",
-      "left": "airflow:providers.databricks.src.airflow.providers.databricks.hooks.databricks::DatabricksHook.get_run",
-      "pair_id": "ed7d5e80bf840071",
-      "right": "airflow:providers.databricks.src.airflow.providers.databricks.operators.databricks::DatabricksCreateJobsOperator.execute",
+      "left": "django:django.db.backends.oracle.features::DatabaseFeatures.introspected_field_types",
+      "pair_id": "f11fe3aeb6f719da",
+      "right": "django:django.urls.base::translate_url",
       "stratum": "probe"
     },
     {
-      "corpus": "airflow",
-      "label": "same-behaviour",
-      "left": "airflow:providers.mysql.src.airflow.providers.mysql.transfers.presto_to_mysql::PrestoToMySqlOperator.__init__",
-      "pair_id": "f0679d90fd7dcf38",
-      "right": "airflow:providers.mysql.src.airflow.providers.mysql.transfers.trino_to_mysql::TrinoToMySqlOperator.__init__",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.hvv_departures.binary_sensor::HvvDepartureBinarySensor.__init__",
-      "pair_id": "f10d00ea6cb679fc",
-      "right": "home-assistant:homeassistant.components.hvv_departures.sensor::HVVDepartureSensor.__init__",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.esphome.infrared::_EsphomeInfraredEntity._on_device_update",
+      "pair_id": "f12e5843e71238e0",
+      "right": "home-assistant:homeassistant.components.esphome.radio_frequency::EsphomeRadioFrequencyEntity._on_device_update",
       "stratum": "pooled"
     },
     {
       "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.contrib.admin.checks::BaseModelAdminChecks.check",
-      "pair_id": "f1279b9938ddbfce",
-      "right": "django:django.utils.http::parse_http_date",
-      "stratum": "probe"
+      "label": "overlapping",
+      "left": "django:django.template.library::Library.inclusion_tag.dec",
+      "pair_id": "f21dc6f873e4a1aa",
+      "right": "django:django.template.library::Library.simple_tag.dec",
+      "stratum": "pooled"
     },
     {
       "corpus": "django",
@@ -2246,6 +2310,14 @@
       "pair_id": "f22fd773ec3209d6",
       "right": "django:django.contrib.contenttypes.admin::GenericInlineModelAdmin.get_formset.PermissionProtectedModelForm.has_changed",
       "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.epic_games_store.calendar::_are_date_range_overlapping",
+      "pair_id": "f3befe85ba661e60",
+      "right": "home-assistant:homeassistant.components.lg_netcast.trigger::_get_trigger_platform",
+      "stratum": "probe"
     },
     {
       "corpus": "django",
@@ -2261,6 +2333,30 @@
       "left": "django:django.contrib.gis.db.backends.oracle.operations::OracleOperations.spatial_aggregate_name",
       "pair_id": "f46a72feafe5df34",
       "right": "django:django.contrib.gis.db.backends.spatialite.operations::SpatiaLiteOperations.spatial_aggregate_name",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "unrelated",
+      "left": "django:django.http.request::HttpHeaders.to_wsgi_name",
+      "pair_id": "f5837b541e9d3a7a",
+      "right": "django:django.http.request::HttpHeaders.to_wsgi_names",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "same-behaviour",
+      "left": "home-assistant:homeassistant.components.cookidoo.sensor::CookidooSensorEntity.native_value",
+      "pair_id": "f624396ad65f2985",
+      "right": "home-assistant:homeassistant.components.playstation_network.sensor::PlaystationNetworkSensorBaseEntity.native_value",
+      "stratum": "pooled"
+    },
+    {
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.contrib.postgres.fields.array::ArrayField.model",
+      "pair_id": "f76aeb85db22d041",
+      "right": "django:django.contrib.postgres.fields.ranges::RangeField.model",
       "stratum": "pooled"
     },
     {
@@ -2280,19 +2376,19 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "overlapping",
-      "left": "django:django.db.migrations.migration::Migration.apply",
-      "pair_id": "f805eb808f4546d1",
-      "right": "django:django.db.migrations.migration::Migration.unapply",
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::PrestoHook._get_pandas_df",
+      "pair_id": "f87b73e3dd3f4575",
+      "right": "airflow:providers.presto.src.airflow.providers.presto.hooks.presto::PrestoHook.get_pandas_df",
       "stratum": "pooled"
     },
     {
-      "corpus": "home-assistant",
-      "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.octoprint.binary_sensor::OctoPrintBinarySensorBase.__init__",
-      "pair_id": "f85dff27749f0b79",
-      "right": "home-assistant:homeassistant.components.octoprint.sensor::OctoPrintSensorBase.__init__",
+      "corpus": "airflow",
+      "label": "unrelated",
+      "left": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.hooks.analyticdb_spark::AnalyticDBSparkHook.build_submit_app_data",
+      "pair_id": "f9319f8482a68427",
+      "right": "airflow:providers.alibaba.src.airflow.providers.alibaba.cloud.operators.analyticdb_spark::AnalyticDBSparkBatchOperator.__init__",
       "stratum": "pooled"
     },
     {
@@ -2304,14 +2400,6 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
-      "label": "unrelated",
-      "left": "django:django.utils.deconstruct::deconstructible",
-      "pair_id": "f9b9adfb6e0ab421",
-      "right": "django:django.utils.deconstruct::deconstructible.decorator",
-      "stratum": "pooled"
-    },
-    {
       "corpus": "airflow",
       "label": "same-behaviour",
       "left": "airflow:providers.influxdb.src.airflow.providers.influxdb.operators.influxdb3::InfluxDB3Operator.__init__",
@@ -2320,43 +2408,43 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
+      "corpus": "django",
       "label": "unrelated",
-      "left": "airflow:providers.ftp.src.airflow.providers.ftp.get_provider_info::get_provider_info",
-      "pair_id": "fbcb635ff6956042",
-      "right": "airflow:providers.sftp.src.airflow.providers.sftp.get_provider_info::get_provider_info",
+      "left": "django:django.core.management.commands.sqlmigrate::Command.add_arguments",
+      "pair_id": "fbed1a7966bd7045",
+      "right": "django:django.db.models.query_utils::DeferredAttribute.fetch_many",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "home-assistant",
+      "label": "unrelated",
+      "left": "home-assistant:homeassistant.components.demo.stt::DemoProviderEntity.supported_sample_rates",
+      "pair_id": "fbfa45b5ee05a784",
+      "right": "home-assistant:homeassistant.components.hue.v2.sensor::HueZigbeeConnectivitySensor.extra_state_attributes",
+      "stratum": "probe"
+    },
+    {
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.contrib.postgres.search::LexemeCombinable._combine",
+      "pair_id": "fcdaec3268040d5a",
+      "right": "django:django.contrib.postgres.search::SearchQueryCombinable._combine",
       "stratum": "pooled"
     },
     {
       "corpus": "home-assistant",
       "label": "same-behaviour",
-      "left": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUBottom.__init__",
-      "pair_id": "fc70f05d7aaef0e4",
-      "right": "home-assistant:homeassistant.components.hunterdouglas_powerview.cover::PowerViewShadeTDBUTop.__init__",
+      "left": "home-assistant:homeassistant.components.esphome.event::EsphomeEvent._on_device_update",
+      "pair_id": "fd93621666478671",
+      "right": "home-assistant:homeassistant.components.esphome.infrared::_EsphomeInfraredEntity._on_device_update",
       "stratum": "pooled"
     },
     {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openlineage.src.airflow.providers.openlineage.utils.spark::inject_parent_job_information_into_spark_properties",
-      "pair_id": "fc73a3c2aaba1731",
-      "right": "airflow:providers.opensearch.src.airflow.providers.opensearch.log.os_response::Hit.__init__",
-      "stratum": "probe"
-    },
-    {
-      "corpus": "home-assistant",
-      "label": "overlapping",
-      "left": "home-assistant:homeassistant.components.fyta.binary_sensor::async_setup_entry._async_add_new_device",
-      "pair_id": "fc9198926ba03ce3",
-      "right": "home-assistant:homeassistant.components.fyta.sensor::async_setup_entry._async_add_new_device",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "overlapping",
-      "left": "airflow:providers.teradata.src.airflow.providers.teradata.hooks.tpt::TptHook._execute_tbuild_locally",
-      "pair_id": "fcdd6bea9641e139",
-      "right": "airflow:providers.teradata.src.airflow.providers.teradata.hooks.tpt::TptHook._execute_tdload_locally",
+      "corpus": "django",
+      "label": "same-behaviour",
+      "left": "django:django.contrib.gis.geos.prototypes.io::ewkb_w",
+      "pair_id": "fdcaa313e661347d",
+      "right": "django:django.contrib.gis.geos.prototypes.io::wkb_w",
       "stratum": "pooled"
     },
     {
@@ -2368,20 +2456,12 @@
       "stratum": "pooled"
     },
     {
-      "corpus": "django",
+      "corpus": "home-assistant",
       "label": "unrelated",
-      "left": "django:django.db.backends.base.introspection::BaseDatabaseIntrospection.get_primary_key_column",
-      "pair_id": "fe9924fe4e3edd91",
-      "right": "django:django.db.backends.base.introspection::BaseDatabaseIntrospection.get_primary_key_columns",
-      "stratum": "pooled"
-    },
-    {
-      "corpus": "airflow",
-      "label": "unrelated",
-      "left": "airflow:providers.openai.src.airflow.providers.openai.get_provider_info::get_provider_info",
-      "pair_id": "ffc52c527a2c7d17",
-      "right": "airflow:providers.opsgenie.src.airflow.providers.opsgenie.get_provider_info::get_provider_info",
-      "stratum": "pooled"
+      "left": "home-assistant:homeassistant.components.point.sensor::MinutPointSensor.native_value",
+      "pair_id": "ff2cde8654d7a89a",
+      "right": "home-assistant:homeassistant.components.wiim.media_player::WiimMediaPlayerEntity._async_registry_updated",
+      "stratum": "probe"
     },
     {
       "corpus": "airflow",

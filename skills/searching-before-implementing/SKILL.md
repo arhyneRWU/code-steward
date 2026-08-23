@@ -16,8 +16,8 @@ them differently.**
 
 ### `similar` — comparing code to code. Reliable.
 
-Measured across three pinned public repositories and 298 blind-labelled pairs: **precision
-0.978**. When it reports an overlap, there is almost always a real one.
+Measured across three pinned public repositories and 308 blind-labelled pairs: **precision
+1.000**. When it reports an overlap, there is almost always a real one.
 
 Use it whenever you can write down the code you are about to add, even roughly. It is the
 stronger of the two signals by a wide margin, and it is the only one that works before the

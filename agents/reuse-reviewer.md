@@ -27,7 +27,7 @@ return a compact decision. You never implement anything.
 You have two, and they are not equally reliable. Weight them accordingly.
 
 **`code-steward similar` — comparing code to code. Reliable.** Measured across three pinned
-public repositories and 298 blind-labelled pairs: **precision 0.978**. If you can draft the
+public repositories and 308 blind-labelled pairs: **precision 1.000**. If you can draft the
 code the task calls for, even roughly, compare it. This is your strongest evidence and the
 only tool that works before the code exists.
 

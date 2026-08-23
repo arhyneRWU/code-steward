@@ -14,7 +14,7 @@ mechanism now used for reuse detection.
 
 Given one function, find the functions already in the same repository
 that a reviewer would call reusable — and stay quiet when there are
-none. Three public corpora pinned to full commit SHAs, 298 pairs
+none. Three public corpora pinned to full commit SHAs, 308 pairs
 labelled blind, four arms scored from one label file.
 
 The protocol, the corpora, the sampling rule, and the known
@@ -33,31 +33,14 @@ It was written before any pair was labelled.
 
 ## Result
 
-> **These numbers are superseded and are being remeasured.** They were
-> produced on a unit population that silently excluded every
-> *decorated* function — 53.3% of comparable units in Home Assistant,
-> and 27–133% more units per corpus once fixed. The cause was a
-> lookup keyed on a function's `def` line while the indexer records a
-> decorated function's start as its first decorator. The comparison
-> itself is unchanged and the defect is fixed; what is invalid is the
-> population the gold set was drawn from. Re-scoring on the corrected
-> corpus puts 28 of 30 returned pairs outside the labels for Home
-> Assistant, so the set cannot be re-scored — it has to be rebuilt.
-> A v2 gold set is in progress.
-
-
-Precision, recall, and F1 at depth 30 per corpus. Bytes are the
-normalised source of everything the arm returned — what a reviewer
-would have to read.
-
 ### Macro, mean over the three corpora
 
 | Arm | Precision | Recall (in pool) | F1 | Bytes | Unlabelled returned |
 | --- | --- | --- | --- | --- | --- |
-| **token-shingle** | **0.978** | **0.404** | **0.571** | **55,642** | 0 |
-| jscpd | 0.899 | 0.367 | 0.521 | 127,401 | 0 |
-| metadata-similarity | 0.744 | 0.304 | 0.431 | 102,457 | 0 |
-| body-rapidfuzz | 1.000\* | 0.180 | 0.276 | 193,159 | **52** |
+| **token-shingle** | **1.000** | **0.406** | **0.577** | **37,342** | 0 |
+| jscpd | 0.878 | 0.356 | 0.506 | 135,934 | 0 |
+| metadata-similarity | 0.667 | 0.271 | 0.385 | 85,145 | 0 |
+| body-rapidfuzz | 1.000\* | 0.210 | 0.321 | 89,400 | **44** |
 
 \* over labelled pairs only — see the bracket below.
 
@@ -65,18 +48,18 @@ would have to read.
 
 | Corpus | Arm | P | R | F1 | Bytes | Unlabelled |
 | --- | --- | --- | --- | --- | --- | --- |
-| home-assistant | token-shingle | 1.000 | 0.375 | 0.545 | 18,964 | 0 |
-| home-assistant | metadata-similarity | 0.933 | 0.350 | 0.509 | 28,207 | 0 |
-| home-assistant | jscpd | 0.897 | 0.325 | 0.477 | 29,450 | 0 |
-| home-assistant | body-rapidfuzz | 1.000 | 0.138 | 0.242 | 63,750 | 19 |
-| airflow | token-shingle | 1.000 | 0.448 | 0.619 | 15,802 | 0 |
-| airflow | body-rapidfuzz | 1.000 | 0.388 | 0.559 | 16,218 | 4 |
-| airflow | jscpd | 0.867 | 0.388 | 0.536 | 58,699 | 0 |
-| airflow | metadata-similarity | 0.633 | 0.284 | 0.392 | 41,846 | 0 |
-| django | jscpd | 0.933 | 0.389 | 0.549 | 39,252 | 0 |
-| django | token-shingle | 0.933 | 0.389 | 0.549 | 20,876 | 0 |
-| django | metadata-similarity | 0.667 | 0.278 | 0.392 | 32,404 | 0 |
-| django | body-rapidfuzz | 1.000 | 0.014 | 0.027 | 113,191 | 29 |
+| home-assistant | token-shingle | 1.000 | 0.390 | 0.561 | 7,758 | 0 |
+| home-assistant | jscpd | 0.967 | 0.377 | 0.542 | 35,415 | 0 |
+| home-assistant | body-rapidfuzz | 1.000 | 0.247 | 0.396 | 15,616 | 11 |
+| home-assistant | metadata-similarity | 0.600 | 0.234 | 0.336 | 20,720 | 0 |
+| airflow | token-shingle | 1.000 | 0.429 | 0.600 | 15,612 | 0 |
+| airflow | body-rapidfuzz | 1.000 | 0.371 | 0.542 | 16,218 | 4 |
+| airflow | jscpd | 0.833 | 0.357 | 0.500 | 57,884 | 0 |
+| airflow | metadata-similarity | 0.667 | 0.286 | 0.400 | 36,628 | 0 |
+| django | token-shingle | 1.000 | 0.400 | 0.571 | 13,972 | 0 |
+| django | jscpd | 0.833 | 0.333 | 0.476 | 42,635 | 0 |
+| django | metadata-similarity | 0.733 | 0.293 | 0.419 | 27,797 | 0 |
+| django | body-rapidfuzz | 1.000 | 0.013 | 0.026 | 57,566 | 29 |
 
 Every figure comes from
 [`benchmarks/similarity/scores.json`](../benchmarks/similarity/scores.json),
@@ -84,14 +67,16 @@ reproducible with `make bench-similarity`.
 
 ## What this says
 
-**Token shingles came first on every axis.** They lead on F1 in two
-corpora and tie for first in the third, in 1.8× to 3.5× fewer bytes.
-No more sophisticated arm bought anything measurable here.
+**Token shingles came first on every axis, on every corpus.**
+Precision 1.000 in all three, the best F1 in all three, and 2.3× to
+3.6× fewer bytes than the next arm. No more sophisticated arm bought
+anything measurable here.
 
-**`metadata_similarity` came third.** Macro F1 0.431 against 0.571,
-at 1.8× the bytes. On Airflow its precision is 0.633. Reading names,
-purposes, and signatures while never reading a body is a handicap for
-this particular question.
+**`metadata_similarity` came last of the three evaluable arms.** Macro
+F1 0.385 against 0.577, at 2.3× the bytes. On Home Assistant its
+precision is 0.600 — two of every five pairs it surfaces are noise.
+Reading names, purposes, and signatures while never reading a body is
+a handicap for this particular question.
 
 **`body-rapidfuzz` is not measurable from this pool, and its 1.000 is
 not a result.** It was not one of the three generators, so its ranking
@@ -160,8 +145,8 @@ shingling is long-established, and jscpd — a mature implementation of
 the same idea — placed second on this benchmark. What is different is
 placement: indexed-unit granularity, stable IDs, asked before the code
 is written, and returned as a packet an agent acts on rather than a
-report a person reads. The edge over jscpd is modest on F1 (0.571 to
-0.521) and larger on bytes (2.3× fewer), and bytes are what decide
+report a person reads. The edge over jscpd is modest on F1 (0.577 to
+0.506) and large on bytes (3.6× fewer), and bytes are what decide
 whether the evidence fits in an agent's context.
 
 ## How deep the gold set can see
@@ -179,16 +164,16 @@ labelled fraction of its own output.
 | Depth | Returned | Labelled | Unlabelled | Precision (labelled) | Precision (pessimistic) |
 | --- | --- | --- | --- | --- | --- |
 | 10 | 30 | 30 | 0% | 1.000 | 1.000 |
-| **30** | **90** | **90** | **0%** | **0.978** | **0.978** |
-| 60 | 180 | 100 | 44% | 0.980 | 0.544 |
-| 120 | 360 | 115 | 68% | 0.983 | 0.314 |
-| 240 | 720 | 135 | 81% | 0.985 | 0.185 |
-| 480 | 1,440 | 169 | 88% | 0.970 | 0.114 |
+| **30** | **90** | **90** | **0%** | **1.000** | **1.000** |
+| 60 | 180 | 92 | 49% | 1.000 | 0.511 |
+| 120 | 360 | 102 | 72% | 1.000 | 0.283 |
+| 240 | 720 | 120 | 83% | 0.992 | 0.165 |
+| 480 | 1,440 | 146 | 90% | 0.993 | 0.101 |
 
 The `precision (labelled)` column looks flat and encouraging all the
 way down. It is not a result below depth 30. At depth 480 it describes
-11.7% of what the arm returned, and the pessimistic bound on the other
-88.3% is 0.114. The truth is somewhere between, and this gold set
+10.1% of what the arm returned, and the pessimistic bound on the other
+89.9% is 0.101. The truth is somewhere between, and this gold set
 cannot narrow it.
 
 **So depth 30 is both the pool depth and the measurement ceiling.**
@@ -200,12 +185,12 @@ Committed at [`benchmarks/similarity/depth.json`](../benchmarks/similarity/depth
 
 ### The detection floor, and why it is weaker evidence than it looks
 
-Of the 219 labelled positives, **0 share too few windows for the arm
-to see them at any depth.** Median overlap is 0.811, and the 10th
+Of the 222 labelled positives, **0 share too few windows for the arm
+to see them at any depth.** Median overlap is 0.904, and the 10th
 percentile is 0.302.
 
 Read literally that says the arm has no blind spot on this set, and
-that its recall of 0.404 at depth 30 is a ranking-depth artifact
+that its recall of 0.406 at depth 30 is a ranking-depth artifact
 rather than a detection failure. The first half of that is not
 trustworthy, for a specific reason:
 
@@ -218,7 +203,7 @@ different words — one generator, at depth 30, out of three.
 
 So the honest statement is not "there is no blind spot." It is that
 **this gold set is structurally close to blind to reimplementations**,
-and 0 out of 219 is what that looks like from the inside. The
+and 0 out of 222 is what that looks like from the inside. The
 rename-tolerance table above shows the blind spot exists on a
 constructed example; how common it is in real code remains unmeasured,
 and measuring it needs a pool built by a generator that is not
@@ -258,9 +243,15 @@ see](#how-deep-the-gold-set-can-see). The depth was chosen before
 scoring so one labeller could read every pair properly, and it was not
 revisited afterwards.
 
-**The measured population excluded decorated functions.** The single
-largest threat on this list, and the reason the numbers above are
-being remeasured. See the note under [Result](#result).
+**This is the second gold set.** The first excluded every decorated
+function — 53.3% of comparable units in Home Assistant — because unit
+lookup keyed on a function's `def` line while the indexer records a
+decorated function's start as its first decorator. Fixing that grew
+the corpora by 27% to 133% and invalidated the first set, which could
+not be re-scored: 28 of 30 returned pairs fell outside its labels. The
+set was rebuilt rather than patched. Direction of the result did not
+change; the shipped arm scored higher and `metadata_similarity`
+scored lower.
 
 **The reimplementation blind spot is demonstrated but unsized.** The
 arm provably misses a function whose every local has been renamed. How
