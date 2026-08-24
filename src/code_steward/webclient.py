@@ -432,3 +432,21 @@ def client_callers(relationships: list[HardRelationship], unit_id: str) -> list[
         if edge.relation == FETCHED_BY and edge.source_unit_id == unit_id
     ]
     return sorted(lines)
+
+
+def unbound_reason(call: ClientCall) -> str:
+    """Say why a call site bound to nothing, without overclaiming.
+
+    Three outcomes, and the distinction between the last two is the
+    point. "No route" invites deleting the endpoint, so it is reserved
+    for a URL this could actually have matched: fully literal, no
+    interpolation. A URL carrying `${...}` was never resolvable -- a
+    whole path segment may be a variable -- and reporting that as dead
+    is a guess in a result's clothing. On one repository 18 of 34
+    such verdicts were interpolated.
+    """
+    if not call.url:
+        return "computed URL"
+    if "${" in call.url:
+        return f"unresolved interpolation in {call.method} {call.url}"
+    return f"no route for {call.method} {call.url}"

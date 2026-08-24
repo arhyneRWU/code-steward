@@ -598,3 +598,42 @@ def slice_to_dict(sliced: Slice) -> dict[str, object]:
             for member in sliced.members
         ],
     }
+
+
+# Extensions this index does not carry units for. JavaScript is the
+# pointed case: the tool reads `.js` for browser call sites, so the
+# file is plainly known to it, and a reader reasonably concludes that
+# a failed `trace` on one means the function is absent.
+UNINDEXED_SUFFIXES = {
+    ".js": "JavaScript",
+    ".jsx": "JavaScript",
+    ".ts": "TypeScript",
+    ".tsx": "TypeScript",
+    ".vue": "Vue",
+    ".html": "HTML",
+    ".css": "CSS",
+    ".json": "JSON",
+    ".md": "Markdown",
+}
+
+
+def unindexed_reason(query: str) -> str:
+    """Explain a miss caused by the file's language, or return "".
+
+    `trace app/static/js/foo.js:120` used to fail exactly as a missing
+    symbol does. Four of one field session's five traces were spent
+    that way. The index is Python-only, and saying so -- with the
+    command that does work on a frontend file -- turns a dead end into
+    a next step.
+    """
+    head, sep, tail = query.rpartition(":")
+    path = head if sep and tail.isdigit() else query
+    for suffix, language in UNINDEXED_SUFFIXES.items():
+        if path.endswith(suffix):
+            named = language if suffix in {".js", ".jsx", ".ts", ".tsx"} else suffix
+            return (
+                f"{named} is not indexed: this index carries Python units only. "
+                f"For a frontend file, `endpoints --unbound` lists its API call "
+                f"sites, and a route bundle names the browser callers it has."
+            )
+    return ""
