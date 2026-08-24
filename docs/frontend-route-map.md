@@ -19,8 +19,23 @@ returning an empty result that reads like "no frontend calls this".
 
 ## What it extracts
 
-`fetch` and `axios` call sites whose URL is written as a literal, plus
-the file and line of the ones whose URL is computed. Both sides are
+Call sites into this project's HTTP API whose URL is written as a
+literal, plus the file and line of the ones whose URL is computed.
+
+"Call site" is not just `fetch`. Most codebases wrap their client, and
+a scanner that only knows `fetch` and `axios` is as repo-specific as
+one that only knows `apiFetchJson` -- it just happens to be wrong on a
+different set of repositories. So wrappers are detected rather than
+configured: a function whose **first parameter is passed to `fetch` as
+the URL** is a client, and calls to it count. The check is local and
+syntactic -- the parameter must reach that slot inside the function's
+own body -- so a function that merely mentions `fetch`, or that fetches
+a fixed path while taking an unrelated first argument, is not one.
+
+On the repository below this found ten: `api`, `apiFetchJson`,
+`fetchJson`, `getJson`, `jsonFetch`, `postJSON`, `postJson`, `suggest`,
+`_doPatch`, `_postJson`. None were configured and none are guessed at
+by name. Both sides are
 reduced to a route pattern before matching — `${id}` and `{item_id}`
 both become `{}` — and the join is then string equality on
 `(method, pattern)`.
@@ -43,13 +58,17 @@ One run against a private full-stack repository (1,243 Python files,
 273 first-party JavaScript files, 14,848 indexed units, 296 endpoints),
 reported as it came out:
 
-| | count |
-|---|---|
-| Browser call sites found | 158 |
-| Bound to a route | **85 (53.8%)** |
-| Unbound — computed URL | 64 |
-| Unbound — literal URL, no matching route | 9 |
-| Route handlers gaining ≥1 browser caller | 60 of 294 |
+| | `fetch`/`axios` only | with wrapper detection |
+|---|---|---|
+| Browser call sites found | 158 | **278** |
+| Bound to a route | 85 (53.8%) | **154 (55.4%)** |
+| Unbound — computed URL | 64 | 90 |
+| Unbound — literal URL, no matching route | 9 | 34 |
+| Route handlers gaining ≥1 browser caller | 60 of 294 | **117 of 294** |
+
+The first column is what shipped initially, and it was wrong about its
+own denominator: the 53.8% read as a ceiling of the approach when a
+third of the repository's call sites were simply invisible to it.
 
 The whole pass, including loading a 64 MB index, took 5.3 seconds.
 
@@ -85,6 +104,24 @@ away, and they are not one problem:
   `/api/items/count` to `/api/items/{id}`. Left unmatched on purpose.
 
 No normalisation was adjusted after seeing these numbers.
+
+## Against a hand-written mapper
+
+That repository already had one: a 415-line regex scanner, wired into
+a `make` target with a staleness check. It knows the project's wrapper
+names, and it also maps HTML form actions and button-to-fetch wiring,
+neither of which this does.
+
+It also publishes a list of 92 endpoints nothing calls. **Fifteen of
+those have callers** — all reached through wrappers whose call sites
+its regex does not match. A dead-route list is exactly the artifact
+where a false positive is expensive, because the action it invites is
+deletion.
+
+That is the argument for parsing over pattern-matching, and for
+detecting the client rather than naming it. It is not an argument that
+the hand-written mapper was a mistake: it covers ground this does not,
+and it was there first.
 
 ## What it does not do
 
