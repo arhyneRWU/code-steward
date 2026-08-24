@@ -38,3 +38,40 @@ def test_one_json_line_per_invocation(tmp_path: Path, monkeypatch) -> None:
 def test_an_unwritable_path_never_breaks_the_command(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setenv(ENV_VAR, str(tmp_path / "no" / "such" / "dir" / "field.jsonl"))
     record({"command": "trace"})  # must not raise
+
+
+def test_it_falls_back_to_the_project_when_home_is_unwritable(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    """Found in the field: agents run sandboxed and cannot write $HOME.
+
+    Every subagent invocation was silently lost, and the swallow that
+    keeps the logger out of the way is what hid it.
+    """
+    monkeypatch.setenv(ENV_VAR, str(tmp_path / "forbidden" / "field.jsonl"))
+    project = tmp_path / "project"
+    (project / ".code-steward").mkdir(parents=True)
+    record({"command": "trace"}, root=project)
+    fallback = project / ".code-steward" / "field-log.jsonl"
+    assert fallback.exists(), "a log that cannot write should try the project first"
+    assert "field log" in capsys.readouterr().err.lower()
+
+
+def test_the_failure_notice_is_printed_once(tmp_path: Path, monkeypatch, capsys) -> None:
+    """A note every time would be noise, and noise gets ignored."""
+    import code_steward.fieldlog as module
+
+    module.NOTIFIED.clear()
+    monkeypatch.setenv(ENV_VAR, str(tmp_path / "nope" / "field.jsonl"))
+    for _ in range(3):
+        record({"command": "trace"})
+    assert capsys.readouterr().err.count("field log") == 1
+
+
+def test_silence_still_means_unused_when_the_path_works(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    log = tmp_path / "field.jsonl"
+    monkeypatch.setenv(ENV_VAR, str(log))
+    record({"command": "trace"})
+    assert capsys.readouterr().err == "", "a working log must say nothing at all"

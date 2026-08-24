@@ -683,6 +683,7 @@ def main(argv: list[str] | None = None) -> int:
                 "exit": code,
                 "ms": round((time.monotonic() - started) * 1000),
                 **OBSERVED,
-            }
+            },
+            root=root_from(getattr(args, "root", None)),
         )
     return code

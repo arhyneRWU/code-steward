@@ -15,6 +15,14 @@ took, how many members a slice came back with, whether it was empty,
 and which selector produced it. Nothing else, nowhere else -- the
 file is local and this project never reads it off your machine.
 
+**If that path is unwritable, the log falls back to the project's own
+`.code-steward/field-log.jsonl` and says so once on stderr.** This is
+not hypothetical: agents run inside a sandbox whose write allowlist
+excludes `$HOME`, so the first hour of the first field test recorded
+nothing an agent did, and the swallow that keeps the logger out of
+the way is what hid it. An empty log now means the tool was unused,
+never that the log could not be written.
+
 **Private repositories are the point of this stage and the reason for
 the rule.** The log names units and paths from whatever repository
 you ran in. It is not committed, and nothing derived from it reaches
