@@ -474,6 +474,7 @@ def render_markdown(
     *,
     source: bool = True,
     note: str = "",
+    client_calls: list[str] | tuple[str, ...] = (),
 ) -> str:
     """Render a slice as a bundle a model can be handed directly.
 
@@ -481,6 +482,11 @@ def render_markdown(
     route, for an endpoint. A reader handed twenty bundles needs
     to know which entry point each one sits under before reading
     any of them.
+
+    ``client_calls`` names the browser-side call sites that reach this
+    unit. They are not slice members because they are not indexed
+    units -- they live on the other side of an HTTP boundary -- but
+    for a route handler they are often the only callers there are.
     """
     out: list[str] = []
     target = sliced.target
@@ -519,6 +525,13 @@ def render_markdown(
     if sliced.truncated:
         out.append("")
         out.append("> Truncated at the slice limit; raise `--limit` to see the rest.")
+
+    if client_calls:
+        out.append("")
+        out.append("## browser callers")
+        out.append("")
+        for line in client_calls:
+            out.append(f"- `{line}`")
 
     out.append("")
     out.append("---")
