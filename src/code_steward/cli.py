@@ -41,6 +41,7 @@ from .trace import (
     slice_from_members,
     slice_to_dict,
     undocumented_units,
+    unindexed_reason,
 )
 from .webclient import client_callers
 
@@ -503,7 +504,10 @@ def cmd_trace(args: argparse.Namespace) -> int:
     else:
         sliced = slice_for(targets[0].unit_id)
     if sliced is None:
+        reason = unindexed_reason(args.unit)
         print(f"unknown unit: {args.unit}", file=sys.stderr)
+        if reason:
+            print(reason, file=sys.stderr)
         return 2
 
     involved = [sliced.target.path] + [member.unit.path for member in sliced.members]
@@ -544,7 +548,10 @@ def cmd_read(args: argparse.Namespace) -> int:
     conn, _, _ = _load(root)
     unit = get_unit(conn, args.unit)
     if not unit:
+        reason = unindexed_reason(args.unit)
         print(f"unknown unit: {args.unit}", file=sys.stderr)
+        if reason:
+            print(reason, file=sys.stderr)
         return 2
     path = root / unit.path
     lines = path.read_text(encoding="utf-8").splitlines()
@@ -606,8 +613,7 @@ def cmd_unbound(root: Path, units: list[CodeUnit], endpoints: list[Endpoint]) ->
     bound = len(calls) - len(unmatched)
     print(f"bound {bound} of {len(calls)} browser call site(s)")
     for call in unmatched:
-        reason = "computed URL" if not call.url else f"no route for {call.method} {call.url}"
-        print(f"  {call.path}:{call.line}  {reason}")
+        print(f"  {call.path}:{call.line}  {webclient.unbound_reason(call)}")
     return 0
 
 
