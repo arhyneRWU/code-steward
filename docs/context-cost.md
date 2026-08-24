@@ -329,3 +329,21 @@ comparison of *bytes* is unaffected. The comparison of *coverage*
 now needs redoing with their claims adjudicated the same way, and
 until that is run the +0.207 should be read as an upper bound rather
 than as a measurement.
+
+## A second qualification, from the field
+
+**Added after publication.** This ran on Django at a pinned commit,
+where every file is committed by construction. That design cannot
+observe the difference that matters most during development: an
+external graph built from git does not see uncommitted work, and
+Code Steward indexes the working tree.
+
+Observed on a live repository the same day: a new untracked module
+was invisible to the external graph, which reported itself current
+(`head_matches_build: true`) and answered a blast-radius question
+naming the *old* copy of the moved function. Its caller advantage on
+that file was not smaller than measured here; it was **zero**.
+
+So the +0.207 applies to committed code. On the file someone is
+editing right now it does not apply at all, and this design was
+structurally incapable of noticing.
