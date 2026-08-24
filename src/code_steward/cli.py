@@ -13,7 +13,7 @@ from .check import alarm_rate, changed_python_files, check_files
 from .config import resolve_excludes
 from .db import all_endpoints, all_hard_relationships, all_units, connect, get_unit
 from .indexer import index_python_file, is_excluded
-from .maintenance import rebuild_index, update_index_file
+from .maintenance import rebuild_index, update_index_files
 from .retrieval import rank_units, retrieve_units
 from .similarity import (
     REUSE_FLOOR,
@@ -21,6 +21,8 @@ from .similarity import (
     rank_with_floor,
     unit_shingles,
 )
+from .staleness import stale_paths
+from .staleness import warning as staleness_warning
 from .trace import (
     build_slice,
     parse_member_refs,
@@ -82,35 +84,43 @@ def cmd_update(args: argparse.Namespace) -> int:
     if args.if_exists and not db.exists():
         return 0
 
-    path = Path(args.path).resolve()
-    if path.suffix != ".py":
-        return 0
-    try:
-        rel = path.relative_to(root).as_posix()
-    except ValueError:
-        return 0
-
-    if is_excluded(root, path, resolve_excludes(root, args.exclude)):
-        return 0
-
-    if not path.exists() and not db.exists():
+    excludes = resolve_excludes(root, args.exclude)
+    wanted: list[Path] = []
+    for name in args.path:
+        path = Path(name).resolve()
+        if path.suffix != ".py":
+            continue
+        try:
+            path.relative_to(root)
+        except ValueError:
+            continue
+        if is_excluded(root, path, excludes):
+            continue
+        if not path.exists() and not db.exists():
+            continue
+        wanted.append(path)
+    if not wanted:
         return 0
 
     conn = connect(db)
     try:
-        stats = update_index_file(conn, root, path)
+        # One call, one relationship refresh. The refresh is the whole
+        # cost -- 22.9s on a 14,791-unit repository -- so a per-file
+        # loop here would reintroduce exactly the problem the field
+        # found: sessions abandoning `update` for a full rebuild.
+        stats = update_index_files(conn, root, wanted)
     except (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError) as exc:
         if not args.quiet:
-            print(f"could not update {path}: {exc}", file=sys.stderr)
+            print(f"could not update: {exc}", file=sys.stderr)
         return 1
     finally:
         conn.close()
 
     if not args.quiet:
-        if path.exists():
-            print(f"updated {stats.primary_units} units from {rel}")
-        else:
-            print(f"removed {rel} from index")
+        if stats.updated_paths:
+            print(f"updated {stats.primary_units} units from {len(stats.updated_paths)} file(s)")
+        for removed in stats.removed_paths:
+            print(f"removed {removed} from index")
     return 0
 
 
@@ -174,6 +184,21 @@ def cmd_check(args: argparse.Namespace) -> int:
         print("no changed Python files")
         return 0
 
+    if args.refresh:
+        # `check` already knows which files changed, and a comparison
+        # against a stale index is the failure the field reported:
+        # wrong line ranges and under-reported callers, both confident.
+        # Batched, so this is one refresh however many files changed.
+        conn = connect(db_path(root))
+        try:
+            update_index_files(conn, root, [p for p in paths if p.suffix == ".py"])
+        except (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError) as exc:
+            print(f"could not refresh the index: {exc}", file=sys.stderr)
+        finally:
+            conn.close()
+        conn, units, _ = _load(root)
+        conn.close()
+
     findings, checked = check_files(
         root,
         paths,
@@ -234,9 +259,27 @@ def cmd_similar(args: argparse.Namespace) -> int:
             return 0
         exclude = ""
     else:
-        if args.unit not in {unit.unit_id for unit in units}:
-            print(f"unknown unit: {args.unit}", file=sys.stderr)
+        # Accept every form `trace` accepts. In the first field
+        # session this gap was 100% of the tool failures: an agent
+        # holding `path:line` from a grep had to go and find the unit
+        # ID by hand before it could ask the obvious next question.
+        targets = resolve_target(args.unit, units)
+        if not targets:
+            print(
+                f"no unit matches {args.unit!r}. Give a unit ID, a bare "
+                "function name, or path:line.",
+                file=sys.stderr,
+            )
             return 2
+        if len(targets) > 1:
+            print(f"{args.unit!r} is ambiguous. Name one of:", file=sys.stderr)
+            for candidate in targets:
+                print(
+                    f"  {candidate.unit_id}  ({candidate.path}:{candidate.start_line})",
+                    file=sys.stderr,
+                )
+            return 2
+        args.unit = targets[0].unit_id
         needle = prepared.get(args.unit, frozenset())
         exclude = args.unit
 
@@ -309,6 +352,16 @@ def cmd_trace(args: argparse.Namespace) -> int:
         if not endpoints:
             print("no FastAPI endpoints in the index")
             return 0
+        if args.route:
+            wanted = args.route.lower()
+            endpoints = [
+                endpoint
+                for endpoint in endpoints
+                if wanted in endpoint.route.lower() or wanted in endpoint.unit_id.lower()
+            ]
+            if not endpoints:
+                print(f"no route matches {args.route!r}")
+                return 0
         routed = [
             (f"{endpoint.method} {endpoint.route}", sliced)
             for endpoint in endpoints
@@ -421,6 +474,14 @@ def cmd_trace(args: argparse.Namespace) -> int:
         print(f"unknown unit: {args.unit}", file=sys.stderr)
         return 2
 
+    involved = [sliced.target.path] + [member.unit.path for member in sliced.members]
+    stale = stale_paths(root, db_path(root), involved)
+    if stale:
+        # Loud, because the failure mode is a confident wrong answer:
+        # the field saw a unit handed back under a neighbour's line
+        # range, and one caller reported where two existed.
+        print(staleness_warning(stale), file=sys.stderr)
+        OBSERVED["stale"] = len(stale)
     OBSERVED["members"] = len(sliced.members)
     OBSERVED["empty"] = not sliced.members
     OBSERVED["selector"] = "members-from" if args.members_from else "own-edges"
@@ -521,8 +582,8 @@ def build_parser() -> argparse.ArgumentParser:
     build.add_argument("--quiet", action="store_true")
     build.set_defaults(func=cmd_build)
 
-    update = sub.add_parser("update", help="incrementally re-index one Python file")
-    update.add_argument("path")
+    update = sub.add_parser("update", help="incrementally re-index Python files")
+    update.add_argument("path", nargs="+")
     update.add_argument("--exclude", action="append", default=[], help=exclude_help)
     update.add_argument(
         "--if-exists", action="store_true", help="do nothing until an index exists"
@@ -571,6 +632,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     check.add_argument("--base", default="main", help="branch to diff against (default main)")
     check.add_argument(
+        "--no-refresh",
+        dest="refresh",
+        action="store_false",
+        help="compare against the index as-is, without re-indexing the changed files",
+    )
+    check.add_argument(
         "--all-overlaps",
         action="store_true",
         help="report every overlap, not only the ones this change introduced",
@@ -618,6 +685,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--endpoints",
         action="store_true",
         help="bundle the path under every FastAPI route, instead of one unit",
+    )
+    trace.add_argument(
+        "--route",
+        default="",
+        metavar="TEXT",
+        help="with --endpoints, only routes whose path or handler contains TEXT",
     )
     trace.add_argument(
         "--dry",

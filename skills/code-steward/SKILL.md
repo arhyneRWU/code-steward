@@ -54,8 +54,16 @@ code-steward build --quiet             # first time, or after large changes
 code-steward update path/to/file.py    # after editing one file
 ```
 
-A stale index is quietly incomplete rather than loudly wrong. `check` and
-`trace` compare against whatever `build` last saw.
+**A stale index is quietly wrong, not quietly incomplete.** Found in the
+field, not in review: it handed back one function labelled with a
+*neighbouring* function's line range, and reported one caller where two
+existed — on a function the agent had just edited. Both are the judgement
+this tool exists to support, inverted, and neither is visible unless you
+already know the answer.
+
+`trace` now warns on stderr when a file in the slice is newer than the
+index, and `check` re-indexes the files it is about to compare. `update`
+takes many paths and costs one relationship refresh however many you pass.
 
 ### Understand a function: `trace`
 
