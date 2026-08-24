@@ -141,3 +141,82 @@ def test_without_the_parser_unbound_says_what_is_missing(tmp_path: Path, monkeyp
 
     assert exit_code == 1
     assert "code-steward[js]" in capsys.readouterr().err
+
+
+@requires_parser
+def test_a_wrapper_around_fetch_is_recognised_as_a_client(tmp_path: Path) -> None:
+    """Most codebases do not call `fetch` at the call site.
+
+    Hardcoding `fetch` made this blind to 83 of one repository's call
+    sites -- it wraps the client as `apiFetchJson` -- which is the same
+    hardcoding the repo-specific script it was meant to improve on
+    already had.
+    """
+    (tmp_path / "util.js").write_text(
+        "async function apiFetchJson(url, opts) {\n"
+        "  return fetch(url, { method: (opts && opts.method) || 'GET' });\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "page.js").write_text("apiFetchJson('/api/items');\n", encoding="utf-8")
+
+    calls = webclient.scan_calls(tmp_path, [Path("util.js"), Path("page.js")])
+
+    assert ("page.js", 1, "/api/items", "GET") in [
+        (c.path, c.line, c.url, c.method) for c in calls
+    ]
+
+
+@requires_parser
+def test_a_wrapper_call_reads_its_method_from_the_options(tmp_path: Path) -> None:
+    (tmp_path / "util.js").write_text(
+        "const jsonFetch = (url, opts) => fetch(url, opts);\n", encoding="utf-8"
+    )
+    (tmp_path / "page.js").write_text(
+        "jsonFetch('/api/items', { method: 'DELETE' });\n", encoding="utf-8"
+    )
+
+    calls = webclient.scan_calls(tmp_path, [Path("util.js"), Path("page.js")])
+    page = [c for c in calls if c.path == "page.js"]
+
+    assert [(c.url, c.method) for c in page] == [("/api/items", "DELETE")]
+
+
+@requires_parser
+def test_a_function_that_ignores_its_first_argument_is_not_a_client(tmp_path: Path) -> None:
+    """The parameter must reach the URL slot, or this guesses."""
+    (tmp_path / "util.js").write_text(
+        "function logThenLoad(label, opts) {\n"
+        "  console.log(label);\n"
+        "  return fetch('/api/fixed', opts);\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "page.js").write_text("logThenLoad('/api/items');\n", encoding="utf-8")
+
+    calls = webclient.scan_calls(tmp_path, [Path("util.js"), Path("page.js")])
+
+    assert [c.path for c in calls] == ["util.js"]
+
+
+@requires_parser
+def test_a_function_that_never_calls_fetch_is_not_a_client(tmp_path: Path) -> None:
+    (tmp_path / "util.js").write_text(
+        "function navigate(url) { window.location = url; }\n", encoding="utf-8"
+    )
+    (tmp_path / "page.js").write_text("navigate('/api/items');\n", encoding="utf-8")
+
+    assert webclient.scan_calls(tmp_path, [Path("util.js"), Path("page.js")]) == []
+
+
+@requires_parser
+def test_a_wrapper_defined_in_another_file_still_counts(tmp_path: Path) -> None:
+    """Wrappers live in a shared module; the call sites do not."""
+    (tmp_path / "a.js").write_text("apiPost('/api/items');\n", encoding="utf-8")
+    (tmp_path / "z_util.js").write_text(
+        "function apiPost(u) { return fetch(u, {method: 'POST'}); }\n", encoding="utf-8"
+    )
+
+    calls = webclient.scan_calls(tmp_path, [Path("a.js"), Path("z_util.js")])
+
+    assert ("a.js", "/api/items") in [(c.path, c.url) for c in calls]

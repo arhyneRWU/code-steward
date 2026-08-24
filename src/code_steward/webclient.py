@@ -141,7 +141,7 @@ def _options_method(node: object) -> str:
     return ""
 
 
-def _callee_method(function_node: object) -> str | None:
+def _callee_method(function_node: object, wrappers: frozenset[str]) -> str | None:
     """Classify the callee, returning its HTTP verb or None.
 
     An empty string means "this is an API client call whose verb is
@@ -150,7 +150,7 @@ def _callee_method(function_node: object) -> str | None:
     kind = function_node.type  # type: ignore[attr-defined]
     if kind == "identifier":
         name = _text(function_node)
-        if name in {"fetch", "axios"}:
+        if name in {"fetch", "axios"} or name in wrappers:
             return ""
         return None
     if kind == "member_expression":
@@ -162,8 +162,9 @@ def _callee_method(function_node: object) -> str | None:
         base = _text(obj)
         if base.endswith("axios") and verb in _AXIOS_METHODS:
             return verb.upper()
-        # `window.fetch(...)` and `this.fetch(...)` are still fetch.
-        if verb == "fetch":
+        # `window.fetch(...)` and `this.fetch(...)` are still fetch,
+        # and so is `api.apiFetchJson(...)` for a detected wrapper.
+        if verb == "fetch" or verb in wrappers:
             return ""
         return None
     return None
@@ -174,7 +175,95 @@ def _is_internal(url: str) -> bool:
     return url.startswith("/") and not url.startswith("//")
 
 
-def _calls_in_tree(root: object, rel_path: str) -> list[ClientCall]:
+_FUNCTION_NODES = {"function_declaration", "function_expression", "arrow_function"}
+
+
+def _first_parameter(node: object) -> str:
+    """Name the function's first parameter, or "" if it has none."""
+    params = node.child_by_field_name("parameters")  # type: ignore[attr-defined]
+    if params is None:
+        # `url => fetch(url)` has a bare identifier, no list.
+        single = node.child_by_field_name("parameter")  # type: ignore[attr-defined]
+        return _text(single) if single is not None and single.type == "identifier" else ""
+    for child in params.named_children:
+        if child.type == "identifier":
+            return _text(child)
+        if child.type in {"required_parameter", "optional_parameter", "assignment_pattern"}:
+            inner = child.child_by_field_name("pattern") or child.child_by_field_name("left")
+            if inner is not None and inner.type == "identifier":
+                return _text(inner)
+        return ""
+    return ""
+
+
+def _passes_parameter_to_fetch(node: object, parameter: str) -> bool:
+    """Whether this function hands ``parameter`` to `fetch` as the URL.
+
+    The check is deliberately local and syntactic: the parameter must
+    appear in `fetch`'s first argument slot inside this function's own
+    body. A function that merely mentions `fetch` somewhere, or that
+    fetches a fixed path while taking an unrelated first argument, is
+    not a client wrapper -- treating it as one would attach call sites
+    to routes they never touch.
+    """
+    if not parameter:
+        return False
+    stack = [node]
+    while stack:
+        current = stack.pop()
+        stack.extend(current.named_children)  # type: ignore[attr-defined]
+        if current.type != "call_expression":  # type: ignore[attr-defined]
+            continue
+        function_node = current.child_by_field_name("function")  # type: ignore[attr-defined]
+        arguments = current.child_by_field_name("arguments")  # type: ignore[attr-defined]
+        if function_node is None or arguments is None:
+            continue
+        name = (
+            _text(function_node.child_by_field_name("property"))
+            if function_node.type == "member_expression"
+            and function_node.child_by_field_name("property") is not None
+            else _text(function_node)
+        )
+        if name != "fetch":
+            continue
+        args = arguments.named_children
+        if args and args[0].type == "identifier" and _text(args[0]) == parameter:
+            return True
+    return False
+
+
+def _wrapper_names(root: object) -> set[str]:
+    """Find functions in this file that are thin wrappers over `fetch`.
+
+    Most codebases do not call `fetch` at the call site; they call
+    their own client. Hardcoding `fetch` made this blind to 83 of one
+    repository's call sites, which is the same hardcoding the
+    repo-specific script it was meant to improve on already had.
+    """
+    found: set[str] = set()
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        stack.extend(node.named_children)  # type: ignore[attr-defined]
+        kind = node.type  # type: ignore[attr-defined]
+        if kind == "function_declaration":
+            name_node = node.child_by_field_name("name")  # type: ignore[attr-defined]
+            if name_node is not None and _passes_parameter_to_fetch(node, _first_parameter(node)):
+                found.add(_text(name_node))
+        elif kind == "variable_declarator":
+            value = node.child_by_field_name("value")  # type: ignore[attr-defined]
+            name_node = node.child_by_field_name("name")  # type: ignore[attr-defined]
+            if (
+                value is not None
+                and name_node is not None
+                and value.type in _FUNCTION_NODES
+                and _passes_parameter_to_fetch(value, _first_parameter(value))
+            ):
+                found.add(_text(name_node))
+    return found
+
+
+def _calls_in_tree(root: object, rel_path: str, wrappers: frozenset[str]) -> list[ClientCall]:
     found: list[ClientCall] = []
     stack = [root]
     while stack:
@@ -186,7 +275,7 @@ def _calls_in_tree(root: object, rel_path: str) -> list[ClientCall]:
         arguments = node.child_by_field_name("arguments")  # type: ignore[attr-defined]
         if function_node is None or arguments is None:
             continue
-        verb = _callee_method(function_node)
+        verb = _callee_method(function_node, wrappers)
         if verb is None:
             continue
         args = [child for child in arguments.named_children if child.type != "comment"]
@@ -218,14 +307,27 @@ def scan_calls(project_root: Path, paths: list[Path]) -> list[ClientCall]:
     if _LANGUAGE is None:
         return []
     parser = Parser(_LANGUAGE)
-    found: list[ClientCall] = []
+
+    # Two passes. A client wrapper is usually defined in a shared
+    # module and called from everywhere else, so the whole tree has to
+    # be read before any call site can be classified -- a single pass
+    # would recognise only the wrappers that happen to be declared
+    # before their callers in walk order.
+    trees = []
+    wrappers: set[str] = set()
     for rel_path in paths:
         try:
             source = (project_root / rel_path).read_bytes()
         except OSError:
             continue
         tree = parser.parse(source)
-        found.extend(_calls_in_tree(tree.root_node, rel_path.as_posix()))
+        trees.append((rel_path.as_posix(), tree))
+        wrappers |= _wrapper_names(tree.root_node)
+
+    frozen = frozenset(wrappers)
+    found: list[ClientCall] = []
+    for rel_posix, tree in trees:
+        found.extend(_calls_in_tree(tree.root_node, rel_posix, frozen))
     return sorted(found, key=lambda call: (call.path, call.line, call.url))
 
 
