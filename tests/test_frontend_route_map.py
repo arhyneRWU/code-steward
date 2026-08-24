@@ -158,9 +158,7 @@ def test_update_accepts_a_javascript_path(tmp_path: Path, capsys) -> None:
     capsys.readouterr()
 
     assert exit_code == 0
-    assert _fetched_by(db_path(root), "app.routes::list_items") == [
-        "app/static/items.js:4"
-    ]
+    assert _fetched_by(db_path(root), "app.routes::list_items") == ["app/static/items.js:4"]
 
 
 def test_unbound_lists_the_call_sites_that_matched_no_route(tmp_path: Path, capsys) -> None:

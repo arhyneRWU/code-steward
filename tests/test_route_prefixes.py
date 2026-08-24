@@ -154,16 +154,15 @@ def test_endpoints_prints_the_mounted_path_not_the_decorator(tmp_path: Path, cap
     (tmp_path / "app").mkdir()
     (tmp_path / "app" / "__init__.py").write_text("", encoding="utf-8")
     (tmp_path / "app" / "admin.py").write_text(
-        'from fastapi import APIRouter\n'
-        'router = APIRouter()\n'
+        "from fastapi import APIRouter\n"
+        "router = APIRouter()\n"
         '@router.get("/sku-pins")\n'
-        'async def list_pins():\n'
-        '    return []\n',
+        "async def list_pins():\n"
+        "    return []\n",
         encoding="utf-8",
     )
     (tmp_path / "app" / "main.py").write_text(
-        "from app.admin import router\n"
-        "app.include_router(router, prefix='/api/admin')\n",
+        "from app.admin import router\napp.include_router(router, prefix='/api/admin')\n",
         encoding="utf-8",
     )
     rebuild_index(tmp_path, db_path(tmp_path))
