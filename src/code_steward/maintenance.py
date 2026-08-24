@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import sqlite3
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,6 +18,7 @@ from .db import (
 )
 from .indexer import index_python_file, iter_python_files
 from .relationships import refresh_relationships
+from .webclient import refresh_web_client_relationships
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +73,23 @@ def _located(rel: str, exc: BaseException) -> BaseException:
         return ValueError(message)
 
 
+def refresh_all_relationships(
+    conn: sqlite3.Connection,
+    project_root: Path,
+    excludes: Iterable[str] = (),
+) -> None:
+    """Re-derive every deterministic edge, Python and frontend alike.
+
+    The two extractors live in separate modules because they answer to
+    different evidence -- one to the Python AST, one to literal URLs
+    across an HTTP boundary -- and orchestrating them here keeps
+    `relationships` from having to import the web client, which would
+    close an import cycle through `routing`.
+    """
+    refresh_relationships(conn, project_root)
+    refresh_web_client_relationships(conn, project_root, excludes)
+
+
 def rebuild_index(
     project_root: Path,
     destination: Path,
@@ -106,7 +124,7 @@ def rebuild_index(
             unit_count += len(units)
             endpoint_count += len(endpoints)
 
-        refresh_relationships(conn, project_root)
+        refresh_all_relationships(conn, project_root, excludes)
         conn.close()
         conn = None
         os.replace(temporary, destination)
@@ -150,7 +168,11 @@ def update_index_files(
     into full rebuilds instead. Batch first, refresh last.
     """
     project_root = project_root.resolve()
-    resolved = [item.resolve() for item in paths]
+    # A JavaScript file holds no indexed unit. It still reaches here,
+    # because editing one changes which routes have a frontend caller,
+    # and the refresh at the end is what records that. Handing it to
+    # the Python indexer would raise a SyntaxError on valid source.
+    resolved = [item.resolve() for item in paths if item.suffix == ".py"]
 
     remove_paths = {
         indexed for indexed in indexed_paths(conn) if not (project_root / indexed).exists()
@@ -169,7 +191,7 @@ def update_index_files(
     if not replacements:
         for rel in sorted(remove_paths):
             remove_file(conn, rel)
-        refresh_relationships(conn, project_root)
+        refresh_all_relationships(conn, project_root)
         return UpdateStats(0, (), tuple(sorted(remove_paths)))
 
     while True:
@@ -191,7 +213,7 @@ def update_index_files(
             replacements[conflict_rel] = _index_replacement(project_root, conflict_path)
 
     replace_files(conn, list(replacements.values()), remove_paths)
-    refresh_relationships(conn, project_root)
+    refresh_all_relationships(conn, project_root)
     return UpdateStats(
         primary_units=primary_units,
         updated_paths=tuple(sorted(replacements)),

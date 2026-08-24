@@ -26,6 +26,7 @@ to misuse this tool.
 | --- | --- | --- |
 | Understand a function before changing it | `trace <target>` | **Strong.** Deterministic graph walk. Incomplete, never wrong. |
 | See what a route actually does | `trace --endpoints` | **Strong.** Same walk, rooted at the routes. |
+| See which screen calls a route | `trace --endpoints` (browser callers) | **Strong where it fires, and partial.** Literal URLs only: 85 of 158 call sites bound on a real repo. Check `endpoints --unbound` before concluding nothing calls it. |
 | Check what you just wrote | `check` | **Strong** on copy-and-tidy. Blind to reimplementation. |
 | Compare code to code | `similar "<unit>"` | **Strong.** Precision 1.000 on 308 blind-labelled pairs. |
 | Duplication across a whole path | `trace --dry` | **A report.** Fires on ~53% of paths; the rate compounds with slice size. |
@@ -65,6 +66,15 @@ already know the answer.
 index, and `check` re-indexes the files it is about to compare. `update`
 takes many paths and costs one relationship refresh however many you pass.
 
+`update` also accepts `.js` paths. A JavaScript file holds no indexed unit,
+but editing one moves the browser-caller edges that hang off the route
+handlers, and the refresh is what records that.
+
+**After pulling a new version of this tool, run one `update` before trusting
+the frontend map.** Edges added by a feature you did not have yesterday do
+not exist in an index built yesterday, and the bundle will show no browser
+callers rather than an error.
+
 ### Understand a function: `trace`
 
 Name the target however you have it. All three forms work:
@@ -93,10 +103,35 @@ code-steward trace --endpoints
 
 One bundle per FastAPI route: the handler, everything it calls, labelled with
 its method and path. Defaults change here to `--callers 0 --callees 2`,
-because nothing in the repository calls a route handler and a handler that
-delegates twice needs two hops before the bundle holds any implementation.
+because no *Python* calls a route handler and a handler that delegates twice
+needs two hops before the bundle holds any implementation.
+
+The path shown is the one a client calls, resolved through the router's mount
+prefix — not the decorator literal, which is not an address when the router is
+mounted under a prefix.
 
 This is usually the right entry point for "what does this service do".
+
+### Who calls this route: browser callers
+
+A bundle for a route handler carries a `## browser callers` section naming the
+`fetch`/`axios` call sites that reach it, by file and line. On a full-stack
+repository these are usually the *only* callers there are, so a handler with
+an empty Python slice is not necessarily dead.
+
+```bash
+code-steward endpoints --unbound   # the call sites that matched nothing
+```
+
+**Read `--unbound` before concluding a route is unused.** Only literal URLs
+bind; a `fetch(url)` assembled from a variable is invisible to this. On the
+repository it was measured against, 85 of 158 call sites bound and 64 of the
+misses were computed URLs. The absence of a browser caller means "not found",
+not "not there".
+
+Two by-products worth knowing about: a call site whose literal URL matches no
+route at all is often **dead frontend code**, and the mounted paths printed by
+`endpoints` are the real API surface.
 
 ### Find duplication on the path: `--dry`
 

@@ -147,10 +147,20 @@ jobs:
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[test]"
+          python -m pip install -e ".[test,js]"
 
       - name: Run tests
         run: python -m pytest -q
+
+      # The JavaScript parser is optional, so the suite must also pass
+      # without it -- and pass by degrading, not by skipping everything.
+      # The first version of this job installed `[test]` only, which
+      # skipped all 22 frontend tests and reported green.
+      - name: Run tests without the optional JavaScript parser
+        run: |
+          python -m pip uninstall -y tree-sitter tree-sitter-javascript
+          python -m pytest -q
+          python -m pip install -e ".[test,js]"
 
       - name: Verify dependency consistency
         run: python -m pip check

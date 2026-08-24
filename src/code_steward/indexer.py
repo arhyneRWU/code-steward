@@ -487,6 +487,31 @@ def is_excluded(project_root: Path, path: Path, excludes: Iterable[str] = ()) ->
     return any(value in path.as_posix() for value in excludes)
 
 
+# Directories that hold third-party JavaScript rather than this
+# project's own. Unlike Python, a web project routinely vendors its
+# dependencies into the source tree.
+SKIPPED_JS_DIRECTORIES = frozenset({"node_modules", "vendor", "dist", "build"})
+
+# A minified or bundled file is generated output. It is also often one
+# line of a hundred kilobytes, which parses to a call site with a line
+# number that points at nothing a person can read.
+GENERATED_JS_SUFFIXES = (".min.js", ".bundle.js")
+
+
+def iter_javascript_files(project_root: Path, excludes: Iterable[str] = ()) -> Iterable[Path]:
+    """Walk a project tree for first-party JavaScript source files."""
+    excluded = tuple(excludes)
+    for path in project_root.rglob("*.js"):
+        if is_excluded(project_root, path, excluded):
+            continue
+        rel_parts = set(path.relative_to(project_root).parts[:-1])
+        if rel_parts & SKIPPED_JS_DIRECTORIES:
+            continue
+        if path.name.endswith(GENERATED_JS_SUFFIXES):
+            continue
+        yield path
+
+
 def iter_python_files(project_root: Path, excludes: Iterable[str] = ()) -> Iterable[Path]:
     """Walk a project tree for indexable Python source files."""
     excluded = tuple(excludes)

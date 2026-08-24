@@ -8,13 +8,20 @@ import sys
 import time
 from pathlib import Path
 
-from . import __version__, fieldlog
+from . import __version__, fieldlog, webclient
 from .check import alarm_rate, changed_python_files, check_files
 from .config import resolve_excludes
 from .db import all_endpoints, all_hard_relationships, all_units, connect, get_unit
-from .indexer import index_python_file, is_excluded
+from .indexer import (
+    index_python_file,
+    is_excluded,
+    iter_javascript_files,
+    iter_python_files,
+)
 from .maintenance import rebuild_index, update_index_files
+from .models import CodeUnit, Endpoint
 from .retrieval import rank_units, retrieve_units
+from .routing import full_routes, scan_prefixes
 from .similarity import (
     REUSE_FLOOR,
     draft_shingles,
@@ -35,6 +42,7 @@ from .trace import (
     slice_to_dict,
     undocumented_units,
 )
+from .webclient import client_callers
 
 # What the command in flight noticed, merged into the field-log row
 # by `main`. A dict rather than a return value because every command
@@ -78,6 +86,9 @@ def cmd_build(args: argparse.Namespace) -> int:
     return 0
 
 
+INDEXED_SUFFIXES = frozenset({".py", ".js"})
+
+
 def cmd_update(args: argparse.Namespace) -> int:
     root = root_from(args.root)
     db = db_path(root)
@@ -88,7 +99,10 @@ def cmd_update(args: argparse.Namespace) -> int:
     wanted: list[Path] = []
     for name in args.path:
         path = Path(name).resolve()
-        if path.suffix != ".py":
+        # JavaScript carries no indexed unit, but editing it moves the
+        # `FETCHED_BY` edges that hang off the route handlers, and the
+        # refresh at the end of the update is what records that.
+        if path.suffix not in INDEXED_SUFFIXES:
             continue
         try:
             path.relative_to(root)
@@ -191,7 +205,7 @@ def cmd_check(args: argparse.Namespace) -> int:
         # Batched, so this is one refresh however many files changed.
         conn = connect(db_path(root))
         try:
-            update_index_files(conn, root, [p for p in paths if p.suffix == ".py"])
+            update_index_files(conn, root, [p for p in paths if p.suffix in INDEXED_SUFFIXES])
         except (OSError, sqlite3.Error, SyntaxError, UnicodeDecodeError, ValueError) as exc:
             print(f"could not refresh the index: {exc}", file=sys.stderr)
         finally:
@@ -319,9 +333,11 @@ def cmd_trace(args: argparse.Namespace) -> int:
     relationships = all_hard_relationships(conn)
     conn.close()
 
-    # Nothing in the repository calls a route handler -- the framework
-    # does -- so walking up from an endpoint finds nothing while
-    # walking down finds the implementation.
+    # No Python in the repository calls a route handler -- the
+    # framework does -- so walking up from an endpoint finds nothing
+    # while walking down finds the implementation. The callers that do
+    # exist are in the browser, and they arrive as `client_calls`
+    # rather than as slice members.
     callers_depth = args.callers if args.callers is not None else (0 if args.endpoints else 1)
     callees_depth = args.callees if args.callees is not None else (2 if args.endpoints else 1)
 
@@ -352,18 +368,23 @@ def cmd_trace(args: argparse.Namespace) -> int:
         if not endpoints:
             print("no FastAPI endpoints in the index")
             return 0
+        routes = resolved_routes(root, units, endpoints)
+
+        def route_of(endpoint) -> str:
+            return routes[(endpoint.unit_id, endpoint.method, endpoint.route)]
+
         if args.route:
             wanted = args.route.lower()
             endpoints = [
                 endpoint
                 for endpoint in endpoints
-                if wanted in endpoint.route.lower() or wanted in endpoint.unit_id.lower()
+                if wanted in route_of(endpoint).lower() or wanted in endpoint.unit_id.lower()
             ]
             if not endpoints:
                 print(f"no route matches {args.route!r}")
                 return 0
         routed = [
-            (f"{endpoint.method} {endpoint.route}", sliced)
+            (f"{endpoint.method} {route_of(endpoint)}", sliced)
             for endpoint in endpoints
             if (sliced := slice_for(endpoint.unit_id))
         ]
@@ -379,7 +400,13 @@ def cmd_trace(args: argparse.Namespace) -> int:
             return 0
         rendered = []
         for note, one in routed:
-            body = render_markdown(root, one, source=not args.signatures, note=note)
+            body = render_markdown(
+                root,
+                one,
+                source=not args.signatures,
+                note=note,
+                client_calls=client_callers(relationships, one.target.unit_id),
+            )
             if args.dry:
                 body += "\n" + render_duplication(path_duplication(root, one, units))
             rendered.append(body)
@@ -421,7 +448,12 @@ def cmd_trace(args: argparse.Namespace) -> int:
         # several bundles at once and needs to know where one ends.
         rendered = []
         for one in bundles:
-            body = render_markdown(root, one, source=not args.signatures)
+            body = render_markdown(
+                root,
+                one,
+                source=not args.signatures,
+                client_calls=client_callers(relationships, one.target.unit_id),
+            )
             if args.dry:
                 body += "\n" + render_duplication(path_duplication(root, one, units))
             rendered.append(body)
@@ -492,7 +524,15 @@ def cmd_trace(args: argparse.Namespace) -> int:
             payload["duplication"] = dry_rows(sliced)
         print(json.dumps(payload, indent=2))
         return 0
-    print(render_markdown(root, sliced, source=not args.signatures), end="")
+    print(
+        render_markdown(
+            root,
+            sliced,
+            source=not args.signatures,
+            client_calls=client_callers(relationships, sliced.target.unit_id),
+        ),
+        end="",
+    )
     if args.dry:
         print()
         print(render_duplication(overlaps), end="")
@@ -519,14 +559,79 @@ def cmd_read(args: argparse.Namespace) -> int:
     return 0
 
 
+def resolved_routes(
+    root: Path,
+    units: list[CodeUnit],
+    endpoints: list[Endpoint],
+) -> dict[tuple[str, str, str], str]:
+    """Map each endpoint to the path a client would actually call.
+
+    The index stores the decorator literal, which is not an address
+    when the router is mounted under a prefix. Resolving here rather
+    than at index time keeps the stored fact the one the source
+    states, and means a prefix moved in `main.py` takes effect on the
+    next query instead of the next rebuild.
+    """
+    excludes = resolve_excludes(root)
+    paths = [path.relative_to(root) for path in iter_python_files(root, excludes)]
+    return full_routes(endpoints, units, scan_prefixes(root, paths))
+
+
+def cmd_unbound(root: Path, units: list[CodeUnit], endpoints: list[Endpoint]) -> int:
+    """Report the browser call sites this cannot bind to a route.
+
+    The point of this command is the denominator. A frontend map that
+    lists only what it resolved reads as complete, and this one is
+    not: a URL assembled from a variable is invisible to it. Printing
+    the misses, with a coverage line, is what keeps the map honest.
+    """
+    if not webclient.available():
+        print(
+            "JavaScript scanning needs the optional parser: pip install 'code-steward[js]'",
+            file=sys.stderr,
+        )
+        return 1
+
+    excludes = resolve_excludes(root)
+    calls = webclient.scan_calls(
+        root,
+        [path.relative_to(root) for path in iter_javascript_files(root, excludes)],
+    )
+    prefixes = scan_prefixes(
+        root,
+        [path.relative_to(root) for path in iter_python_files(root, excludes)],
+    )
+    _, unmatched = webclient.route_edges(endpoints, units, prefixes, calls)
+
+    bound = len(calls) - len(unmatched)
+    print(f"bound {bound} of {len(calls)} browser call site(s)")
+    for call in unmatched:
+        reason = "computed URL" if not call.url else f"no route for {call.method} {call.url}"
+        print(f"  {call.path}:{call.line}  {reason}")
+    return 0
+
+
 def cmd_endpoints(args: argparse.Namespace) -> int:
     root = root_from(args.root)
-    _, _, endpoints = _load(root)
+    _, units, endpoints = _load(root)
+    if args.unbound:
+        return cmd_unbound(root, units, endpoints)
+    routes = resolved_routes(root, units, endpoints)
+
+    def route_of(endpoint: Endpoint) -> str:
+        return routes[(endpoint.unit_id, endpoint.method, endpoint.route)]
+
     if args.json:
-        print(json.dumps([endpoint.to_dict() for endpoint in endpoints], indent=2))
+        rows = []
+        for endpoint in endpoints:
+            row = endpoint.to_dict()
+            row["route"] = route_of(endpoint)
+            row["declared_route"] = endpoint.route
+            rows.append(row)
+        print(json.dumps(rows, indent=2))
     else:
         for endpoint in endpoints:
-            print(f"{endpoint.method:7} {endpoint.route:36} {endpoint.unit_id}")
+            print(f"{endpoint.method:7} {route_of(endpoint):36} {endpoint.unit_id}")
     return 0
 
 
@@ -729,6 +834,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     endpoints = sub.add_parser("endpoints", help="show FastAPI endpoints found by AST")
     endpoints.add_argument("--json", action="store_true")
+    endpoints.add_argument(
+        "--unbound",
+        action="store_true",
+        help="list browser call sites that matched no route",
+    )
     endpoints.set_defaults(func=cmd_endpoints)
 
     code_map = sub.add_parser("map", help="export a compact Markdown code map")
