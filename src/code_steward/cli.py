@@ -90,6 +90,20 @@ def cmd_build(args: argparse.Namespace) -> int:
 INDEXED_SUFFIXES = frozenset({".py", ".js"})
 
 
+def _explain_unindexed(query: str) -> None:
+    """Add the language reason to a miss, when that is the cause.
+
+    Every path that reports "no unit matches" needs this, which is why
+    it is a function rather than a line repeated at each site: the
+    first version of this fix patched two branches the commands do not
+    take, and shipped green because its tests called the pure reason
+    function directly instead of running the command.
+    """
+    reason = unindexed_reason(query)
+    if reason:
+        print(reason, file=sys.stderr)
+
+
 def cmd_update(args: argparse.Namespace) -> int:
     root = root_from(args.root)
     db = db_path(root)
@@ -285,6 +299,7 @@ def cmd_similar(args: argparse.Namespace) -> int:
                 "function name, or path:line.",
                 file=sys.stderr,
             )
+            _explain_unindexed(args.unit)
             return 2
         if len(targets) > 1:
             print(f"{args.unit!r} is ambiguous. Name one of:", file=sys.stderr)
@@ -471,6 +486,7 @@ def cmd_trace(args: argparse.Namespace) -> int:
             f"no unit matches {args.unit!r}. Give a unit ID, a bare function name, or path:line.",
             file=sys.stderr,
         )
+        _explain_unindexed(args.unit)
         return 2
     if len(targets) > 1:
         # Choosing between them would be ranking a shortlist, and a
@@ -504,10 +520,8 @@ def cmd_trace(args: argparse.Namespace) -> int:
     else:
         sliced = slice_for(targets[0].unit_id)
     if sliced is None:
-        reason = unindexed_reason(args.unit)
         print(f"unknown unit: {args.unit}", file=sys.stderr)
-        if reason:
-            print(reason, file=sys.stderr)
+        _explain_unindexed(args.unit)
         return 2
 
     involved = [sliced.target.path] + [member.unit.path for member in sliced.members]
@@ -548,10 +562,8 @@ def cmd_read(args: argparse.Namespace) -> int:
     conn, _, _ = _load(root)
     unit = get_unit(conn, args.unit)
     if not unit:
-        reason = unindexed_reason(args.unit)
         print(f"unknown unit: {args.unit}", file=sys.stderr)
-        if reason:
-            print(reason, file=sys.stderr)
+        _explain_unindexed(args.unit)
         return 2
     path = root / unit.path
     lines = path.read_text(encoding="utf-8").splitlines()

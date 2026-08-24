@@ -62,3 +62,60 @@ def test_a_fully_literal_url_may_still_be_called_dead() -> None:
     """The one case where the strong verdict is earned."""
     call = ClientCall("a.js", 1, "/api/gone", "GET")
     assert unbound_reason(call) == "no route for GET /api/gone"
+
+
+def _tiny_project(tmp_path):
+    """Build a project with one Python unit and one JavaScript file."""
+    from code_steward.cli import db_path
+    from code_steward.maintenance import rebuild_index
+
+    (tmp_path / "app").mkdir()
+    (tmp_path / "app" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "app" / "routes.py").write_text(
+        "def list_items():\n    return []\n", encoding="utf-8"
+    )
+    (tmp_path / "app" / "ui.js").write_text(
+        "function render() {\n  return 1;\n}\n", encoding="utf-8"
+    )
+    rebuild_index(tmp_path, db_path(tmp_path))
+    return tmp_path
+
+
+def test_trace_on_a_javascript_path_explains_itself(tmp_path, capsys) -> None:
+    """The pure function was right; nothing called it on this path.
+
+    The first version of this fix patched two `unknown unit` branches
+    and shipped green, because the test exercised `unindexed_reason`
+    directly and never ran the command. The command takes a different
+    branch. This test runs the command.
+    """
+    from code_steward.cli import main
+
+    root = _tiny_project(tmp_path)
+    exit_code = main(["--root", str(root), "trace", "app/ui.js:2"])
+    err = capsys.readouterr().err
+
+    assert exit_code == 2
+    assert "JavaScript" in err
+    assert "endpoints --unbound" in err
+
+
+def test_similar_on_a_javascript_path_explains_itself(tmp_path, capsys) -> None:
+    from code_steward.cli import main
+
+    root = _tiny_project(tmp_path)
+    main(["--root", str(root), "similar", "app/ui.js:2"])
+
+    assert "JavaScript" in capsys.readouterr().err
+
+
+def test_a_genuinely_missing_python_unit_gets_no_language_excuse(tmp_path, capsys) -> None:
+    """Only a language miss earns the language explanation."""
+    from code_steward.cli import main
+
+    root = _tiny_project(tmp_path)
+    main(["--root", str(root), "trace", "app/routes.py:999"])
+    err = capsys.readouterr().err
+
+    assert "no unit matches" in err
+    assert "JavaScript" not in err
