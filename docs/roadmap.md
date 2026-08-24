@@ -166,8 +166,16 @@ finding.
 On a real repository, locally. Nothing from a private repository is
 ever committed or published here.
 
+Instrumented, so the account is a record rather than a recollection:
+`CODE_STEWARD_FIELD_LOG` appends one line per invocation to a local
+file -- command, exit, duration, slice size, whether it came back
+empty, which selector produced it. Off unless the variable is set,
+and it never leaves the machine. The template and the publishing
+rules are in [`stage-2-field-notes.md`](stage-2-field-notes.md).
+
 *Exit: a written account of what it caught and what it wasted time
-on. Both halves.*
+on. Both halves.* An account whose second half is empty has not met
+this criterion.
 
 ### Stage 3 -- new passes, and only then
 
