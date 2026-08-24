@@ -132,7 +132,7 @@ def test_without_the_parser_a_refresh_leaves_existing_edges_alone(monkeypatch) -
 
 
 def test_without_the_parser_unbound_says_what_is_missing(tmp_path: Path, monkeypatch, capsys):
-    """Silence would read as full coverage, which is the wrong answer."""
+    """Silence would read as full coverage. Say what is missing."""
     from code_steward.cli import cmd_unbound
 
     monkeypatch.setattr(webclient, "_LANGUAGE", None)
