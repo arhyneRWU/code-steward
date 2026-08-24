@@ -75,7 +75,18 @@ def test_similar_reports_nothing_rather_than_failing(project, capsys):
 
 def test_similar_rejects_an_unknown_unit(project, capsys):
     assert _run(project, "similar", "nope::missing") == 2
-    assert "unknown unit" in capsys.readouterr().err
+    assert "no unit matches" in capsys.readouterr().err
+
+
+def test_similar_accepts_the_forms_trace_accepts(project, capsys):
+    """One gap was 100% of the first field session's tool failures.
+
+    An agent holding `path:line` from a grep had to go and find the
+    unit ID by hand before it could ask the obvious next question.
+    """
+    assert _run(project, "similar", "a.py:2", "--json") == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert [row["unit_id"] for row in payload["matches"]] == ["b::order_items"]
 
 
 def test_similar_matches_a_draft_that_is_not_indexed(project, capsys):

@@ -54,8 +54,16 @@ code-steward build --quiet             # first time, or after large changes
 code-steward update path/to/file.py    # after editing one file
 ```
 
-A stale index is quietly incomplete rather than loudly wrong. `check` and
-`trace` compare against whatever `build` last saw.
+**A stale index is quietly wrong, not quietly incomplete.** Found in the
+field, not in review: it handed back one function labelled with a
+*neighbouring* function's line range, and reported one caller where two
+existed — on a function the agent had just edited. Both are the judgement
+this tool exists to support, inverted, and neither is visible unless you
+already know the answer.
+
+`trace` now warns on stderr when a file in the slice is newer than the
+index, and `check` re-indexes the files it is about to compare. `update`
+takes many paths and costs one relationship refresh however many you pass.
 
 ### Understand a function: `trace`
 
@@ -189,9 +197,12 @@ there, assemble here.**
 ### The pattern
 
 ```bash
-# 1. Gate on currency FIRST. A stale graph is treated as an absent one.
+# 1. Gate on currency FIRST, on BOTH axes. A stale graph is an absent one.
 built=$(code-review-graph status --repo . | sed -n 's/^Built at commit: //p')
-case "$(git rev-parse HEAD)" in "$built"*) ;; *) echo "stale graph: use plain trace"; exit 0;; esac
+case "$(git rev-parse HEAD)" in "$built"*) ;; *) echo "stale graph"; exit 0;; esac
+# A commit match is not enough. A git-shaped graph cannot see uncommitted
+# work, and uncommitted work is what you are usually changing.
+[ -z "$(git status --porcelain -- '*.py')" ] || { echo "uncommitted Python: use plain trace"; exit 0; }
 
 # 2. Select: ask the broader graph who the neighbours are.
 code-review-graph query --repo . callers_of "$PWD/django/http/response.py::HttpResponseBase.has_header" \
@@ -213,9 +224,21 @@ nothing indexed is **printed to stderr, never dropped**.
 
 ### The rules that come with it
 
-- **Gate before you trust.** If the graph cannot prove it matches the current
-  tree, treat it as absent and run plain `trace`. Do not use it "with a
-  caveat" -- a caveat is a cost the reader pays to reach the same decision.
+- **Gate before you trust, on both axes.** A commit match is necessary and
+  not sufficient. A graph built from git reports itself current the moment
+  its commit matches `HEAD`, and is still blind to every uncommitted file
+  -- which, during development, is exactly the file you are changing.
+  **Found in the field, not in review:** a graph reporting
+  `head_matches_build: true` held no node at all for a new untracked
+  module, and answered a blast-radius question that named the *old* copy
+  of the function without saying the new one was missing.
+- **Code Steward indexes the working tree**, so it sees that file. This is
+  the one axis where the narrower tool wins outright, and it is invisible
+  to any benchmark run at a pinned commit -- including this project's own,
+  where every file is committed by construction.
+- If the graph cannot prove currency, treat it as absent and run plain
+  `trace`. Do not use it "with a caveat" -- a caveat is a cost the reader
+  pays to reach the same decision.
 - **Absence is the supported configuration.** No such graph installed means
   plain `trace`, no warning, no degradation. Every number this project
   publishes is reproducible without it.

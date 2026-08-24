@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import sqlite3
 import tempfile
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -132,20 +133,44 @@ def update_index_file(
     path: Path,
 ) -> UpdateStats:
     """Update one path while reconciling stale semantic-ID owners."""
+    return update_index_files(conn, project_root, [path])
+
+
+def update_index_files(
+    conn: sqlite3.Connection,
+    project_root: Path,
+    paths: Sequence[Path],
+) -> UpdateStats:
+    """Update several paths, refreshing relationships exactly once.
+
+    The refresh re-derives edges across the whole index, so its cost
+    is per call and not per file. Doing it inside a per-file loop is
+    what made `update` unusable on a large repository: 22.9 seconds
+    for one file, measured on 14,791 units, which pushed real sessions
+    into full rebuilds instead. Batch first, refresh last.
+    """
     project_root = project_root.resolve()
-    path = path.resolve()
-    rel = path.relative_to(project_root).as_posix()
+    resolved = [item.resolve() for item in paths]
 
-    if not path.exists():
-        remove_file(conn, rel)
-        refresh_relationships(conn, project_root)
-        return UpdateStats(0, (), (rel,))
-
-    primary = _index_replacement(project_root, path)
-    replacements: dict[str, FileReplacement] = {rel: primary}
     remove_paths = {
         indexed for indexed in indexed_paths(conn) if not (project_root / indexed).exists()
     }
+    replacements: dict[str, FileReplacement] = {}
+    primary_units = 0
+    for path in resolved:
+        rel = path.relative_to(project_root).as_posix()
+        if not path.exists():
+            remove_paths.add(rel)
+            continue
+        replacement = _index_replacement(project_root, path)
+        replacements[rel] = replacement
+        primary_units += len(replacement[1])
+
+    if not replacements:
+        for rel in sorted(remove_paths):
+            remove_file(conn, rel)
+        refresh_relationships(conn, project_root)
+        return UpdateStats(0, (), tuple(sorted(remove_paths)))
 
     while True:
         claimed_ids = {unit.unit_id for _, units, _ in replacements.values() for unit in units}
@@ -168,7 +193,7 @@ def update_index_file(
     replace_files(conn, list(replacements.values()), remove_paths)
     refresh_relationships(conn, project_root)
     return UpdateStats(
-        primary_units=len(primary[1]),
+        primary_units=primary_units,
         updated_paths=tuple(sorted(replacements)),
         removed_paths=tuple(sorted(remove_paths)),
     )
