@@ -53,6 +53,19 @@ reported as it came out:
 
 The whole pass, including loading a 64 MB index, took 5.3 seconds.
 
+Cost on an index refresh, which is where it actually runs, measured on
+the same repository:
+
+| pass | seconds |
+|---|---|
+| Python AST calls and `TESTED_BY` (pre-existing) | 20.85 |
+| Frontend route map (new) | 2.89 |
+
+So the frontend pass is 12% of a refresh. Scanning prefixes originally
+cost 2.6s of that on its own, because it parsed all 1,243 Python files;
+only 153 of them name a router at all, and a substring prefilter before
+`ast.parse` brought it to 0.57s with identical output.
+
 The 64 computed URLs are the honest ceiling of this approach. They are
 `fetch(url)` where `url` was assembled upstream, and resolving them
 means dataflow inference this deliberately does not do.
