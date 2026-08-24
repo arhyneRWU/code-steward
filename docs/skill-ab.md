@@ -140,6 +140,10 @@ callers the 32.6%-resolved graph missed, or it may be guessing.
    key against the source rather than assuming they are wrong.
 6. **Cost as a co-primary outcome**, measured by the harness.
 
+Run 2 applies all six of these and is pre-registered in
+[`skill-ab-run2.md`](skill-ab-run2.md) -- written and committed
+before the run, which is the part this page got wrong.
+
 ## Caveats that travel with these numbers
 
 - Ground truth is the same graph the skill exposes, so the skill arm

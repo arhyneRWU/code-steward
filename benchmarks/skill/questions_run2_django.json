@@ -1,0 +1,580 @@
+{
+  "edge_resolution": 0.2253,
+  "note": "Ground truth comes from the same graph the skill exposes. Report edge resolution beside any score, and count units an arm named that the key does not contain rather than punishing them.",
+  "questions": [
+    {
+      "answer": [
+        "django.db.models.fields.related::RelatedField._check_clashes",
+        "django.db.models.fields.related::RelatedField._check_referencing_to_swapped_model",
+        "django.db.models.fields.related::RelatedField._check_related_name_is_valid",
+        "django.db.models.fields.related::RelatedField._check_related_query_name_is_valid",
+        "django.db.models.fields.related::RelatedField._check_relation_model_exists",
+        "django.db.models.fields.related::RelatedField.related_query_name"
+      ],
+      "id": "calls:django.db.models.fields.related::RelatedField.check",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `check` (django/db/models/fields/related.py:125)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.fields.related::RelatedField.check"
+    },
+    {
+      "answer": [
+        "django.core.exceptions::ValidationError",
+        "django.db.models.expressions::Exists",
+        "django.db.models.expressions::F",
+        "django.db.models.fields.__init__::BooleanField",
+        "django.db.models.lookups::Exact",
+        "django.db.models.lookups::IsNull",
+        "django.db.models.query_utils::Q",
+        "django.utils.deconstruct::deconstructible"
+      ],
+      "id": "calls:django.db.models.constraints::UniqueConstraint.validate",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `validate` (django/db/models/constraints.py:578)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.constraints::UniqueConstraint.validate"
+    },
+    {
+      "answer": [
+        "django.core.exceptions::FieldDoesNotExist",
+        "django.core.exceptions::ImproperlyConfigured",
+        "django.db.models.options::Options._get_default_pk_class",
+        "django.db.models.options::Options._get_fields",
+        "django.db.models.options::Options.setup_pk",
+        "django.db.models.options::make_immutable_fields_list",
+        "django.utils.module_loading::import_string"
+      ],
+      "id": "calls:django.db.models.options::Options._prepare",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `_prepare` (django/db/models/options.py:292)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.options::Options._prepare"
+    },
+    {
+      "answer": [
+        "django.tasks.backends.dummy::DummyBackend._store_result",
+        "django.tasks.base::TaskResult",
+        "django.utils.crypto::get_random_string",
+        "django.utils.timezone::now"
+      ],
+      "id": "calls:django.tasks.backends.dummy::DummyBackend.enqueue",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `enqueue` (django/tasks/backends/dummy.py:26)? Include what it calls directly and what those call in turn.",
+      "target": "django.tasks.backends.dummy::DummyBackend.enqueue"
+    },
+    {
+      "answer": [
+        "django.db.models.fields.__init__::BinaryField",
+        "django.db.models.fields.__init__::BooleanField",
+        "django.db.models.fields.__init__::CharField",
+        "django.db.models.fields.__init__::DateField",
+        "django.db.models.fields.__init__::DateTimeField",
+        "django.db.models.fields.__init__::DecimalField",
+        "django.db.models.fields.__init__::DurationField",
+        "django.db.models.fields.__init__::FloatField",
+        "django.db.models.fields.__init__::IntegerField",
+        "django.db.models.fields.__init__::TimeField",
+        "django.db.models.fields.__init__::UUIDField"
+      ],
+      "id": "calls:django.db.models.expressions::Value._resolve_output_field",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `_resolve_output_field` (django/db/models/expressions.py:1215)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.expressions::Value._resolve_output_field"
+    },
+    {
+      "answer": [
+        "django.apps.registry::Apps",
+        "django.db.backends.base.schema::_all_related_fields",
+        "django.db.backends.base.schema::_is_relevant_relation",
+        "django.db.backends.base.schema::_related_non_m2m_objects",
+        "django.db.backends.sqlite3.schema::DatabaseSchemaEditor._remake_table",
+        "django.db.backends.sqlite3.schema::DatabaseSchemaEditor.delete_model",
+        "django.db.backends.sqlite3.schema::DatabaseSchemaEditor.prepare_default",
+        "django.db.backends.utils::strip_quotes"
+      ],
+      "id": "calls:django.db.backends.sqlite3.schema::DatabaseSchemaEditor._alter_field",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `_alter_field` (django/db/backends/sqlite3/schema.py:360)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.backends.sqlite3.schema::DatabaseSchemaEditor._alter_field"
+    },
+    {
+      "answer": [
+        "django.tasks.base::Task.__post_init__",
+        "django.tasks.base::Task.aenqueue",
+        "django.tasks.base::Task.aget_result",
+        "django.tasks.base::Task.enqueue",
+        "django.tasks.base::Task.get_result"
+      ],
+      "id": "impact:django.tasks.base::Task.get_backend",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `get_backend` (django/tasks/base.py:141) changed? Name its direct callers.",
+      "target": "django.tasks.base::Task.get_backend"
+    },
+    {
+      "answer": [
+        "django.core.handlers.wsgi::LimitedStream",
+        "django.core.handlers.wsgi::get_bytes_from_wsgi",
+        "django.core.handlers.wsgi::get_path_info",
+        "django.core.handlers.wsgi::get_script_name",
+        "django.utils.encoding::repercent_broken_unicode"
+      ],
+      "id": "calls:django.core.handlers.wsgi::WSGIRequest.__init__",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `__init__` (django/core/handlers/wsgi.py:57)? Include what it calls directly and what those call in turn.",
+      "target": "django.core.handlers.wsgi::WSGIRequest.__init__"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.helpers::AdminField.label_tag",
+        "django.contrib.admin.helpers::AdminReadonlyField.contents",
+        "django.template.backends.dummy::Template.render",
+        "django.template.base::render_value_in_context",
+        "django.template.defaultfilters::escape_filter",
+        "django.template.defaultfilters::escapeseq",
+        "django.template.defaultfilters::join",
+        "django.template.defaulttags::URLNode.render",
+        "django.template.library::SimpleNode.render",
+        "django.templatetags.static::StaticNode.render",
+        "django.utils.html::format_html",
+        "django.utils.html::format_html_join"
+      ],
+      "id": "impact:django.utils.html::conditional_escape",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `conditional_escape` (django/utils/html.py:120) changed? Name its direct callers.",
+      "target": "django.utils.html::conditional_escape"
+    },
+    {
+      "answer": [
+        "django.utils.functional::keep_lazy",
+        "django.utils.safestring::SafeString",
+        "django.utils.safestring::_safety_decorator",
+        "django.utils.safestring::mark_safe"
+      ],
+      "id": "calls:django.template.defaultfilters::cut",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `cut` (django/template/defaultfilters.py:441)? Include what it calls directly and what those call in turn.",
+      "target": "django.template.defaultfilters::cut"
+    },
+    {
+      "answer": [
+        "django.contrib.sessions.backends.base::SessionBase.aget_expire_at_browser_close",
+        "django.contrib.sessions.backends.base::SessionBase.aget_expiry_age",
+        "django.contrib.sessions.backends.base::SessionBase.aget_expiry_date",
+        "django.contrib.sessions.backends.base::SessionBase.atest_cookie_worked"
+      ],
+      "id": "impact:django.contrib.sessions.backends.base::SessionBase.aget",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `aget` (django/contrib/sessions/backends/base.py:79) changed? Name its direct callers.",
+      "target": "django.contrib.sessions.backends.base::SessionBase.aget"
+    },
+    {
+      "answer": [
+        "django.contrib.postgres.search::SearchQueryCombinable.__and__",
+        "django.contrib.postgres.search::SearchQueryCombinable.__or__",
+        "django.contrib.postgres.search::SearchQueryCombinable.__rand__",
+        "django.contrib.postgres.search::SearchQueryCombinable.__ror__"
+      ],
+      "id": "impact:django.contrib.postgres.search::SearchQueryCombinable._combine",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `_combine` (django/contrib/postgres/search.py:201) changed? Name its direct callers.",
+      "target": "django.contrib.postgres.search::SearchQueryCombinable._combine"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.utils::_get_non_gfk_field",
+        "django.contrib.admin.utils::flatten",
+        "django.contrib.admin.utils::flatten_fieldsets",
+        "django.contrib.admin.utils::get_fields_from_path",
+        "django.contrib.admin.utils::help_text_for_field",
+        "django.contrib.admin.utils::label_for_field",
+        "django.forms.utils::pretty_name"
+      ],
+      "id": "calls:django.contrib.admin.helpers::InlineAdminFormSet.fields",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `fields` (django/contrib/admin/helpers.py:381)? Include what it calls directly and what those call in turn.",
+      "target": "django.contrib.admin.helpers::InlineAdminFormSet.fields"
+    },
+    {
+      "answer": [
+        "django.db.migrations.autodetector::MigrationAutodetector._generate_added_field",
+        "django.db.migrations.autodetector::MigrationAutodetector._generate_removed_field",
+        "django.db.migrations.autodetector::MigrationAutodetector._get_dependencies_for_foreign_key",
+        "django.db.migrations.autodetector::MigrationAutodetector._get_dependencies_for_generated_field",
+        "django.db.migrations.autodetector::MigrationAutodetector._get_generated_field_dependencies_for_removed_field",
+        "django.db.migrations.autodetector::MigrationAutodetector.add_operation",
+        "django.db.migrations.autodetector::MigrationAutodetector.deep_deconstruct",
+        "django.db.migrations.autodetector::OperationDependency",
+        "django.db.migrations.utils::RegexObject",
+        "django.db.migrations.utils::resolve_relation"
+      ],
+      "id": "calls:django.db.migrations.autodetector::MigrationAutodetector.generate_altered_fields",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `generate_altered_fields` (django/db/migrations/autodetector.py:1252)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.migrations.autodetector::MigrationAutodetector.generate_altered_fields"
+    },
+    {
+      "answer": [
+        "django.core.cache.backends.base::BaseCache.delete",
+        "django.core.cache.backends.base::BaseCache.get",
+        "django.core.cache.backends.base::BaseCache.incr_version",
+        "django.core.cache.backends.base::BaseCache.set"
+      ],
+      "id": "calls:django.core.cache.backends.base::BaseCache.decr_version",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `decr_version` (django/core/cache/backends/base.py:403)? Include what it calls directly and what those call in turn.",
+      "target": "django.core.cache.backends.base::BaseCache.decr_version"
+    },
+    {
+      "answer": [
+        "django.db.models.deletion::Collector._has_signal_listeners",
+        "django.db.models.deletion::Collector.add",
+        "django.db.models.deletion::Collector.add_dependency",
+        "django.db.models.deletion::Collector.can_fast_delete",
+        "django.db.models.deletion::Collector.clear_restricted_objects_from_queryset",
+        "django.db.models.deletion::Collector.clear_restricted_objects_from_set",
+        "django.db.models.deletion::Collector.get_del_batches",
+        "django.db.models.deletion::Collector.related_objects",
+        "django.db.models.deletion::ProtectedError",
+        "django.db.models.deletion::RestrictedError",
+        "django.db.models.deletion::get_candidate_relations_to_delete"
+      ],
+      "id": "calls:django.db.models.deletion::Collector.collect",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `collect` (django/db/models/deletion.py:271)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.deletion::Collector.collect"
+    },
+    {
+      "answer": [
+        "django.utils.dateformat::format",
+        "django.utils.dateformat::time_format",
+        "django.utils.formats::date_format",
+        "django.utils.formats::get_format",
+        "django.utils.formats::number_format",
+        "django.utils.formats::time_format",
+        "django.utils.numberformat::format",
+        "django.utils.translation.__init__::get_language"
+      ],
+      "id": "calls:django.utils.formats::localize",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `localize` (django/utils/formats.py:193)? Include what it calls directly and what those call in turn.",
+      "target": "django.utils.formats::localize"
+    },
+    {
+      "answer": [
+        "django.dispatch.dispatcher::Signal._clear_dead_receivers",
+        "django.dispatch.dispatcher::Signal._live_receivers",
+        "django.dispatch.dispatcher::_make_id",
+        "django.dispatch.dispatcher::_restore_context",
+        "django.dispatch.dispatcher::_run_parallel",
+        "django.dispatch.dispatcher::receiver"
+      ],
+      "id": "calls:django.dispatch.dispatcher::Signal.asend_robust",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `asend_robust` (django/dispatch/dispatcher.py:393)? Include what it calls directly and what those call in turn.",
+      "target": "django.dispatch.dispatcher::Signal.asend_robust"
+    },
+    {
+      "answer": [
+        "django.db.models.fields.__init__::Field._get_default",
+        "django.db.models.fields.__init__::Field.get_choices",
+        "django.db.models.fields.__init__::Field.get_default",
+        "django.db.models.fields.__init__::Field.has_default",
+        "django.db.models.utils::get_blank_choice_label",
+        "django.utils.choices::BlankChoiceIterator",
+        "django.utils.text::capfirst"
+      ],
+      "id": "calls:django.db.models.fields.__init__::Field.formfield",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `formfield` (django/db/models/fields/__init__.py:1142)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.fields.__init__::Field.formfield"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.helpers::InlineAdminFormSet.__iter__",
+        "django.contrib.admin.helpers::InlineAdminFormSet.fields",
+        "django.contrib.admin.options::InlineModelAdmin.get_formset",
+        "django.contrib.admin.options::ModelAdmin._changeform_view",
+        "django.contrib.admin.options::ModelAdmin.get_form"
+      ],
+      "id": "impact:django.contrib.admin.utils::flatten_fieldsets",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `flatten_fieldsets` (django/contrib/admin/utils.py:119) changed? Name its direct callers.",
+      "target": "django.contrib.admin.utils::flatten_fieldsets"
+    },
+    {
+      "answer": [
+        "django.utils.timezone::localtime",
+        "django.utils.timezone::now",
+        "django.views.generic.dates::_get_next_prev",
+        "django.views.generic.dates::timezone_today"
+      ],
+      "id": "calls:django.views.generic.dates::MonthMixin.get_previous_month",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `get_previous_month` (django/views/generic/dates.py:101)? Include what it calls directly and what those call in turn.",
+      "target": "django.views.generic.dates::MonthMixin.get_previous_month"
+    },
+    {
+      "answer": [
+        "django.utils.functional::keep_lazy",
+        "django.utils.safestring::SafeString",
+        "django.utils.safestring::_safety_decorator",
+        "django.utils.safestring::mark_safe",
+        "django.utils.timezone::is_naive",
+        "django.utils.timezone::localtime",
+        "django.utils.timezone::template_localtime"
+      ],
+      "id": "calls:django.template.base::FilterExpression.resolve",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `resolve` (django/template/base.py:802)? Include what it calls directly and what those call in turn.",
+      "target": "django.template.base::FilterExpression.resolve"
+    },
+    {
+      "answer": [
+        "django.core.serializers.base::DeserializationError",
+        "django.core.serializers.base::DeserializedObject",
+        "django.core.serializers.base::M2MDeserializationError",
+        "django.core.serializers.base::build_instance",
+        "django.core.serializers.xml_serializer::Deserializer._get_model_from_node",
+        "django.core.serializers.xml_serializer::Deserializer._handle_fk_field_node",
+        "django.core.serializers.xml_serializer::Deserializer._handle_m2m_field_node",
+        "django.core.serializers.xml_serializer::check_element_type",
+        "django.core.serializers.xml_serializer::getChildrenByTagName",
+        "django.core.serializers.xml_serializer::getInnerText"
+      ],
+      "id": "calls:django.core.serializers.xml_serializer::Deserializer._handle_object",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `_handle_object` (django/core/serializers/xml_serializer.py:260)? Include what it calls directly and what those call in turn.",
+      "target": "django.core.serializers.xml_serializer::Deserializer._handle_object"
+    },
+    {
+      "answer": [
+        "django.contrib.auth.forms::PasswordResetForm.get_users",
+        "django.contrib.auth.forms::PasswordResetForm.send_mail",
+        "django.contrib.auth.forms::_unicode_ci_compare",
+        "django.contrib.sites.requests::RequestSite",
+        "django.contrib.sites.shortcuts::get_current_site",
+        "django.template.loader::render_to_string",
+        "django.utils.encoding::force_bytes",
+        "django.utils.encoding::is_protected_type",
+        "django.utils.http::urlsafe_base64_encode"
+      ],
+      "id": "calls:django.contrib.auth.forms::PasswordResetForm.save",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `save` (django/contrib/auth/forms.py:444)? Include what it calls directly and what those call in turn.",
+      "target": "django.contrib.auth.forms::PasswordResetForm.save"
+    },
+    {
+      "answer": [
+        "django.test.runner::get_max_test_processes",
+        "django.test.utils::NullTimeKeeper",
+        "django.test.utils::TimeKeeper",
+        "django.test.utils::get_runner"
+      ],
+      "id": "calls:django.core.management.commands.test::Command.handle",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `handle` (django/core/management/commands/test.py:54)? Include what it calls directly and what those call in turn.",
+      "target": "django.core.management.commands.test::Command.handle"
+    },
+    {
+      "answer": [
+        "django.utils.html::conditional_escape",
+        "django.utils.html::format_html",
+        "django.utils.html::format_html_join",
+        "django.utils.safestring::mark_safe"
+      ],
+      "id": "calls:django.forms.utils::flatatt",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `flatatt` (django/forms/utils.py:20)? Include what it calls directly and what those call in turn.",
+      "target": "django.forms.utils::flatatt"
+    },
+    {
+      "answer": [
+        "django.db.models.query::QuerySet._check_operator_queryset",
+        "django.db.models.query::QuerySet._merge_sanity_check",
+        "django.db.models.query::QuerySet._values",
+        "django.db.models.query::QuerySet.values"
+      ],
+      "id": "calls:django.db.models.query::QuerySet.__or__",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `__or__` (django/db/models/query.py:503)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.query::QuerySet.__or__"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.sites::AdminSite._build_app_dict",
+        "django.contrib.admin.sites::AdminSite.get_app_list",
+        "django.contrib.admin.sites::AdminSite.get_log_entries",
+        "django.contrib.admin.sites::AdminSite.has_permission"
+      ],
+      "id": "calls:django.contrib.admin.sites::AdminSite.each_context",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `each_context` (django/contrib/admin/sites.py:328)? Include what it calls directly and what those call in turn.",
+      "target": "django.contrib.admin.sites::AdminSite.each_context"
+    },
+    {
+      "answer": [
+        "django.utils.functional::keep_lazy",
+        "django.utils.html::urlize",
+        "django.utils.safestring::SafeString",
+        "django.utils.safestring::_safety_decorator",
+        "django.utils.safestring::mark_safe"
+      ],
+      "id": "calls:django.template.defaultfilters::urlizetrunc",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `urlizetrunc` (django/template/defaultfilters.py:389)? Include what it calls directly and what those call in turn.",
+      "target": "django.template.defaultfilters::urlizetrunc"
+    },
+    {
+      "answer": [
+        "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_point_2d",
+        "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_point_3d",
+        "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_point_3d_m",
+        "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_point_4d"
+      ],
+      "id": "impact:django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_x",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `_get_x` (django/contrib/gis/geos/coordseq.py:88) changed? Name its direct callers.",
+      "target": "django.contrib.gis.geos.coordseq::GEOSCoordSeq._get_x"
+    },
+    {
+      "answer": [
+        "django.contrib.auth.views::RedirectURLMixin.get_default_redirect_url",
+        "django.contrib.auth.views::RedirectURLMixin.get_redirect_url",
+        "django.contrib.auth.views::RedirectURLMixin.get_success_url_allowed_hosts",
+        "django.core.exceptions::ImproperlyConfigured",
+        "django.shortcuts::resolve_url",
+        "django.utils.http::url_has_allowed_host_and_scheme"
+      ],
+      "id": "calls:django.contrib.auth.views::RedirectURLMixin.get_success_url",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `get_success_url` (django/contrib/auth/views.py:40)? Include what it calls directly and what those call in turn.",
+      "target": "django.contrib.auth.views::RedirectURLMixin.get_success_url"
+    },
+    {
+      "answer": [
+        "django.db.models.sql.compiler::SQLCompiler.apply_converters",
+        "django.db.models.sql.compiler::SQLCompiler.as_sql",
+        "django.db.models.sql.compiler::SQLCompiler.composite_fields_to_tuples",
+        "django.db.models.sql.compiler::SQLCompiler.execute_sql",
+        "django.db.models.sql.compiler::SQLCompiler.get_converters",
+        "django.db.models.sql.compiler::SQLCompiler.has_composite_fields",
+        "django.db.models.sql.compiler::cursor_iter"
+      ],
+      "id": "calls:django.db.models.sql.compiler::SQLCompiler.results_iter",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `results_iter` (django/db/models/sql/compiler.py:1564)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.sql.compiler::SQLCompiler.results_iter"
+    },
+    {
+      "answer": [
+        "django.contrib.humanize.templatetags.humanize::NaturalTimeFormatter",
+        "django.contrib.postgres.validators::ArrayMaxLengthValidator",
+        "django.contrib.postgres.validators::ArrayMinLengthValidator",
+        "django.core.validators::DecimalValidator",
+        "django.core.validators::MaxLengthValidator",
+        "django.core.validators::MinLengthValidator",
+        "django.forms.fields::FileField",
+        "django.forms.formsets::BaseFormSet"
+      ],
+      "id": "impact:django.utils.translation.__init__::ngettext_lazy",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `ngettext_lazy` (django/utils/translation/__init__.py:171) changed? Name its direct callers.",
+      "target": "django.utils.translation.__init__::ngettext_lazy"
+    },
+    {
+      "answer": [
+        "django.utils.timezone::get_current_timezone",
+        "django.utils.timezone::is_aware",
+        "django.utils.timezone::is_naive",
+        "django.utils.timezone::make_naive"
+      ],
+      "id": "calls:django.db.backends.sqlite3.operations::DatabaseOperations.adapt_datetimefield_value",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `adapt_datetimefield_value` (django/db/backends/sqlite3/operations.py:246)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.backends.sqlite3.operations::DatabaseOperations.adapt_datetimefield_value"
+    },
+    {
+      "answer": [
+        "django.template.autoreload::get_template_directories",
+        "django.template.autoreload::reset_loaders",
+        "django.utils._os::to_path",
+        "django.utils.autoreload::is_django_path"
+      ],
+      "id": "calls:django.template.autoreload::template_changed",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `template_changed` (django/template/autoreload.py:54)? Include what it calls directly and what those call in turn.",
+      "target": "django.template.autoreload::template_changed"
+    },
+    {
+      "answer": [
+        "django.db.models.fields.related_descriptors::create_forward_many_to_many_manager.ManyRelatedManager._get_add_plan",
+        "django.db.models.fields.related_descriptors::create_forward_many_to_many_manager.ManyRelatedManager._get_missing_target_ids",
+        "django.db.models.fields.related_descriptors::create_forward_many_to_many_manager.ManyRelatedManager._get_target_ids",
+        "django.db.models.utils::resolve_callables",
+        "django.db.transaction::Atomic",
+        "django.db.transaction::atomic"
+      ],
+      "id": "calls:django.db.models.fields.related_descriptors::create_forward_many_to_many_manager.ManyRelatedManager._add_items",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `_add_items` (django/db/models/fields/related_descriptors.py:1580)? Include what it calls directly and what those call in turn.",
+      "target": "django.db.models.fields.related_descriptors::create_forward_many_to_many_manager.ManyRelatedManager._add_items"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.options::BaseModelAdmin.has_add_permission",
+        "django.contrib.admin.options::BaseModelAdmin.has_change_permission",
+        "django.contrib.admin.options::BaseModelAdmin.has_delete_permission",
+        "django.contrib.admin.options::BaseModelAdmin.has_view_permission",
+        "django.contrib.admin.options::InlineModelAdmin._has_any_perms_for_target_model",
+        "django.contrib.admindocs.views::user_has_model_view_permission",
+        "django.contrib.auth.management.__init__::_get_builtin_permissions"
+      ],
+      "id": "impact:django.contrib.auth.__init__::get_permission_codename",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `get_permission_codename` (django/contrib/auth/__init__.py:363) changed? Name its direct callers.",
+      "target": "django.contrib.auth.__init__::get_permission_codename"
+    },
+    {
+      "answer": [
+        "django.contrib.gis.db.backends.oracle.schema::OracleGISSchemaEditor._create_spatial_index_name",
+        "django.db.backends.oracle.operations::DatabaseOperations._get_no_autofield_sequence_name",
+        "django.db.backends.oracle.operations::DatabaseOperations.last_insert_id",
+        "django.db.backends.oracle.operations::DatabaseOperations.sequence_reset_by_name_sql",
+        "django.db.backends.oracle.operations::DatabaseOperations.sequence_reset_sql",
+        "django.db.backends.postgresql.creation::DatabaseCreation._database_exists",
+        "django.db.backends.postgresql.schema::DatabaseSchemaEditor._alter_column_type_sql",
+        "django.db.backends.sqlite3.schema::DatabaseSchemaEditor._remake_table",
+        "django.db.models.fields.related::ManyToManyField._get_m2m_db_table"
+      ],
+      "id": "impact:django.db.backends.utils::strip_quotes",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `strip_quotes` (django/db/backends/utils.py:335) changed? Name its direct callers.",
+      "target": "django.db.backends.utils::strip_quotes"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.utils::flatten",
+        "django.contrib.admin.utils::flatten_fieldsets",
+        "django.core.exceptions::FieldError",
+        "django.core.exceptions::ImproperlyConfigured",
+        "django.forms.models::modelform_defines_fields",
+        "django.forms.models::modelform_factory"
+      ],
+      "id": "calls:django.contrib.admin.options::ModelAdmin.get_form",
+      "kind": "calls",
+      "question": "Which functions run as a result of calling `get_form` (django/contrib/admin/options.py:847)? Include what it calls directly and what those call in turn.",
+      "target": "django.contrib.admin.options::ModelAdmin.get_form"
+    },
+    {
+      "answer": [
+        "django.contrib.admin.filters::AllValuesFieldListFilter.__init__",
+        "django.contrib.admin.filters::BooleanFieldListFilter.__init__",
+        "django.contrib.admin.filters::ChoicesFieldListFilter.__init__",
+        "django.contrib.admin.filters::EmptyFieldListFilter.__init__",
+        "django.contrib.admin.filters::RelatedFieldListFilter.__init__"
+      ],
+      "id": "impact:django.contrib.admin.utils::get_last_value_from_parameters",
+      "kind": "impact",
+      "question": "Which functions would be affected if the behaviour of `get_last_value_from_parameters` (django/contrib/admin/utils.py:63) changed? Name its direct callers.",
+      "target": "django.contrib.admin.utils::get_last_value_from_parameters"
+    }
+  ],
+  "schema_version": 1
+}

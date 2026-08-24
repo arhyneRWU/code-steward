@@ -142,18 +142,27 @@ provenance stripped, negative result published either way.
 
 *Exit met, and the number is null.* See
 [`skill-ab.md`](skill-ab.md). Skill arm 0.984 mean F1, control 0.929,
-paired difference +0.055 with a one-sided 95% lower bound of -0.099.
-The pre-registered detectable effect was 0.20, so this does not show
-the skill helping.
+paired difference **+0.055**, permutation p = 0.126. The skill arm
+also used 22% fewer tool calls and 24% fewer tokens. This does not
+show the skill helping.
+
+The bootstrap bound this page previously quoted, -0.099, was wrong
+twice over: the arms were subtracted in the wrong direction, and on a
+sample with no negative differences that bound cannot fail anyway.
+Both corrections are on the `skill-ab.md` page rather than erased.
 
 **The design could not answer the question, and that is the finding.**
 At 0.929 the control nearly saturates: this repository is 4,400 lines
 and an agent can just read it. The skill's claim is about
 repositories too large to read, and a repository small enough to read
-cannot test it. The next run needs Django or Home Assistant, harder
-questions, one question per agent, and the sign test pre-registered
-as primary -- most questions tie, and a mean difference is the wrong
-instrument for that.
+cannot test it.
+
+Run 2 is pre-registered in
+[`skill-ab-run2.md`](skill-ab-run2.md), written and committed before
+the run: Django, 40 questions with a raised answer-size floor, one
+question per agent, a paired sign-flip permutation test on recall as
+primary, cost as a co-primary, and the inconclusive outcome named in
+advance.
 
 Recorded, and explicitly not the result: the arms differed on 5 of 20
 questions and **all five favoured the skill**, one-sided sign-test p
