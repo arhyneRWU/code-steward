@@ -20,3 +20,6 @@ build/
 .coverage.*
 htmlcov/
 coverage.json
+
+# Stage 2 field log, if you point it here. Local only.
+.code-steward-field.jsonl

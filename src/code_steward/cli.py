@@ -5,9 +5,10 @@ import json
 import os
 import sqlite3
 import sys
+import time
 from pathlib import Path
 
-from . import __version__
+from . import __version__, fieldlog
 from .check import alarm_rate, changed_python_files, check_files
 from .config import resolve_excludes
 from .db import all_endpoints, all_hard_relationships, all_units, connect, get_unit
@@ -32,6 +33,11 @@ from .trace import (
     slice_to_dict,
     undocumented_units,
 )
+
+# What the command in flight noticed, merged into the field-log row
+# by `main`. A dict rather than a return value because every command
+# already has a return type and none of them is this.
+OBSERVED: dict[str, object] = {}
 
 
 def root_from(value: str | None) -> Path:
@@ -415,6 +421,9 @@ def cmd_trace(args: argparse.Namespace) -> int:
         print(f"unknown unit: {args.unit}", file=sys.stderr)
         return 2
 
+    OBSERVED["members"] = len(sliced.members)
+    OBSERVED["empty"] = not sliced.members
+    OBSERVED["selector"] = "members-from" if args.members_from else "own-edges"
     overlaps = path_duplication(root, sliced, units) if args.dry else []
     if args.json:
         payload = slice_to_dict(sliced)
@@ -660,4 +669,20 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "similar" and not args.unit and args.draft is None:
         parser.error("similar needs a unit ID or --draft")
-    return int(args.func(args))
+    started = time.monotonic()
+    OBSERVED.clear()
+    code = 70  # not reached unless the command raised
+    try:
+        code = int(args.func(args))
+    finally:
+        # Recorded whether the command succeeded or not: a command
+        # that failed is the most interesting line in a field log.
+        fieldlog.record(
+            {
+                "command": args.command,
+                "exit": code,
+                "ms": round((time.monotonic() - started) * 1000),
+                **OBSERVED,
+            }
+        )
+    return code
